@@ -7,12 +7,17 @@
 StartSymbol
   : VariableDeclaration
   | ConstantDeclaration
+  | FunctionDeclaration
+  ;
+  
+Statement
+  : VariableDeclaration
+  | ConstantDeclaration
   | VariableAssignment
   | ForCycle
   | WhileCycle
   | DoWhileCycle
   | IfCondition
-  | FunctionDeclaration
   | FunctionCall
   | SwitchCondition
   ;
@@ -170,7 +175,7 @@ LogicalExpression
   ;
   
 ForCycle
-  : 'for' '(' ForDeclaration ';' ForCondition ';' ForExpression ')' '{' StartSymbol '}'
+  : 'for' '(' ForDeclaration ';' ForCondition ';' ForExpression ')' '{' Statement '}'
   ;
   
 ForDeclaration
@@ -191,16 +196,16 @@ ForExpression
   ;
   
 WhileCycle
-  : 'while' '(' CycleCondition ')' '{' StartSymbol '}'
+  : 'while' '(' CycleCondition ')' '{' Statement '}'
   ;
   
 DoWhileCycle
-  : 'do' '{' StartSymbol '}' 'while' '(' CycleCondition ')'
+  : 'do' '{' Statement '}' 'while' '(' CycleCondition ')'
   ;
 
 IfCondition
-  : 'if' (LogicalExpression) '{' StartSymbol '}'
-  | 'if' (LogicalExpression) '{' StartSymbol '}' 'else' '{' StartSymbol '}'
+  : 'if' (LogicalExpression) '{' Statement '}'
+  | 'if' (LogicalExpression) '{' Statement '}' 'else' '{' Statement '}'
   
 FunctionDeclaration /* Only functions with no return value allowed */
   : 'void' Identifier '(' FunctionArgumentList ')'
@@ -237,11 +242,11 @@ StringConcatenation
   
 SwitchCondition
   : 'switch' '(' Value ')' (SwitchCase)* 
-  | 'switch' '(' Value ')' (SwitchCase)* 'default' ':' StartSymbol ('break')?
+  | 'switch' '(' Value ')' (SwitchCase)* 'default' ':' Statement ('break')?
   ;
   
 SwitchCase
-  : 'case' Value ':' StartSymbol ('break')?
+  : 'case' Value ':' Statement ('break')?
   ;
   
 Digit
