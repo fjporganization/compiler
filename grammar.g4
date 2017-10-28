@@ -5,21 +5,33 @@
 */
 
 StartSymbol
-  : VariableDeclaration
-  | ConstantDeclaration
+  : VariableDeclaration 
+  | ConstantDeclaration 
   | FunctionDeclaration
+  | VariableDeclaration StartSymbol
+  | ConstantDeclaration StartSymbol
+  | FunctionDeclaration StartSymbol
   ;
   
 Statement
   : VariableDeclaration
-  | ConstantDeclaration
-  | VariableAssignment
+  | ConstantDeclaration 
+  | VariableAssignment 
   | ForCycle
   | WhileCycle
   | DoWhileCycle
   | IfCondition
   | FunctionCall
   | SwitchCondition
+  | VariableDeclaration Statement
+  | ConstantDeclaration Statement
+  | VariableAssignment Statement
+  | ForCycle Statement
+  | WhileCycle Statement
+  | DoWhileCycle Statement
+  | IfCondition Statement
+  | FunctionCall Statement
+  | SwitchCondition Statement
   ;
   
 Identifier
@@ -127,7 +139,7 @@ AssignmentExpression
   ;
   
 ParallelAssignment
-  : '{' IdentifierList '}' = '{' ValueList '}'
+  : '{' IdentifierList '}' = '{' ValueList '}' ';' 
   ;
   
 IdentifierList
@@ -138,16 +150,16 @@ ValueList
   : Value ',' ValueList
   
 VariableDeclaration
-  : TypeSpecifier Identifier 
-  | TypeSpecifier Identifier AssignmentExpression
+  : TypeSpecifier Identifier ';' 
+  | TypeSpecifier Identifier AssignmentExpression ';' 
   ;
 
 ConstantDeclaration
-  :  TypeQualifier TypeSpecifier Identifier AssignmentExpression
+  :  TypeQualifier TypeSpecifier Identifier AssignmentExpression ';' 
   ;
   
 VariableAssignment
-  : Identifier AssignmentExpression 
+  : Identifier AssignmentExpression ';' 
   ; 
    
 ArithmeticExpression
@@ -200,7 +212,7 @@ WhileCycle
   ;
   
 DoWhileCycle
-  : 'do' '{' Statement '}' 'while' '(' CycleCondition ')'
+  : 'do' '{' Statement '}' 'while' '(' CycleCondition ')' ';'
   ;
 
 IfCondition
@@ -208,7 +220,8 @@ IfCondition
   | 'if' (LogicalExpression) '{' Statement '}' 'else' '{' Statement '}'
   
 FunctionDeclaration /* Only functions with no return value allowed */
-  : 'void' Identifier '(' FunctionArgumentList ')'
+  : 'void' Identifier '(' FunctionArgumentList ')' ';'
+  | 'void' Identifier '(' FunctionArgumentList ')' '{' Statement '}'
   ;
   
 FunctionArgumentList
@@ -218,7 +231,7 @@ FunctionArgumentList
   ;
   
 FunctionCall
-  : Identifier '(' FunctionCallArguments ')'
+  : Identifier '(' FunctionCallArguments ')' ';'
   ;
   
 FunctionCallArguments
@@ -232,12 +245,12 @@ FunctionCallArguments
   ;
   
 StringConcatenation
-  : Identifier StringConcatenationOperator Identifier
-  | StringValue StringConcatenationOperator Identifier
-  | Identifier StringConcatenationOperator StringValue
-  | StringValue StringConcatenationOperator StringValue
-  | Identifier StringConcatenationOperator StringConcatenation
-  | StringValue StringConcatenationOperator StringConcatenation
+  : Identifier StringConcatenationOperator Identifier ';'
+  | StringValue StringConcatenationOperator Identifier ';'
+  | Identifier StringConcatenationOperator StringValue ';'
+  | StringValue StringConcatenationOperator StringValue ';'
+  | Identifier StringConcatenationOperator StringConcatenation ';'
+  | StringValue StringConcatenationOperator StringConcatenation ';'
   ;
   
 SwitchCondition
