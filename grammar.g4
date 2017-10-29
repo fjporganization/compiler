@@ -182,6 +182,7 @@ LogicalExpression
   | NumericalValue ComparisonOperator Identifier
   | NumericalValue ComparisonOperator NumericalValue
   | NumericalValue ComparisonOperator ArithmeticExpression
+  | ArithmeticExpression ComparisonOperator ArithmeticExpression
   | Identifier LogicalOperator LogicalExpression
   | Identifier
   | '(' LogicalExpression ')'
