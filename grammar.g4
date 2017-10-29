@@ -117,8 +117,8 @@ StringValue
   ;
   
 String
-  : Digit StringValue
-  | NonDigit StringValue
+  : Digit String
+  | NonDigit String
   | //empty
   ;
   
@@ -144,10 +144,12 @@ ParallelAssignment
   
 IdentifierList
   : Identifier ',' IdentifierList
+  | Identifier
   ;
   
 ValueList
   : Value ',' ValueList
+  | Value
   
 VariableDeclaration
   : TypeSpecifier Identifier ';' 
@@ -241,6 +243,8 @@ FunctionCallArguments
   | NumericalValue ',' FunctionCallArguments
   | ArithmeticExpression
   | LogicalExpression
+  | ArithmeticExpression ',' FunctionCallArguments
+  | LogicalExpression ',' FunctionCallArguments
   | \\empty
   ;
   
