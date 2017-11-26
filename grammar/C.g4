@@ -46,8 +46,8 @@ statement
   ;
   
 variabledeclaration
-  : TYPESPECIFIER IDENTIFIER ASSIGNMENTOPERATOR expression SEMICOLON
-  | TYPESPECIFIER IDENTIFIER SEMICOLON
+  : TYPESPECIFIER IDENTIFIER ASSIGNMENTOPERATOR expression SEMICOLON   #declarationAndInitialization
+  | TYPESPECIFIER IDENTIFIER SEMICOLON                                 #declarationOnly                                               
   ;
   
 constantdeclaration
@@ -55,9 +55,9 @@ constantdeclaration
   ;
   
 assignment
-  : IDENTIFIER ASSIGNMENTOPERATOR expression SEMICOLON
-  | (IDENTIFIER ASSIGNMENTOPERATOR)+ expression SEMICOLON //multiple assignment
-  | IDENTIFIER ASSIGNMENTOPERATOR logicalexpression QUESTIONMARK expression COLON expression SEMICOLON //ternary operator 
+  : IDENTIFIER ASSIGNMENTOPERATOR expression SEMICOLON                                                  #standardAssignment
+  | (IDENTIFIER ASSIGNMENTOPERATOR)+ expression SEMICOLON                                               #multipleAssignment
+  | IDENTIFIER ASSIGNMENTOPERATOR logicalexpression QUESTIONMARK expression COLON expression SEMICOLON  #ternaryOperatorAssignment 
   ;
   
 parallelassignment
@@ -79,27 +79,33 @@ expression
   ;
   
 arithmeticexpression
-  : LEFTPARENTHESE arithmeticexpression RIGHTPARENTHESE 
-  | IDENTIFIER
-  | NUMERICALVALUE
-  | LEFTPARENTHESE arithmeticexpression RIGHTPARENTHESE (ARITHMETICOPERATOR arithmeticexpression)+
-  | IDENTIFIER (ARITHMETICOPERATOR arithmeticexpression)+
-  | NUMERICALVALUE (ARITHMETICOPERATOR arithmeticexpression)+
+  : LEFTPARENTHESE arithmeticexpression RIGHTPARENTHESE                               #parenthesesArithmeticExp
+  | arithmeticexpression MULTIPLICATIONDIVISIONOPERATOR arithmeticexpression          #mulDivExp
+  | arithmeticexpression ADDITIONSUBTRACTIONOPERATOR arithmeticexpression             #addSubExp
+  | atom                                                                              #arithmeticAtom
   ;
   
 logicalexpression
-  : LEFTPARENTHESE logicalexpression RIGHTPARENTHESE
-  | IDENTIFIER
-  | LOGICALVALUE
-  | LEFTPARENTHESE logicalexpression RIGHTPARENTHESE (LOGICALOPERATOR logicalexpression)+
-  | arithmeticexpression COMPARISONOPERATOR arithmeticexpression
-  | logicalexpression LOGICALOPERATOR logicalexpression
-  | LOGICALNEGATION logicalexpression
+  : LEFTPARENTHESE logicalexpression RIGHTPARENTHESE                                  #parenthesesLogicExp
+  | LOGICALNEGATION logicalexpression                                                 #logicNegation
+  | logicalexpression RELATIONALOPERATOR logicalexpression                            #relationalLogicExp
+  | logicalexpression EQUALITYOPERATOR logicalexpression                              #equalityLogicExp
+  | logicalexpression LOGICALAND logicalexpression                                    #LogicalAndExp
+  | logicalexpression LOGICALOR logicalexpression                                     #LogicalOrExp
+  | atom                                                                              #logicalAtom
+  
   ;
   
 stringexpression
-  : STRINGVALUE (STRINGCONCATENATION stringexpression)*
-  | IDENTIFIER (STRINGCONCATENATION stringexpression)*
+  : stringexpression STRINGCONCATENATION stringexpression                             #stringConcatExp
+  | atom                                                                              #stringExpAtom
+  ;
+  
+atom
+  : IDENTIFIER                                                                        #identifierAtom
+  | NUMERICALVALUE                                                                    #numericAtom
+  | STRINGVALUE                                                                       #stringAtom
+  | LOGICALVALUE                                                                      #logicAtom
   ;
   
 functiondeclaration
@@ -233,29 +239,39 @@ STRINGCONCATENATION
   : '.'
   ;
   
-ARITHMETICOPERATOR
-  : '+'
-  | '-'
-  | '*'
+MULTIPLICATIONDIVISIONOPERATOR
+  : '*'
   | '/'
   ;
+  
+ADDITIONSUBTRACTIONOPERATOR
+  : '+'
+  | '-'
+  ;
+  
+RELATIONALOPERATOR
+  : '>='
+  | '>'
+  | '<='
+  | '<'
+  ;
+  
+EQUALITYOPERATOR
+  : '=='
+  | '!='
+  ;
+  
       
 ASSIGNMENTOPERATOR
   : '='
   ;
   
-COMPARISONOPERATOR
-  : '>'
-  | '<'
-  | '>='
-  | '<='
-  | '=='
-  | '!='
+LOGICALOR
+  : '||'
   ;
   
-LOGICALOPERATOR
-  : '||'
-  | '&&'
+LOGICALAND
+  : '&&'
   ;
 
 LOGICALNEGATION
@@ -271,8 +287,8 @@ IDENTIFIER
   ;
 
 NUMERICALVALUE
-  : UNARYOPERATOR (DIGIT)+
-  | UNARYOPERATOR (DIGIT)+ '.' (DIGIT)+ 
+  : (ADDITIONSUBTRACTIONOPERATOR)? (DIGIT)+
+  | (ADDITIONSUBTRACTIONOPERATOR)? (DIGIT)+ '.' (DIGIT)+ 
   ;
 
 LEFTPARENTHESE
@@ -294,12 +310,6 @@ RIGHTBRACE
 COMMA
   : ','
   ;  
-  
-fragment UNARYOPERATOR
-  : '+'
-  | '-'
-  | //empty
-  ;
    
 fragment DIGIT
   : [0-9] 
@@ -312,4 +322,3 @@ fragment LOWERCASE
 fragment UPPERCASE
   : [A-Z]
   ;
-  
