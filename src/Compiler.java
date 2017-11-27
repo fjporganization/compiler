@@ -31,7 +31,7 @@ public class Compiler extends CBaseListener{
 	
 	/*
 	 * 
-	 * ARITHMETICS
+	 * ARITHMETIC
 	 * 
 	 */
 	
@@ -125,12 +125,24 @@ public class Compiler extends CBaseListener{
 	
 	@Override 
 	public void exitLogicalAndExp(CParser.LogicalAndExpContext ctx) { 
-		// TODO
+		output.add(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.ADDITION));
+		stackPointer--;
+		// sum of two true must be 2
+		output.add(new Instruction(InstructionCodes.PUSH, 0, 2));
+		stackPointer++;
+		output.add(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.EQUALITY));
+		stackPointer--;
 	}
 	
 	@Override 
 	public void exitLogicalOrExp(CParser.LogicalOrExpContext ctx) { 
-		// TODO
+		output.add(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.ADDITION));
+		stackPointer--;
+		// sum must be >= 1
+		output.add(new Instruction(InstructionCodes.PUSH, 0, 1));
+		stackPointer++;
+		output.add(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.GREATER_EQUAL));
+		stackPointer--;
 	}
 	
 	@Override 
