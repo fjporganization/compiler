@@ -150,10 +150,26 @@ whileloop
 dowhileloop
   : DOWHILEKEYWORD LEFTBRACE statement RIGHTBRACE WHILELOOPKEYWORD LEFTPARENTHESE logicalexpression RIGHTPARENTHESE SEMICOLON 
   ;
-  
+
 condition
-  : CONDITIONKEYWORD LEFTPARENTHESE logicalexpression RIGHTPARENTHESE LEFTBRACE statement RIGHTBRACE														#simpleCondition
-  | CONDITIONKEYWORD LEFTPARENTHESE logicalexpression RIGHTPARENTHESE LEFTBRACE statement RIGHTBRACE CONDITIONELSEKEYWORD LEFTBRACE statement RIGHTBRACE	#ifElseCondition
+  : simplecondition
+  | ifelsecondition
+  ;
+  
+simplecondition
+  : CONDITIONKEYWORD LEFTPARENTHESE logicalexpression RIGHTPARENTHESE LEFTBRACE statement RIGHTBRACE 
+  ;
+  
+ifelsecondition
+  : CONDITIONKEYWORD LEFTPARENTHESE logicalexpression RIGHTPARENTHESE assertivebranch CONDITIONELSEKEYWORD negativebranch
+  ;
+  
+assertivebranch
+  : LEFTBRACE statement RIGHTBRACE
+  ;
+  
+negativebranch
+  : LEFTBRACE statement RIGHTBRACE
   ;
   
 switchcondition

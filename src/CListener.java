@@ -451,29 +451,55 @@ public interface CListener extends ParseTreeListener {
 	 */
 	void exitDowhileloop(CParser.DowhileloopContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code simpleCondition}
-	 * labeled alternative in {@link CParser#condition}.
+	 * Enter a parse tree produced by {@link CParser#condition}.
 	 * @param ctx the parse tree
 	 */
-	void enterSimpleCondition(CParser.SimpleConditionContext ctx);
+	void enterCondition(CParser.ConditionContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code simpleCondition}
-	 * labeled alternative in {@link CParser#condition}.
+	 * Exit a parse tree produced by {@link CParser#condition}.
 	 * @param ctx the parse tree
 	 */
-	void exitSimpleCondition(CParser.SimpleConditionContext ctx);
+	void exitCondition(CParser.ConditionContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ifElseCondition}
-	 * labeled alternative in {@link CParser#condition}.
+	 * Enter a parse tree produced by {@link CParser#simplecondition}.
 	 * @param ctx the parse tree
 	 */
-	void enterIfElseCondition(CParser.IfElseConditionContext ctx);
+	void enterSimplecondition(CParser.SimpleconditionContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ifElseCondition}
-	 * labeled alternative in {@link CParser#condition}.
+	 * Exit a parse tree produced by {@link CParser#simplecondition}.
 	 * @param ctx the parse tree
 	 */
-	void exitIfElseCondition(CParser.IfElseConditionContext ctx);
+	void exitSimplecondition(CParser.SimpleconditionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#ifelsecondition}.
+	 * @param ctx the parse tree
+	 */
+	void enterIfelsecondition(CParser.IfelseconditionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#ifelsecondition}.
+	 * @param ctx the parse tree
+	 */
+	void exitIfelsecondition(CParser.IfelseconditionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#assertivebranch}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssertivebranch(CParser.AssertivebranchContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#assertivebranch}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssertivebranch(CParser.AssertivebranchContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#negativebranch}.
+	 * @param ctx the parse tree
+	 */
+	void enterNegativebranch(CParser.NegativebranchContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#negativebranch}.
+	 * @param ctx the parse tree
+	 */
+	void exitNegativebranch(CParser.NegativebranchContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CParser#switchcondition}.
 	 * @param ctx the parse tree
