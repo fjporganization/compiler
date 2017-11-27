@@ -1,4 +1,4 @@
-// Generated from ./grammar/C.g4 by ANTLR 4.7
+// Generated from C.g4 by ANTLR 4.7
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -495,13 +495,25 @@ public class CBaseListener implements CListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCondition(CParser.ConditionContext ctx) { }
+	@Override public void enterSimpleCondition(CParser.SimpleConditionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitCondition(CParser.ConditionContext ctx) { }
+	@Override public void exitSimpleCondition(CParser.SimpleConditionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterIfElseCondition(CParser.IfElseConditionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitIfElseCondition(CParser.IfElseConditionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

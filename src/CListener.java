@@ -1,4 +1,4 @@
-// Generated from ./grammar/C.g4 by ANTLR 4.7
+// Generated from C.g4 by ANTLR 4.7
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -451,15 +451,29 @@ public interface CListener extends ParseTreeListener {
 	 */
 	void exitDowhileloop(CParser.DowhileloopContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link CParser#condition}.
+	 * Enter a parse tree produced by the {@code simpleCondition}
+	 * labeled alternative in {@link CParser#condition}.
 	 * @param ctx the parse tree
 	 */
-	void enterCondition(CParser.ConditionContext ctx);
+	void enterSimpleCondition(CParser.SimpleConditionContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link CParser#condition}.
+	 * Exit a parse tree produced by the {@code simpleCondition}
+	 * labeled alternative in {@link CParser#condition}.
 	 * @param ctx the parse tree
 	 */
-	void exitCondition(CParser.ConditionContext ctx);
+	void exitSimpleCondition(CParser.SimpleConditionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ifElseCondition}
+	 * labeled alternative in {@link CParser#condition}.
+	 * @param ctx the parse tree
+	 */
+	void enterIfElseCondition(CParser.IfElseConditionContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ifElseCondition}
+	 * labeled alternative in {@link CParser#condition}.
+	 * @param ctx the parse tree
+	 */
+	void exitIfElseCondition(CParser.IfElseConditionContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CParser#switchcondition}.
 	 * @param ctx the parse tree

@@ -26,7 +26,6 @@ public class Compiler extends CBaseListener{
 		
 		this.symbolTable = new HashMap<String, Addressable>();
 		this.output = new ArrayList<Instruction>();
-		this.output.add(null); //empty for the first jump (to the main function)
 	}
 	
 	/*
@@ -234,6 +233,15 @@ public class Compiler extends CBaseListener{
 		
 		//value of the assignment is on top of the stack, store value to address of variable
 		variable.setAddress(stackPointer);
+	}
+	
+	/*
+	 * CONDITIONS
+	 */
+	
+	@Override 
+	public void exitSimpleCondition(CParser.SimpleConditionContext ctx) { 
+		// TODO
 	}
 	
 	public void writeToFile() {
