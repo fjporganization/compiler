@@ -138,7 +138,7 @@ public class Compiler extends CBaseListener{
 	public void exitLogicalOrExp(CParser.LogicalOrExpContext ctx) { 
 		output.add(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.ADDITION));
 		stackPointer--;
-		// sum must be >= 1
+		// sum of (T,T | T,F | F,T) must be >= 1
 		output.add(new Instruction(InstructionCodes.PUSH, 0, 1));
 		stackPointer++;
 		output.add(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.GREATER_EQUAL));
@@ -160,21 +160,17 @@ public class Compiler extends CBaseListener{
 	public void exitDeclarationOnly(CParser.DeclarationOnlyContext ctx) { 
 		String identifier = ctx.IDENTIFIER().getText();
 		String dataType = ctx.TYPESPECIFIER().getText();
-		int address = 0;
 		int length = 0;
 		DataType type = null;
 		
 		switch(dataType) {
 		case "int":
-			output.add(new Instruction(InstructionCodes.INCREMENT, 0, 1)); //allocate 1 local
-			address = this.stackPointer;
 			type = DataType.INT;
 			length = 1;
-			stackPointer++;
 			break;
 		}
 		
-		Variable var = new Variable(address, nestingLevel, identifier, length, type);
+		Variable var = new Variable(nestingLevel, identifier, length, type);
 		symbolTable.put(identifier, var);
 	}
 	
@@ -237,10 +233,7 @@ public class Compiler extends CBaseListener{
 		}
 		
 		//value of the assignment is on top of the stack, store value to address of variable
-		Instruction instruction = new Instruction(InstructionCodes.STORE, 
-				nestingLevel - variable.getNestingLevel(), variable.getAddress());
-		
-		output.add(instruction);
+		variable.setAddress(stackPointer);
 	}
 	
 	public void writeToFile() {

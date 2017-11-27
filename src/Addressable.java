@@ -10,9 +10,15 @@ public abstract class Addressable extends Identifier{
 	
 	private int length;
 	
-	public Addressable(int address, int nestingLevel, String name, int lenght) {
+	public Addressable(int address, int nestingLevel, String name, int length) {
 		super(name);
 		this.address = address;
+		this.nestingLevel = nestingLevel;
+		this.length = length;
+	}
+	
+	public Addressable(int nestingLevel, String name, int length) {
+		super(name);
 		this.nestingLevel = nestingLevel;
 		this.length = length;
 	}
