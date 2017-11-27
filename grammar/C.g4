@@ -13,12 +13,16 @@ start
   ;
  
 startsymbol
-  : variabledeclaration
+  : functions
+  | variabledeclaration
   | variabledeclaration startsymbol
   | constantdeclaration
   | constantdeclaration startsymbol
-  | functiondeclaration
-  | functiondeclaration startsymbol
+  ;
+  
+functions
+  : functiondeclaration
+  | functiondeclaration functions
   ;
   
 statement
