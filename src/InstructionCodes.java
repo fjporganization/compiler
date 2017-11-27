@@ -6,7 +6,7 @@ public enum InstructionCodes {
 	STORE("STO"),
 	CALL("CAL"),
 	INCREMENT("INT"),
-	CONDITIONAL_JUMP("JPC"),
+	CONDITIONAL_JUMP("JMC"),
 	JUMP("JMP");
 		
 	private String operation;

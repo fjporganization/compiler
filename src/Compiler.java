@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 public class Compiler extends CBaseListener{
 		
@@ -19,6 +20,13 @@ public class Compiler extends CBaseListener{
 	
 	private final List<Instruction> output;
 	
+	/**
+	 * used for storing instructions, in which will be changed operands 
+	 * (e.g. changing address of conditional jump instruction created on 
+	 * entering if statement at the time of exiting if statement)
+	 */
+	private final Stack<Instruction> instructionStack;
+	
 	public Compiler(String outputFileName) {
 		this.stackPointer = 0;
 		this.nestingLevel = 0;
@@ -26,6 +34,7 @@ public class Compiler extends CBaseListener{
 		
 		this.symbolTable = new HashMap<String, Addressable>();
 		this.output = new ArrayList<Instruction>();
+		this.instructionStack = new Stack<Instruction>();
 	}
 	
 	/*
@@ -57,9 +66,32 @@ public class Compiler extends CBaseListener{
 	}
 	
 	@Override 
-	public void exitNumericAtom(CParser.NumericAtomContext ctx) { 
+	public void exitNumericAtom(CParser.NumericAtomContext ctx) {
+		//load given literal onto the stack
 		String literal = ctx.getText();
 		Instruction instruction = new Instruction(InstructionCodes.PUSH, 0, literal);
+		stackPointer++;
+		output.add(instruction);
+	}
+	
+	@Override 
+	public void exitIdentifierAtom(CParser.IdentifierAtomContext ctx) {
+		//load varible or constant identified by identifier onto the stack
+		String identifier = ctx.IDENTIFIER().getText();
+		Addressable variable = symbolTable.get(identifier);
+		
+		if(variable == null) {
+			System.err.println(identifier + " is unknown");
+			System.exit(1);
+		}
+		
+		if(!(variable instanceof Variable || variable instanceof Constant)) {
+			System.err.println(identifier + " is not constant or variable");
+			System.exit(1);
+		}
+		
+		Instruction instruction = new Instruction(InstructionCodes.LOAD, 
+				nestingLevel - variable.getNestingLevel(), variable.getAddress());
 		stackPointer++;
 		output.add(instruction);
 	}
@@ -80,7 +112,7 @@ public class Compiler extends CBaseListener{
 	@Override 
 	public void exitRelationalLogicExp(CParser.RelationalLogicExpContext ctx) { 
 		OperationCode operationCode = null;
-		String operator = ctx.getText();
+		String operator = ctx.RELATIONALOPERATOR().getText();
 		
 		switch(operator) {
 		case ">": 
@@ -105,7 +137,7 @@ public class Compiler extends CBaseListener{
 	@Override 
 	public void exitEqualityLogicExp(CParser.EqualityLogicExpContext ctx) {
 		int operationCode = -1;
-		String operator = ctx.getText();
+		String operator = ctx.EQUALITYOPERATOR().getText();
 		
 		switch(operator) {
 		case "==": 
@@ -236,12 +268,53 @@ public class Compiler extends CBaseListener{
 	}
 	
 	/*
-	 * CONDITIONS
+	 * IF CONDITIONS
 	 */
+	@Override 
+	public void enterSimplecondition(CParser.SimpleconditionContext ctx) { 
+		Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0);
+		stackPointer--;
+		output.add(conditionalJump);
+		instructionStack.add(conditionalJump);
+	}
 	
 	@Override 
-	public void exitSimpleCondition(CParser.SimpleConditionContext ctx) { 
-		// TODO
+	public void exitSimplecondition(CParser.SimpleconditionContext ctx) { 
+		Instruction conditionalJump = instructionStack.pop();
+		conditionalJump.setOperand(getCurrentInstructionAddress() + 1);
+	}
+	
+	/*
+	 * IF ELSE CONDITION 
+	 */
+	@Override 
+	public void enterIfelsecondition(CParser.IfelseconditionContext ctx) { 
+		Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0);
+		stackPointer--;
+		output.add(conditionalJump);
+		instructionStack.add(conditionalJump);
+	}
+	
+	@Override 
+	public void exitAssertivebranch(CParser.AssertivebranchContext ctx) { 
+		Instruction conditionalJump = instructionStack.pop();
+		// must jump to instruction beyond instruction for unconditional jump beyond negative branch, therefore +2  
+		conditionalJump.setOperand(getCurrentInstructionAddress() + 2);
+		
+		// jump beyond negative branch
+		Instruction jump = new Instruction(InstructionCodes.JUMP, 0);
+		output.add(jump);
+		instructionStack.add(jump);
+	}
+	
+	@Override 
+	public void exitNegativebranch(CParser.NegativebranchContext ctx) { 
+		Instruction jump = instructionStack.pop();
+		jump.setOperand(getCurrentInstructionAddress() + 1);
+	}
+	
+	public int getCurrentInstructionAddress() {
+		return output.size() - 1;
 	}
 	
 	public void writeToFile() {
