@@ -155,7 +155,7 @@ public class Compiler extends CBaseListener{
 	 */
 	@Override
 	public void exitLogicNegation(CParser.LogicNegationContext ctx) { 
-		Instruction instruction = new Instruction(InstructionCodes.OPERATION, 0, OperationCode.NEGATION);		
+		Instruction instruction = new Instruction(InstructionCodes.OPERATION, 0, OperationCode.LOGIC_NEGATION);		
 		//no change of stack pointer
 		output.add(instruction);
 	}

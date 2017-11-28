@@ -5,7 +5,7 @@ public class Instruction {
 	
 	private final int nestingLevel;
 	
-	private String operand;
+	private int operand;
 	
 	public Instruction(InstructionCodes code, int nestingLevel) {
 		this.code = code;
@@ -15,31 +15,39 @@ public class Instruction {
 	public Instruction(InstructionCodes code, int nestingLevel, int operand) {
 		this.code = code;
 		this.nestingLevel = nestingLevel;
-		this.operand = operand + "";
+		this.operand = operand;
 	}
 	
 	public Instruction(InstructionCodes code, int nestingLevel, OperationCode operand) {
 		this.code = code;
 		this.nestingLevel = nestingLevel;
-		this.operand = operand.getCode() + "";
+		this.operand = operand.getCode();
 	}
 	
 	public Instruction(InstructionCodes code, int nestingLevel, String operand) {
 		this.code = code;
 		this.nestingLevel = nestingLevel;
-		this.operand = operand;
+		this.operand = Integer.parseInt(operand);
 	}
 	
-	public String getOperand() {
+	public InstructionCodes getCode() {
+		return code;
+	}
+
+	public int getNestingLevel() {
+		return nestingLevel;
+	}
+
+	public int getOperand() {
 		return operand;
 	}
 
 	public void setOperand(String operand) {
-		this.operand = operand;
+		this.operand = Integer.parseInt(operand);
 	}
 	
 	public void setOperand(int operand) {
-		this.operand = operand + "";
+		this.operand = operand;
 	}
 
 	public String toString() {
