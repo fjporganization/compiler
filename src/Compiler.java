@@ -473,11 +473,9 @@ public class Compiler extends CBaseListener{
 
 	@Override
 	public void exitWhilestatement(CParser.WhilestatementContext ctx) {
-		Instruction condJump = instructionStack.pop();
-		condJump.setOperand(getCurrentInstructionAddress() + 2);
 
-		Instruction jump  = new Instruction(InstructionCodes.JUMP, 0, addressStack.pop());
-		output.add(jump);
+		instructionStack.pop().setOperand(getCurrentInstructionAddress() + 2);
+		output.add(new Instruction(InstructionCodes.JUMP, 0, addressStack.pop()));
 	}
 
 	@Override
