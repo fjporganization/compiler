@@ -484,6 +484,20 @@ public class Compiler extends CBaseListener{
 	}
 
 	@Override
+	public void enterDowhileloop(CParser.DowhileloopContext ctx) {
+		addressStack.push(getCurrentInstructionAddress() + 1);
+	}
+
+	@Override
+	public void exitDowhileloop(CParser.DowhileloopContext ctx) {
+		// JMC - jump on zero -> need to neg. resutl
+		output.add(new Instruction(InstructionCodes.PUSH, 0, 0));
+		output.add(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.EQUALITY));
+		output.add(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, addressStack.pop()));
+		stackPointer--;
+	}
+
+	@Override
 	public void exitForinitialization(CParser.ForinitializationContext ctx) {
 		addressStack.push(getCurrentInstructionAddress() + 1);
 	}
