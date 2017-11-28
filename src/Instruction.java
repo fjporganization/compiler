@@ -1,11 +1,11 @@
 
 public class Instruction {
 	
-	public final InstructionCodes code;
+	private final InstructionCodes code;
 	
-	public final int nestingLevel;
+	private final int nestingLevel;
 	
-	public String operand;
+	private String operand;
 	
 	public Instruction(InstructionCodes code, int nestingLevel) {
 		this.code = code;
