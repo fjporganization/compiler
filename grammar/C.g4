@@ -152,16 +152,16 @@ dowhileloop
   ;
 
 condition
-  : simplecondition
-  | ifelsecondition
+  : CONDITIONKEYWORD LEFTPARENTHESE logicalexpression RIGHTPARENTHESE simplecondition
+  | CONDITIONKEYWORD LEFTPARENTHESE logicalexpression RIGHTPARENTHESE ifelsecondition
   ;
   
 simplecondition
-  : CONDITIONKEYWORD LEFTPARENTHESE logicalexpression RIGHTPARENTHESE LEFTBRACE statement RIGHTBRACE 
+  : LEFTBRACE statement RIGHTBRACE 
   ;
   
 ifelsecondition
-  : CONDITIONKEYWORD LEFTPARENTHESE logicalexpression RIGHTPARENTHESE assertivebranch CONDITIONELSEKEYWORD negativebranch
+  : assertivebranch CONDITIONELSEKEYWORD negativebranch
   ;
   
 assertivebranch
