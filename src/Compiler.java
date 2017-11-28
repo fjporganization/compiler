@@ -66,10 +66,11 @@ public class Compiler extends CBaseListener{
 	 * 
 	 */
 	
-	@Override 
+
 	/**
 	 * Processes arithmetic expressions which contains multiplication or division
 	 */
+	@Override
 	public void exitMulDivExp(CParser.MulDivExpContext ctx) {
 		OperationCode operationCode = ctx.MULTIPLICATIONDIVISIONOPERATOR().getText().equals("*") ? 
 				OperationCode.MULTIPLICATION : OperationCode.DIVISION;
@@ -81,10 +82,11 @@ public class Compiler extends CBaseListener{
 		output.add(instruction);
 	}
 	
-	@Override 
+
 	/**
 	 * Processes arithmetic expressions which contains addition or subtraction
 	 */
+	@Override
 	public void exitAddSubExp(CParser.AddSubExpContext ctx) { 
 		OperationCode operationCode = ctx.ADDITIONSUBTRACTIONOPERATOR().getText().equals("+") ? 
 				OperationCode.ADDITION : OperationCode.SUBTRACTION;
@@ -96,10 +98,11 @@ public class Compiler extends CBaseListener{
 		output.add(instruction);
 	}
 	
-	@Override 
+
 	/**
 	 * Processes numeric atom (single numeric value) (pushes the value of the variable onto the stack)
 	 */
+	@Override
 	public void exitNumericAtom(CParser.NumericAtomContext ctx) {
 		//load given literal onto the stack
 		String literal = ctx.getText();
@@ -110,10 +113,11 @@ public class Compiler extends CBaseListener{
 		output.add(instruction);
 	}
 	
-	@Override 
+
 	/**
 	 * Processes atom identified by identifier (pushes the value of the variable onto the stack)
 	 */
+	@Override
 	public void exitIdentifierAtom(CParser.IdentifierAtomContext ctx) {
 		//load variable or constant identified by identifier onto the stack
 		String identifier = ctx.IDENTIFIER().getText();
@@ -142,20 +146,22 @@ public class Compiler extends CBaseListener{
 	 * LOGIC
 	 */
 	
-	@Override 
+
 	/**
 	 * Processes logic negation
 	 */
+	@Override
 	public void exitLogicNegation(CParser.LogicNegationContext ctx) { 
 		Instruction instruction = new Instruction(InstructionCodes.OPERATION, 0, OperationCode.NEGATION);		
 		//no change of stack pointer
 		output.add(instruction);
 	}
 	
-	@Override
+
 	/**
 	 * Processes logic expression which contains relational operator
 	 */
+	@Override
 	public void exitRelationalLogicExp(CParser.RelationalLogicExpContext ctx) { 
 		OperationCode operationCode = null;
 		String operator = ctx.RELATIONALOPERATOR().getText();
@@ -182,10 +188,11 @@ public class Compiler extends CBaseListener{
 		output.add(instruction);
 	}
 	
-	@Override 
+
 	/**
 	 * Processes logic expression which contains equality operator
 	 */
+	@Override
 	public void exitEqualityLogicExp(CParser.EqualityLogicExpContext ctx) {
 		int operationCode = -1;
 		String operator = ctx.EQUALITYOPERATOR().getText();
@@ -206,10 +213,11 @@ public class Compiler extends CBaseListener{
 		output.add(instruction);
 	}
 	
-	@Override 
+
 	/**
 	 * Processes logic expression which contains AND operator
 	 */
+	@Override
 	public void exitLogicalAndExp(CParser.LogicalAndExpContext ctx) { 
 		output.add(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.ADDITION));
 		stackPointer--;
@@ -221,10 +229,11 @@ public class Compiler extends CBaseListener{
 		stackPointer--;
 	}
 	
-	@Override 
+
 	/**
 	 * Processes logic expression which contains OR operator
 	 */
+	@Override
 	public void exitLogicalOrExp(CParser.LogicalOrExpContext ctx) { 
 		output.add(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.ADDITION));
 		stackPointer--;
@@ -235,10 +244,11 @@ public class Compiler extends CBaseListener{
 		stackPointer--;
 	}
 	
-	@Override
+
 	/**
 	 * Processes logic literal atom
 	 */
+	@Override
 	public void exitLogicAtom(CParser.LogicAtomContext ctx) { 
 		int value = ctx.LOGICALVALUE().getText().equals("true") ? 1 : 0;
 		Instruction instruction = new Instruction(InstructionCodes.PUSH, 0, value);
@@ -250,10 +260,11 @@ public class Compiler extends CBaseListener{
 	 * DEFINITIONS
 	 */
 	
-	@Override 
+
 	/**
 	 * Processes variable declaration without initialization
 	 */
+	@Override
 	public void exitDeclarationOnly(CParser.DeclarationOnlyContext ctx) { 
 		String identifier = ctx.IDENTIFIER().getText();
 		String dataType = ctx.TYPESPECIFIER().getText();
@@ -279,10 +290,11 @@ public class Compiler extends CBaseListener{
 		symbolTable.put(identifier, var);
 	}
 	
-	@Override
+
 	/**
 	 * Processes variable declaration with initialization
 	 */
+	@Override
 	public void exitDeclarationAndInitialization(CParser.DeclarationAndInitializationContext ctx) { 
 		String identifier = ctx.IDENTIFIER().getText();
 		String dataType = ctx.TYPESPECIFIER().getText();
@@ -309,10 +321,11 @@ public class Compiler extends CBaseListener{
 		symbolTable.put(identifier, variable);
 	}
 	
-	@Override 
+
 	/**
 	 * Processes constant declaration with initialization
 	 */
+	@Override
 	public void exitConstantdeclaration(CParser.ConstantdeclarationContext ctx) { 
 		String identifier = ctx.IDENTIFIER().getText();
 		String dataType = ctx.TYPESPECIFIER().getText();
@@ -343,10 +356,11 @@ public class Compiler extends CBaseListener{
 	 * ASSIGNMENTS
 	 */
 	
-	@Override
+
 	/**
 	 * Processes variable assignment
 	 */
+	@Override
 	public void exitStandardAssignment(CParser.StandardAssignmentContext ctx) { 
 		String identifier =  ctx.IDENTIFIER().getText();
 		
@@ -369,12 +383,13 @@ public class Compiler extends CBaseListener{
 	/*
 	 * IF CONDITIONS
 	 */
-	@Override 
+
 	/**
 	 * Processes beginning of the simple condition statement
 	 * Prepares instruction with conditional jump, address to conditional 
 	 * jump will be completed after processing the statements block
 	 */
+	@Override
 	public void enterSimplecondition(CParser.SimpleconditionContext ctx) { 
 		//method is called AFTER parser processed block 'if(condition)' so condition is already processed
 		Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0);
@@ -384,12 +399,13 @@ public class Compiler extends CBaseListener{
 		instructionStack.add(conditionalJump);
 	}
 	
-	@Override 
+
 	/**
 	 * Processes end of the simple condition statement
 	 * Completes instruction with conditional jump - adds address to conditional 
 	 * jump beyond the statements block
 	 */
+	@Override
 	public void exitSimplecondition(CParser.SimpleconditionContext ctx) { 
 		Instruction conditionalJump = instructionStack.pop();
 		conditionalJump.setOperand(getCurrentInstructionAddress() + 1);
@@ -398,12 +414,13 @@ public class Compiler extends CBaseListener{
 	/*
 	 * IF ELSE CONDITION 
 	 */
-	@Override
+
 	/**
 	 * Processes beginning of the if-else condition statement
 	 * Prepares instruction with conditional jump, address to conditional 
 	 * jump will be completed after processing the assertive branch statements block
 	 */
+	@Override
 	public void enterIfelsecondition(CParser.IfelseconditionContext ctx) { 
 		//method is called AFTER parser processed block 'if(condition)' so condition is already processed
 		Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0);
@@ -412,12 +429,13 @@ public class Compiler extends CBaseListener{
 		instructionStack.add(conditionalJump);
 	}
 	
-	@Override 
+
 	/**
 	 * Processes end of the if-else condition assertive branch
 	 * Completes instruction with conditional jump - adds address to conditional 
 	 * jump beyond the assertive branch statements block
 	 */
+	@Override
 	public void exitAssertivebranch(CParser.AssertivebranchContext ctx) { 
 		Instruction conditionalJump = instructionStack.pop();
 		// must jump to instruction beyond instruction for unconditional jump beyond negative branch, therefore +2  
@@ -429,12 +447,13 @@ public class Compiler extends CBaseListener{
 		instructionStack.add(jump);
 	}
 	
-	@Override
+
 	/**
 	 * Processes end of the if-else condition negative branch
 	 * Completes instruction with jump on the end of assertive branch - 
 	 * adds address to jump beyond the negative branch statements block
 	 */
+	@Override
 	public void exitNegativebranch(CParser.NegativebranchContext ctx) { 
 		Instruction jump = instructionStack.pop();
 		jump.setOperand(getCurrentInstructionAddress() + 1);
