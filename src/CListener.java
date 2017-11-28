@@ -441,6 +441,16 @@ public interface CListener extends ParseTreeListener {
 	 */
 	void exitWhileloop(CParser.WhileloopContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link CParser#whilestatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterWhilestatement(CParser.WhilestatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#whilestatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitWhilestatement(CParser.WhilestatementContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link CParser#dowhileloop}.
 	 * @param ctx the parse tree
 	 */

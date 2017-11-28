@@ -45,6 +45,8 @@ public class Compiler extends CBaseListener{
 	 * entering if statement at the time of exiting if statement)
 	 */
 	private final Stack<Instruction> instructionStack;
+
+	private final Stack<Integer> addressStack;
 	
 	/**
 	 * Constructor of Compiler
@@ -58,6 +60,7 @@ public class Compiler extends CBaseListener{
 		this.symbolTable = new HashMap<String, Addressable>();
 		this.output = new ArrayList<Instruction>();
 		this.instructionStack = new Stack<Instruction>();
+		this.addressStack = new Stack<>();
 	}
 	
 	/*
@@ -458,6 +461,30 @@ public class Compiler extends CBaseListener{
 		Instruction jump = instructionStack.pop();
 		jump.setOperand(getCurrentInstructionAddress() + 1);
 	}
+
+	@Override
+	public void enterWhilestatement(CParser.WhilestatementContext ctx) {
+		//method is called AFTER parser processed block 'if(condition)' so condition is already processed
+		Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, getCurrentInstructionAddress());
+		stackPointer--;
+		output.add(conditionalJump);
+		instructionStack.push(conditionalJump);
+	}
+
+	@Override
+	public void exitWhilestatement(CParser.WhilestatementContext ctx) {
+		Instruction condJump = instructionStack.pop();
+		condJump.setOperand(getCurrentInstructionAddress() + 2);
+
+		Instruction jump  = new Instruction(InstructionCodes.JUMP, 0, addressStack.pop());
+		output.add(jump);
+	}
+
+	@Override
+	public void enterWhileloop(CParser.WhileloopContext ctx) {
+		addressStack.push(getCurrentInstructionAddress() + 1);
+	}
+
 	
 	/**
 	 * returns address of last added instructio

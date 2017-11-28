@@ -144,9 +144,14 @@ forafterthought
   ;
   
 whileloop
-  : WHILELOOPKEYWORD LEFTPARENTHESE logicalexpression RIGHTPARENTHESE LEFTBRACE statement RIGHTBRACE
+  : WHILELOOPKEYWORD LEFTPARENTHESE logicalexpression RIGHTPARENTHESE whilestatement
   ;
-  
+
+whilestatement
+  : LEFTBRACE statement RIGHTBRACE
+  ;
+
+
 dowhileloop
   : DOWHILEKEYWORD LEFTBRACE statement RIGHTBRACE WHILELOOPKEYWORD LEFTPARENTHESE logicalexpression RIGHTPARENTHESE SEMICOLON 
   ;
