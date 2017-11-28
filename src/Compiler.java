@@ -465,7 +465,7 @@ public class Compiler extends CBaseListener{
 	@Override
 	public void enterWhilestatement(CParser.WhilestatementContext ctx) {
 		//method is called AFTER parser processed block 'if(condition)' so condition is already processed
-		Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, getCurrentInstructionAddress());
+		Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, -1);
 		stackPointer--;
 		output.add(conditionalJump);
 		instructionStack.push(conditionalJump);
@@ -483,6 +483,47 @@ public class Compiler extends CBaseListener{
 	@Override
 	public void enterWhileloop(CParser.WhileloopContext ctx) {
 		addressStack.push(getCurrentInstructionAddress() + 1);
+	}
+
+	@Override
+	public void exitForinitialization(CParser.ForinitializationContext ctx) {
+		addressStack.push(getCurrentInstructionAddress() + 1);
+	}
+
+	@Override
+	public void enterForafterthought(CParser.ForafterthoughtContext ctx) {
+		Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, -1);
+		stackPointer--;
+		output.add(conditionalJump);
+		instructionStack.push(conditionalJump);
+
+		Instruction jump = new Instruction(InstructionCodes.JUMP, 0, -1);
+		output.add(jump);
+		instructionStack.push(jump);
+
+		addressStack.push(getCurrentInstructionAddress() + 1);
+	}
+
+	@Override
+	public void exitForafterthought(CParser.ForafterthoughtContext ctx) {
+
+		int temp = addressStack.pop();
+
+		Instruction jump = new Instruction(InstructionCodes.JUMP, 0, addressStack.pop());
+		output.add(jump);
+
+		addressStack.push(temp);
+
+		instructionStack.pop().setOperand(getCurrentInstructionAddress() + 1);
+	}
+
+	@Override
+	public void exitForloop(CParser.ForloopContext ctx) {
+
+		Instruction jump = new Instruction(InstructionCodes.JUMP, 0, addressStack.pop());
+		output.add(jump);
+
+		instructionStack.pop().setOperand(getCurrentInstructionAddress() + 1);
 	}
 
 	
