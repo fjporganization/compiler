@@ -115,7 +115,7 @@ public class Compiler extends CBaseListener{
 	 * Processes atom identified by identifier (pushes the value of the variable onto the stack)
 	 */
 	public void exitIdentifierAtom(CParser.IdentifierAtomContext ctx) {
-		//load varible or constant identified by identifier onto the stack
+		//load variable or constant identified by identifier onto the stack
 		String identifier = ctx.IDENTIFIER().getText();
 		Addressable variable = symbolTable.get(identifier);
 		
@@ -269,6 +269,10 @@ public class Compiler extends CBaseListener{
 			type = DataType.INT;
 			length = 0; //int has no overlap in the stack
 			break;
+		case "boolean":
+			type = DataType.BOOLEAN;
+			length = 0; //boolean has no overlap in the stack
+			break;
 		}
 		
 		Variable var = new Variable(nestingLevel, identifier, length, type);
@@ -295,6 +299,10 @@ public class Compiler extends CBaseListener{
 			type = DataType.INT;
 			length = 0; //int has no overlap in the stack
 			break;
+		case "boolean":
+			type = DataType.BOOLEAN;
+			length = 0; //boolean has no overlap in the stack
+			break;
 		}
 		
 		Variable variable = new Variable(address, nestingLevel, identifier, length, type);
@@ -320,6 +328,10 @@ public class Compiler extends CBaseListener{
 		case "int":
 			type = DataType.INT;
 			length = 0; //int has no overlap in the stack
+			break;
+		case "boolean":
+			type = DataType.BOOLEAN;
+			length = 0; //boolean has no overlap in the stack
 			break;
 		}
 		
