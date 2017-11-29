@@ -1,5 +1,7 @@
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.antlr.v4.runtime.*;
 
@@ -20,13 +22,14 @@ public class Main {
 		
 		String outputFileName = args.length == 2 ? args[1] : 
 			args[0].substring(0, args[0].lastIndexOf(".")) + CompilerConstants.outputFileExtension;
-		
-		Compiler compiler = new Compiler(outputFileName);
+
+		CompilerData data = new CompilerData();
+
 		
 		parser.addParseListener(compiler);
 		parser.start();
 		
-		compiler.writeToFile();
+		data.writeToFile(outputFileName);
 	}
 
 }

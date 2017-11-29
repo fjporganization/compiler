@@ -1,10 +1,4 @@
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -15,30 +9,10 @@ import java.util.Stack;
 public class Compiler extends CBaseListener{
 	
 	/**
-	 * address of actual position of the stack (in the assembler)
-	 */
-	private int stackPointer;
-	
-	/**
-	 * current lexicographical level
-	 */
-	private int nestingLevel;
-	
-	/**
 	 * table of symbol
 	 */
 	private final Map<String, Addressable> symbolTable;
-	
-	/**
-	 * name of the output file with compiled code
-	 */
-	private final String outputFileName;
-	
-	/**
-	 * output instructions
-	 */
-	private final List<Instruction> output;
-	
+
 	/**
 	 * used for storing instructions, in which will be changed operands 
 	 * (e.g. changing address of conditional jump instruction created on 
@@ -48,17 +22,15 @@ public class Compiler extends CBaseListener{
 
 	private final Stack<Integer> addressStack;
 	
+	private final CompilerData data;
+	
 	/**
 	 * Constructor of Compiler
-	 * @param outputFileName name of the output file with compiled code
+	 * @param data contains data which are shared with all compiler classes
 	 */
-	public Compiler(String outputFileName) {
-		this.stackPointer = -1;
-		this.nestingLevel = 0;
-		this.outputFileName = outputFileName;
-		
+	public Compiler(CompilerData data) {
+		this.data = data;
 		this.symbolTable = new HashMap<String, Addressable>();
-		this.output = new ArrayList<Instruction>();
 		this.instructionStack = new Stack<Instruction>();
 		this.addressStack = new Stack<>();
 	}
@@ -80,9 +52,9 @@ public class Compiler extends CBaseListener{
 				
 		Instruction instruction = new Instruction(InstructionCodes.OPERATION, 0, operationCode);
 		//instruction pops 2 values from the stack (operands) and push 1 value (result)  
-		stackPointer--; 
+		data.decStackPointer(); 
 			
-		output.add(instruction);
+		data.addInstruction(instruction);
 	}
 	
 
@@ -96,9 +68,9 @@ public class Compiler extends CBaseListener{
 				
 		Instruction instruction = new Instruction(InstructionCodes.OPERATION, 0, operationCode);
 		//instruction pops 2 values from the stack (operands) and push 1 value (result)
-		stackPointer--;
+		data.decStackPointer();
 			
-		output.add(instruction);
+		data.addInstruction(instruction);
 	}
 	
 
@@ -112,8 +84,8 @@ public class Compiler extends CBaseListener{
 		Instruction instruction = new Instruction(InstructionCodes.PUSH, 0, literal);
 		
 		//instruction push 1 value onto the stack
-		stackPointer++;
-		output.add(instruction);
+		data.incStackPointer();
+		data.addInstruction(instruction);
 	}
 	
 
@@ -138,11 +110,11 @@ public class Compiler extends CBaseListener{
 		}
 		
 		Instruction instruction = new Instruction(InstructionCodes.LOAD, 
-				nestingLevel - variable.getNestingLevel(), variable.getAddress());
+				data.getNestingLevel() - variable.getNestingLevel(), variable.getAddress());
 		
 		//instruction push 1 value onto the stack
-		stackPointer++;
-		output.add(instruction);
+		data.incStackPointer();
+		data.addInstruction(instruction);
 	}
 	
 	/*
@@ -157,7 +129,7 @@ public class Compiler extends CBaseListener{
 	public void exitLogicNegation(CParser.LogicNegationContext ctx) { 
 		Instruction instruction = new Instruction(InstructionCodes.OPERATION, 0, OperationCode.LOGIC_NEGATION);		
 		//no change of stack pointer
-		output.add(instruction);
+		data.addInstruction(instruction);
 	}
 	
 
@@ -187,8 +159,8 @@ public class Compiler extends CBaseListener{
 		Instruction instruction = new Instruction(InstructionCodes.OPERATION, 0, operationCode);
 		
 		//instruction pops 2 values from the stack (operands) and push 1 value (result)
-		stackPointer--;
-		output.add(instruction);
+		data.decStackPointer();
+		data.addInstruction(instruction);
 	}
 	
 
@@ -211,9 +183,9 @@ public class Compiler extends CBaseListener{
 		
 		Instruction instruction = new Instruction(InstructionCodes.OPERATION, 0, operationCode);
 		//instruction pops 2 values from the stack (operands) and push 1 value (result)
-		stackPointer--;
+		data.decStackPointer();
 		
-		output.add(instruction);
+		data.addInstruction(instruction);
 	}
 	
 
@@ -222,14 +194,14 @@ public class Compiler extends CBaseListener{
 	 */
 	@Override
 	public void exitLogicalAndExp(CParser.LogicalAndExpContext ctx) { 
-		output.add(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.ADDITION));
-		stackPointer--;
+		data.addInstruction(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.ADDITION));
+		data.decStackPointer();
 		// sum of two trues must be 2 (T = true = 1; F = false = 0)
-		output.add(new Instruction(InstructionCodes.PUSH, 0, 2));
-		stackPointer++;
+		data.addInstruction(new Instruction(InstructionCodes.PUSH, 0, 2));
+		data.incStackPointer();
 		
-		output.add(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.EQUALITY));
-		stackPointer--;
+		data.addInstruction(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.EQUALITY));
+		data.decStackPointer();
 	}
 	
 
@@ -238,13 +210,13 @@ public class Compiler extends CBaseListener{
 	 */
 	@Override
 	public void exitLogicalOrExp(CParser.LogicalOrExpContext ctx) { 
-		output.add(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.ADDITION));
-		stackPointer--;
+		data.addInstruction(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.ADDITION));
+		data.decStackPointer();
 		// sum of (T,T | T,F | F,T) must be >= 1 (T = true = 1; F = false = 0)
-		output.add(new Instruction(InstructionCodes.PUSH, 0, 1));
-		stackPointer++;
-		output.add(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.GREATER_EQUAL));
-		stackPointer--;
+		data.addInstruction(new Instruction(InstructionCodes.PUSH, 0, 1));
+		data.incStackPointer();
+		data.addInstruction(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.GREATER_EQUAL));
+		data.decStackPointer();
 	}
 	
 
@@ -255,8 +227,8 @@ public class Compiler extends CBaseListener{
 	public void exitLogicAtom(CParser.LogicAtomContext ctx) { 
 		int value = ctx.LOGICALVALUE().getText().equals("true") ? 1 : 0;
 		Instruction instruction = new Instruction(InstructionCodes.PUSH, 0, value);
-		stackPointer++;
-		output.add(instruction);
+		data.incStackPointer();
+		data.addInstruction(instruction);
 	}
 	
 	/*
@@ -289,7 +261,7 @@ public class Compiler extends CBaseListener{
 			break;
 		}
 		
-		Variable var = new Variable(nestingLevel, identifier, length, type);
+		Variable var = new Variable(data.getNestingLevel(), identifier, length, type);
 		symbolTable.put(identifier, var);
 	}
 	
@@ -301,7 +273,7 @@ public class Compiler extends CBaseListener{
 	public void exitDeclarationAndInitialization(CParser.DeclarationAndInitializationContext ctx) { 
 		String identifier = ctx.IDENTIFIER().getText();
 		String dataType = ctx.TYPESPECIFIER().getText();
-		int address = this.stackPointer;
+		int address = data.getStackPointer();
 		int length = 0;
 		DataType type = null;
 		
@@ -320,7 +292,7 @@ public class Compiler extends CBaseListener{
 			break;
 		}
 		
-		Variable variable = new Variable(address, nestingLevel, identifier, length, type);
+		Variable variable = new Variable(address, data.getNestingLevel(), identifier, length, type);
 		symbolTable.put(identifier, variable);
 	}
 	
@@ -332,7 +304,7 @@ public class Compiler extends CBaseListener{
 	public void exitConstantdeclaration(CParser.ConstantdeclarationContext ctx) { 
 		String identifier = ctx.IDENTIFIER().getText();
 		String dataType = ctx.TYPESPECIFIER().getText();
-		int address = this.stackPointer; // the value is already on the top of the stack
+		int address = data.getStackPointer(); // the value is already on the top of the stack
 		int length = 0;
 		DataType type = null;
 		
@@ -351,7 +323,7 @@ public class Compiler extends CBaseListener{
 			break;
 		}
 		
-		Constant constant = new Constant(address, nestingLevel, identifier, length, type);
+		Constant constant = new Constant(address, data.getNestingLevel(), identifier, length, type);
 		symbolTable.put(identifier, constant);
 	}
 	
@@ -380,7 +352,7 @@ public class Compiler extends CBaseListener{
 		}
 		
 		//value of the assignment is on top of the stack, store current stack pointer
-		variable.setAddress(stackPointer);
+		variable.setAddress(data.getStackPointer());
 	}
 	
 	/*
@@ -397,8 +369,8 @@ public class Compiler extends CBaseListener{
 		//method is called AFTER parser processed block 'if(condition)' so condition is already processed
 		Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0);
 		// pops one value
-		stackPointer--;
-		output.add(conditionalJump);
+		data.decStackPointer();
+		data.addInstruction(conditionalJump);
 		instructionStack.add(conditionalJump);
 	}
 	
@@ -411,7 +383,7 @@ public class Compiler extends CBaseListener{
 	@Override
 	public void exitSimplecondition(CParser.SimpleconditionContext ctx) { 
 		Instruction conditionalJump = instructionStack.pop();
-		conditionalJump.setOperand(getCurrentInstructionAddress() + 1);
+		conditionalJump.setOperand(data.getCurrentInstructionAddress() + 1);
 	}
 	
 	/*
@@ -427,8 +399,8 @@ public class Compiler extends CBaseListener{
 	public void enterIfelsecondition(CParser.IfelseconditionContext ctx) { 
 		//method is called AFTER parser processed block 'if(condition)' so condition is already processed
 		Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0);
-		stackPointer--;
-		output.add(conditionalJump);
+		data.decStackPointer();
+		data.addInstruction(conditionalJump);
 		instructionStack.add(conditionalJump);
 	}
 	
@@ -442,11 +414,11 @@ public class Compiler extends CBaseListener{
 	public void exitAssertivebranch(CParser.AssertivebranchContext ctx) { 
 		Instruction conditionalJump = instructionStack.pop();
 		// must jump to instruction beyond instruction for unconditional jump beyond negative branch, therefore +2  
-		conditionalJump.setOperand(getCurrentInstructionAddress() + 2);
+		conditionalJump.setOperand(data.getCurrentInstructionAddress() + 2);
 		
 		// jump beyond negative branch
 		Instruction jump = new Instruction(InstructionCodes.JUMP, 0);
-		output.add(jump);
+		data.addInstruction(jump);
 		instructionStack.add(jump);
 	}
 	
@@ -459,61 +431,61 @@ public class Compiler extends CBaseListener{
 	@Override
 	public void exitNegativebranch(CParser.NegativebranchContext ctx) { 
 		Instruction jump = instructionStack.pop();
-		jump.setOperand(getCurrentInstructionAddress() + 1);
+		jump.setOperand(data.getCurrentInstructionAddress() + 1);
 	}
 
 	@Override
 	public void enterWhilestatement(CParser.WhilestatementContext ctx) {
 		//method is called AFTER parser processed block 'if(condition)' so condition is already processed
 		Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, -1);
-		stackPointer--;
-		output.add(conditionalJump);
+		data.decStackPointer();
+		data.addInstruction(conditionalJump);
 		instructionStack.push(conditionalJump);
 	}
 
 	@Override
 	public void exitWhilestatement(CParser.WhilestatementContext ctx) {
 
-		instructionStack.pop().setOperand(getCurrentInstructionAddress() + 2);
-		output.add(new Instruction(InstructionCodes.JUMP, 0, addressStack.pop()));
+		instructionStack.pop().setOperand(data.getCurrentInstructionAddress() + 2);
+		data.addInstruction(new Instruction(InstructionCodes.JUMP, 0, addressStack.pop()));
 	}
 
 	@Override
 	public void enterWhileloop(CParser.WhileloopContext ctx) {
-		addressStack.push(getCurrentInstructionAddress() + 1);
+		addressStack.push(data.getCurrentInstructionAddress() + 1);
 	}
 
 	@Override
 	public void enterDowhileloop(CParser.DowhileloopContext ctx) {
-		addressStack.push(getCurrentInstructionAddress() + 1);
+		addressStack.push(data.getCurrentInstructionAddress() + 1);
 	}
 
 	@Override
 	public void exitDowhileloop(CParser.DowhileloopContext ctx) {
 		// JMC - jump on zero -> need to neg. resutl
-		output.add(new Instruction(InstructionCodes.PUSH, 0, 0));
-		output.add(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.EQUALITY));
-		output.add(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, addressStack.pop()));
-		stackPointer--;
+		data.addInstruction(new Instruction(InstructionCodes.PUSH, 0, 0));
+		data.addInstruction(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.EQUALITY));
+		data.addInstruction(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, addressStack.pop()));
+		data.decStackPointer();
 	}
 
 	@Override
 	public void exitForinitialization(CParser.ForinitializationContext ctx) {
-		addressStack.push(getCurrentInstructionAddress() + 1);
+		addressStack.push(data.getCurrentInstructionAddress() + 1);
 	}
 
 	@Override
 	public void enterForafterthought(CParser.ForafterthoughtContext ctx) {
 		Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, -1);
-		stackPointer--;
-		output.add(conditionalJump);
+		data.decStackPointer();
+		data.addInstruction(conditionalJump);
 		instructionStack.push(conditionalJump);
 
 		Instruction jump = new Instruction(InstructionCodes.JUMP, 0, -1);
-		output.add(jump);
+		data.addInstruction(jump);
 		instructionStack.push(jump);
 
-		addressStack.push(getCurrentInstructionAddress() + 1);
+		addressStack.push(data.getCurrentInstructionAddress() + 1);
 	}
 
 	@Override
@@ -522,55 +494,19 @@ public class Compiler extends CBaseListener{
 		int temp = addressStack.pop();
 
 		Instruction jump = new Instruction(InstructionCodes.JUMP, 0, addressStack.pop());
-		output.add(jump);
+		data.addInstruction(jump);
 
 		addressStack.push(temp);
 
-		instructionStack.pop().setOperand(getCurrentInstructionAddress() + 1);
+		instructionStack.pop().setOperand(data.getCurrentInstructionAddress() + 1);
 	}
 
 	@Override
 	public void exitForloop(CParser.ForloopContext ctx) {
 
 		Instruction jump = new Instruction(InstructionCodes.JUMP, 0, addressStack.pop());
-		output.add(jump);
+		data.addInstruction(jump);
 
-		instructionStack.pop().setOperand(getCurrentInstructionAddress() + 1);
-	}
-
-	
-	/**
-	 * returns address of last added instructio
-	 * @return address of last added instructio
-	 */
-	public int getCurrentInstructionAddress() {
-		return output.size() - 1;
-	}
-	
-	/**
-	 * writes generated instructions into the output file
-	 */
-	public void writeToFile() {
-		Writer bw = null;
-		int currentAddress = 0;
-		
-		try {
-			bw = new BufferedWriter(new FileWriter(this.outputFileName));
-			for(Instruction instruction : output) {
-				if(instruction != null) {
-					bw.write(currentAddress + " " + instruction.toString() + "\n");
-					currentAddress++;
-				}
-			}
-			
-		} catch (IOException e) {
-			System.err.println("Cannot write to the output file");
-		} finally {
-			try {
-				bw.close();
-			} catch (IOException e) {
-				System.err.println("Cannot close the output file");
-			}
-		}
+		instructionStack.pop().setOperand(data.getCurrentInstructionAddress() + 1);
 	}
 }
