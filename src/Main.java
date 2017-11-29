@@ -25,8 +25,11 @@ public class Main {
 
 		CompilerData data = new CompilerData();
 
+		Compiler compiler = new Compiler(data);
+		SwitchCompiler switchCompiler = new SwitchCompiler(data);
 		
 		parser.addParseListener(compiler);
+		parser.addParseListener(switchCompiler);
 		parser.start();
 		
 		data.writeToFile(outputFileName);

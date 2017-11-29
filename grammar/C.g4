@@ -178,11 +178,19 @@ negativebranch
   ;
   
 switchcondition
-  : SWITCHKEYWORD LEFTPARENTHESE expression RIGHTPARENTHESE LEFTBRACE (switchcase)* (DEFAULTKEYWORD COLON statement)? RIGHTBRACE
+  : SWITCHKEYWORD LEFTPARENTHESE expression RIGHTPARENTHESE LEFTBRACE (switchcase)* (DEFAULTKEYWORD COLON switchdefaultstatement)? RIGHTBRACE
   ;
   
 switchcase
-  : SWITCHCASEKEYWORD expression COLON statement (BREAKKEYWORD SEMICOLON)?
+  : SWITCHCASEKEYWORD expression COLON switchstatement
+  ;
+
+switchstatement
+  : statement (BREAKKEYWORD SEMICOLON)?
+  ;
+
+switchdefaultstatement
+  : statement
   ;
 
 /*

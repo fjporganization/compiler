@@ -530,4 +530,24 @@ public interface CListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSwitchcase(CParser.SwitchcaseContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#switchstatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterSwitchstatement(CParser.SwitchstatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#switchstatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitSwitchstatement(CParser.SwitchstatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#switchdefaultstatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterSwitchdefaultstatement(CParser.SwitchdefaultstatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#switchdefaultstatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitSwitchdefaultstatement(CParser.SwitchdefaultstatementContext ctx);
 }
