@@ -63,11 +63,11 @@ public class SwitchCompiler extends CBaseListener {
         Instruction lastJump = switches.peek().insQueue.poll();
 
         // Comparison
-        data.addInstruction(new Instruction(InstructionCodes.LOAD, data.getNestingLevel(), switches.peek().cmpAdr));
-        data.addInstruction(new Instruction(InstructionCodes.OPERATION, data.getNestingLevel(), OperationCode.EQUALITY));
+        data.addInstruction(new Instruction(InstructionCodes.LOAD, data.getNestingLevel(), switches.peek().cmpAdr)); //TODO incorrect level
+        data.addInstruction(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.EQUALITY));
 
         // Jump to next next case
-        Instruction jump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, data.getNestingLevel(), -1);
+        Instruction jump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, -1);
         data.addInstruction(jump);
         switches.peek().insQueue.offer(jump);
         data.incStackPointer();
@@ -80,12 +80,12 @@ public class SwitchCompiler extends CBaseListener {
     @Override
     public void exitSwitchstatement(CParser.SwitchstatementContext ctx) {
         if(ctx.BREAKKEYWORD() != null) {
-            Instruction breakJump = new Instruction(InstructionCodes.JUMP, data.getNestingLevel(), -1);
+            Instruction breakJump = new Instruction(InstructionCodes.JUMP, 0, -1);
             data.addInstruction(breakJump);
             switches.peek().insList.add(breakJump);
         }
 
-        Instruction jump = new Instruction(InstructionCodes.JUMP, data.getNestingLevel(), -1);
+        Instruction jump = new Instruction(InstructionCodes.JUMP, 0, -1);
         data.addInstruction(jump);
         switches.peek().insQueue.offer(jump);
     }
