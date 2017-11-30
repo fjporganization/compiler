@@ -10,6 +10,8 @@ import java.util.List;
  */
 public class CompilerData {
 
+    public static final short BASE_FUNC_STACK_SIZE = 3;
+
     /**
      * address of actual position of the stack (in the assembler)
      */
@@ -29,7 +31,7 @@ public class CompilerData {
      * Initialize data in class
      */
     public CompilerData(){
-        this.stackPointer = -1;
+        resetStackPointer();
         this.nestingLevel = 0;
 
         this.output = new ArrayList<>();
@@ -83,6 +85,13 @@ public class CompilerData {
      */
     public void incStackPointer(){
         stackPointer ++;
+    }/**
+
+     * Method add value to stackPointer
+     * @param value which is add to stackPointer
+     */
+    public void incStackPointer(int value){
+        stackPointer += value;
     }
 
     /**
@@ -90,6 +99,10 @@ public class CompilerData {
      */
     public void decStackPointer(){
         stackPointer --;
+    }
+
+    public void resetStackPointer(){
+        stackPointer = -1;
     }
 
     /**
@@ -107,5 +120,9 @@ public class CompilerData {
      */
     public int getNestingLevel() {
         return nestingLevel;
+    }
+
+    public void incNestingLevel() {
+        nestingLevel++;
     }
 }

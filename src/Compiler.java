@@ -1,13 +1,11 @@
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Class providing compiler functionality
  *
  */
 public class Compiler extends CBaseListener{
-	
+
 	/**
 	 * table of symbol
 	 */
@@ -23,6 +21,13 @@ public class Compiler extends CBaseListener{
 	private final Stack<Integer> addressStack;
 	
 	private final CompilerData data;
+
+	private Instruction intInstruction = null;
+
+	/**
+	 * Number of variables which will be defined at the beginning of function/program
+	 */
+	private int varCounter = 0;
 	
 	/**
 	 * Constructor of Compiler
@@ -30,11 +35,77 @@ public class Compiler extends CBaseListener{
 	 */
 	public Compiler(CompilerData data) {
 		this.data = data;
-		this.symbolTable = new HashMap<String, Addressable>();
-		this.instructionStack = new Stack<Instruction>();
+		this.symbolTable = new HashMap<>();
+		this.instructionStack = new Stack<>();
 		this.addressStack = new Stack<>();
 	}
-	
+
+	private Addressable symbolTableGet(String identifier){
+		Addressable res = symbolTable.get(hashIdentifier(identifier, data.getNestingLevel()));
+
+		if (res == null){
+			res = symbolTable.get(hashIdentifier(identifier, 0));
+		}
+
+		return res;
+	}
+
+	private void symbolTablePut(String identifier, Addressable addressable){
+		symbolTable.put(hashIdentifier(identifier, data.getNestingLevel()), addressable);
+	}
+
+	private String hashIdentifier(String identifier, int nestingLevel){
+		return nestingLevel + identifier;
+	}
+
+
+	@Override
+	public void enterStartsymbol(CParser.StartsymbolContext ctx) {
+		data.addInstruction(new Instruction(InstructionCodes.JUMP, 0 , 1));
+
+		Instruction increment = new Instruction(InstructionCodes.INCREMENT, 0, CompilerData.BASE_FUNC_STACK_SIZE);
+		data.addInstruction(increment);
+		intInstruction = increment;
+
+		data.incStackPointer(CompilerData.BASE_FUNC_STACK_SIZE);
+	}
+
+	@Override
+	public void enterFunctiondeclaration(CParser.FunctiondeclarationContext ctx) {
+		if (intInstruction != null){
+			shiftInstructions();
+			// first function in code is start function
+			data.addInstruction(new Instruction(InstructionCodes.CALL, 0, data.getCurrentInstructionAddress()+2));
+		}
+
+		data.incNestingLevel();
+		data.resetStackPointer();
+
+		Instruction increment = new Instruction(InstructionCodes.INCREMENT, 0, CompilerData.BASE_FUNC_STACK_SIZE);
+		data.addInstruction(increment);
+		intInstruction = increment;
+
+		data.incStackPointer(CompilerData.BASE_FUNC_STACK_SIZE);
+	}
+
+	@Override
+	public void exitFunctiondeclaration(CParser.FunctiondeclarationContext ctx) {
+		shiftInstructions();
+
+		data.addInstruction(new Instruction(InstructionCodes.RETURN, 0 ,0));
+
+		// TODO should be removed symbolTable.removeAll(is in data.getNestingLevel());
+	}
+
+	private void shiftInstructions(){
+
+		intInstruction.setOperand(intInstruction.getOperand() + varCounter);
+
+		varCounter = 0;
+		intInstruction = null;
+	}
+
+
 	/*
 	 * 
 	 * ARITHMETIC
@@ -96,7 +167,7 @@ public class Compiler extends CBaseListener{
 	public void exitIdentifierAtom(CParser.IdentifierAtomContext ctx) {
 		//load variable or constant identified by identifier onto the stack
 		String identifier = ctx.IDENTIFIER().getText();
-		Addressable variable = symbolTable.get(identifier);
+		Addressable variable = symbolTableGet(identifier);
 		
 		if(variable == null) {
 			System.err.println(identifier + " is unknown");
@@ -246,7 +317,7 @@ public class Compiler extends CBaseListener{
 		int length = 0;
 		DataType type = null;
 		
-		if(symbolTable.get(identifier) != null) {
+		if(symbolTableGet(identifier) != null) {
 			System.err.println("Identifier " + identifier + " is already declared");
 		}
 		
@@ -260,9 +331,12 @@ public class Compiler extends CBaseListener{
 			length = 0; //boolean has no overlap in the stack
 			break;
 		}
-		
-		Variable var = new Variable(data.getNestingLevel(), identifier, length, type);
-		symbolTable.put(identifier, var);
+
+		int varAddress = CompilerData.BASE_FUNC_STACK_SIZE + varCounter;
+		varCounter++;
+
+		Variable var = new Variable(varAddress, data.getNestingLevel(), identifier, length, type);
+		symbolTablePut(identifier, var);
 	}
 	
 
@@ -273,11 +347,10 @@ public class Compiler extends CBaseListener{
 	public void exitDeclarationAndInitialization(CParser.DeclarationAndInitializationContext ctx) { 
 		String identifier = ctx.IDENTIFIER().getText();
 		String dataType = ctx.TYPESPECIFIER().getText();
-		int address = data.getStackPointer();
 		int length = 0;
 		DataType type = null;
 		
-		if(symbolTable.get(identifier) != null) {
+		if(symbolTableGet(identifier) != null) {
 			System.err.println("Identifier " + identifier + " is already declared");
 		}
 		
@@ -291,9 +364,15 @@ public class Compiler extends CBaseListener{
 			length = 0; //boolean has no overlap in the stack
 			break;
 		}
-		
-		Variable variable = new Variable(address, data.getNestingLevel(), identifier, length, type);
-		symbolTable.put(identifier, variable);
+
+		int varAddress = CompilerData.BASE_FUNC_STACK_SIZE + varCounter;
+		varCounter++;
+
+		Variable variable = new Variable(varAddress, data.getNestingLevel(), identifier, length, type);
+		symbolTablePut(identifier, variable);
+
+		data.addInstruction(new Instruction(InstructionCodes.STORE, 0, varAddress));
+		data.decStackPointer();
 	}
 	
 
@@ -304,11 +383,10 @@ public class Compiler extends CBaseListener{
 	public void exitConstantdeclaration(CParser.ConstantdeclarationContext ctx) { 
 		String identifier = ctx.IDENTIFIER().getText();
 		String dataType = ctx.TYPESPECIFIER().getText();
-		int address = data.getStackPointer(); // the value is already on the top of the stack
 		int length = 0;
 		DataType type = null;
 		
-		if(symbolTable.get(identifier) != null) {
+		if(symbolTableGet(identifier) != null) {
 			System.err.println("Identifier " + identifier + " is already declared");
 		}
 		
@@ -322,9 +400,15 @@ public class Compiler extends CBaseListener{
 			length = 0; //boolean has no overlap in the stack
 			break;
 		}
-		
-		Constant constant = new Constant(address, data.getNestingLevel(), identifier, length, type);
-		symbolTable.put(identifier, constant);
+
+		int varAddress = CompilerData.BASE_FUNC_STACK_SIZE + varCounter;
+		varCounter++;
+
+		Constant constant = new Constant(varAddress, data.getNestingLevel(), identifier, length, type);
+		symbolTablePut(identifier, constant);
+
+		data.addInstruction(new Instruction(InstructionCodes.STORE, 0, varAddress));
+		data.decStackPointer();
 	}
 	
 	/*
@@ -339,7 +423,7 @@ public class Compiler extends CBaseListener{
 	public void exitStandardAssignment(CParser.StandardAssignmentContext ctx) { 
 		String identifier =  ctx.IDENTIFIER().getText();
 		
-		Addressable variable = symbolTable.get(identifier);
+		Addressable variable = symbolTableGet(identifier);
 		
 		if(variable == null) {
 			System.err.println("Unknown identifier: " + identifier);
@@ -350,9 +434,10 @@ public class Compiler extends CBaseListener{
 			System.err.println(identifier + "is not variable");
 			System.exit(1);
 		}
-		
+
 		//value of the assignment is on top of the stack, store current stack pointer
-		variable.setAddress(data.getStackPointer());
+		data.addInstruction(new Instruction(InstructionCodes.STORE, data.getNestingLevel() - variable.getNestingLevel(), variable.getAddress()));
+		data.decStackPointer();
 	}
 	
 	/*
@@ -465,12 +550,14 @@ public class Compiler extends CBaseListener{
 		// JMC - jump on zero -> need to neg. resutl
 		data.addInstruction(new Instruction(InstructionCodes.PUSH, 0, 0));
 		data.addInstruction(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.EQUALITY));
-		data.addInstruction(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, addressStack.pop()));
+		Instruction jump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, addressStack.pop());
+		data.addInstruction(jump);
 		data.decStackPointer();
 	}
 
 	@Override
 	public void exitForinitialization(CParser.ForinitializationContext ctx) {
+
 		addressStack.push(data.getCurrentInstructionAddress() + 1);
 	}
 
