@@ -64,6 +64,10 @@ public class Interpreter {
 		do {
 			Instruction instruction = instructions.get(programCounter);
 			
+			if(InterpreterConstants.isShowDebug()) {
+				System.out.println(programCounter + " " +instruction.toString());
+			}
+			
 			switch(instruction.getCode()) {
 			case PUSH:
 				processPush(instruction);
@@ -142,8 +146,19 @@ public class Interpreter {
 				break;
 				
 			default: 
-				System.err.println("INTERPRETER: Unknown instruction");	
+				System.err.println("INTERPRETER: Unknown instruction");
 			}
+			
+			if(InterpreterConstants.isShowDebug()) {
+				System.out.println("PC: " + programCounter + ", SP: " + stackPointer);
+				
+				if(InterpreterConstants.isShowStack()) {
+					System.out.println(Arrays.toString(Arrays.copyOfRange(stack, 1, stackPointer + 1)));
+				}
+				
+				System.out.println();
+			}
+			
 		}while(programCounter > 0);
 		
 		System.out.println("END PL/0");
