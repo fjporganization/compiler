@@ -509,4 +509,14 @@ public class Compiler extends CBaseListener{
 
 		instructionStack.pop().setOperand(data.getCurrentInstructionAddress() + 1);
 	}
+	
+	@Override
+	public void exitInputinteger(CParser.InputintegerContext ctx) { 
+		data.addInstruction(new Instruction(InstructionCodes.READ_INTEGER, 0, 0));
+	}
+	
+	@Override
+	public void exitOutputinteger(CParser.OutputintegerContext ctx) { 
+		data.addInstruction(new Instruction(InstructionCodes.WRITE_INTEGER, 0, 0));
+	}
 }

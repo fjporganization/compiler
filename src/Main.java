@@ -33,6 +33,10 @@ public class Main {
 		parser.start();
 		
 		data.writeToFile(outputFileName);
+		
+		Interpreter interpreter = new Interpreter();
+		interpreter.setInstructions(data.getOutput());
+		interpreter.interpret();
 	}
 
 }
