@@ -4,12 +4,25 @@ import java.util.Queue;
 import java.util.Stack;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * Create instructions which are connected witch switch command
+ */
 public class SwitchCompiler extends CBaseListener {
 
+    /**
+     * Data which are shared across all compilers classes
+     */
     private final CompilerData data;
+
+    /**
+     * Stack of nested switches
+     */
     private Stack<SwitchObject> switches;
 
-    class SwitchObject {
+    /**
+     * Class contains all needed data of one switch
+     */
+    private class SwitchObject {
         Queue<Instruction> insQueue;
         List<Instruction> insList;
         Instruction loadCmpValue;
@@ -27,11 +40,17 @@ public class SwitchCompiler extends CBaseListener {
         switches = new Stack<>();
     }
 
+    /**
+     * Create new SwitchObject on beginning of switch
+     */
     @Override
     public void enterSwitchcondition(CParser.SwitchconditionContext ctx) {
         switches.push(new SwitchObject());
     }
 
+    /**
+     * Set all left jump instructions to jump at the end of switch
+     */
     @Override
     public void exitSwitchcondition(CParser.SwitchconditionContext ctx) {
         SwitchObject obj = switches.pop();
@@ -47,8 +66,14 @@ public class SwitchCompiler extends CBaseListener {
         }
     }
 
+
+    /**
+     * Set adress of jump in last case to start of this case.
+     */
     @Override
     public void enterSwitchcase(CParser.SwitchcaseContext ctx) {
+        // first switch case take last instruction from output which representing input value
+        // deleted value will be added again in every switch case
         if(switches.peek().loadCmpValue == null) {
             switches.peek().loadCmpValue = data.getOutput().remove(data.getOutput().size() - 1);
         }
@@ -60,6 +85,9 @@ public class SwitchCompiler extends CBaseListener {
         }
     }
 
+    /**
+     * Set address to jump from last case and add comparison of case
+     */
     @Override
     public void enterSwitchstatement(CParser.SwitchstatementContext ctx) {
         // Get jump from last case block to set address
@@ -80,6 +108,9 @@ public class SwitchCompiler extends CBaseListener {
         }
     }
 
+    /**
+     * Check key word break at the end of case. Add jump to body of next case.
+     */
     @Override
     public void exitSwitchstatement(CParser.SwitchstatementContext ctx) {
         if(ctx.BREAKKEYWORD() != null) {
@@ -93,6 +124,9 @@ public class SwitchCompiler extends CBaseListener {
         switches.peek().insQueue.offer(jump);
     }
 
+    /**
+     * Set address of jump in last case to this default branch
+     */
     @Override
     public void enterSwitchdefaultstatement(CParser.SwitchdefaultstatementContext ctx) {
 
