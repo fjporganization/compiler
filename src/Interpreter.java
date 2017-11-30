@@ -157,6 +157,8 @@ public class Interpreter {
 				}
 				
 				System.out.println();
+			}else if(InterpreterConstants.isShowStack()) {
+				System.out.println(Arrays.toString(Arrays.copyOfRange(stack, 1, stackPointer + 1)));
 			}
 			
 		}while(programCounter > 0);
