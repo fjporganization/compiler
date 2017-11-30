@@ -72,6 +72,10 @@ public class CompilerData {
         }
     }
 
+    public List<Instruction> getOutput(){
+        return output;
+    }
+
     /**
      * Add input instruction to end of list of all instructions.
      * @param instruction instruction which will be add to list
