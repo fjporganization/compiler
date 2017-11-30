@@ -27,15 +27,15 @@ public interface CListener extends ParseTreeListener {
 	 */
 	void exitStartsymbol(CParser.StartsymbolContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link CParser#functions}.
+	 * Enter a parse tree produced by {@link CParser#declarations}.
 	 * @param ctx the parse tree
 	 */
-	void enterFunctions(CParser.FunctionsContext ctx);
+	void enterDeclarations(CParser.DeclarationsContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link CParser#functions}.
+	 * Exit a parse tree produced by {@link CParser#declarations}.
 	 * @param ctx the parse tree
 	 */
-	void exitFunctions(CParser.FunctionsContext ctx);
+	void exitDeclarations(CParser.DeclarationsContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CParser#statement}.
 	 * @param ctx the parse tree

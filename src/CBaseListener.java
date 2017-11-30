@@ -39,13 +39,13 @@ public class CBaseListener implements CListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFunctions(CParser.FunctionsContext ctx) { }
+	@Override public void enterDeclarations(CParser.DeclarationsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFunctions(CParser.FunctionsContext ctx) { }
+	@Override public void exitDeclarations(CParser.DeclarationsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
