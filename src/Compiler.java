@@ -101,7 +101,7 @@ public class Compiler extends CBaseListener{
 		if (intInstruction != null){
 			shiftInstructions();
 			// first function in code is start function
-			data.addInstruction(new Instruction(InstructionCodes.CALL, 0, data.getCurrentInstructionAddress()+2));
+			data.addInstruction(new Instruction(InstructionCodes.CALL, 0, data.getCurrentInstructionAddress()+3));
 			data.addInstruction(new Instruction(InstructionCodes.RETURN, 0 ,0));
 		}
 
