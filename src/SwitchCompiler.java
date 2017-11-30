@@ -64,18 +64,29 @@ public class SwitchCompiler extends CBaseListener {
         for (Instruction ins : obj.insQueue){
             ins.setOperand(endAdr);
         }
+
+        // TODO expecting that value from expression is at the end of switch on top of stack
+        // TODO exist instruction for remove value from stack?
+        // remove last value from stack
+        data.addInstruction(new Instruction(InstructionCodes.PUSH, 0, 0));
+        Instruction store = new Instruction(InstructionCodes.STORE, 0, obj.loadCmpValue.getOperand());
+        data.addInstruction(store);
+        data.toShift.add(store);
+        data.addInstruction(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.ADDITION));
+        data.decStackPointer();
     }
 
 
     /**
-     * Set adress of jump in last case to start of this case.
+     * Set address of jump in last case to start of this case.
      */
     @Override
     public void enterSwitchcase(CParser.SwitchcaseContext ctx) {
-        // first switch case take last instruction from output which representing input value
-        // deleted value will be added again in every switch case
+        // first switch case create load instruction to last value from stack
+        // new instruction will be added in all switch case branches
         if(switches.peek().loadCmpValue == null) {
-            switches.peek().loadCmpValue = data.getOutput().remove(data.getOutput().size() - 1);
+            switches.peek().loadCmpValue = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer());
+            data.toShift.add(switches.peek().loadCmpValue);
         }
 
         // Get jump from last case block to set address
@@ -95,6 +106,7 @@ public class SwitchCompiler extends CBaseListener {
 
         // Comparison
         data.addInstruction(switches.peek().loadCmpValue);
+        data.incStackPointer();
         data.addInstruction(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.EQUALITY));
 
         // Jump to next next case

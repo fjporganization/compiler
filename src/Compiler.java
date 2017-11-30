@@ -121,12 +121,18 @@ public class Compiler extends CBaseListener{
 
 		data.addInstruction(new Instruction(InstructionCodes.RETURN, 0 ,0));
 
-		// TODO should be removed symbolTable.removeAll(is in data.getNestingLevel()); (ONLY FOR MEMEORY OPTIMALIZATION)
+		// TODO should be removed symbolTable.removeAll(is in data.getNestingLevel()); (ONLY FOR MEMORY OPTIMALIZATION)
 	}
 
 	private void shiftInstructions(){
 
 		intInstruction.setOperand(intInstruction.getOperand() + varCounter);
+
+		for (Instruction ins : data.toShift){
+			ins.setOperand(ins.getOperand() + varCounter);
+		}
+
+		data.toShift.clear();
 
 		varCounter = 0;
 		intInstruction = null;

@@ -16,16 +16,16 @@ public class CompilerData {
      * address of actual position of the stack (in the assembler)
      */
     private int stackPointer;
-
     /**
      * current lexicographical level
      */
     private int nestingLevel;
-
     /**
      * output instructions
      */
     private final List<Instruction> output;
+
+    public final List<Instruction> toShift;
 
     /**
      * Initialize data in class
@@ -35,6 +35,7 @@ public class CompilerData {
         this.nestingLevel = 0;
 
         this.output = new ArrayList<>();
+        this.toShift = new ArrayList<>();
     }
 
     /**
