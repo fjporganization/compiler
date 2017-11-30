@@ -1,6 +1,6 @@
 
 public enum InstructionCodes {
-	PUSH("LIT"),
+	PUSH("LIT"), 
 	OPERATION("OPR"),
 	LOAD("LOD"),
 	STORE("STO"),
