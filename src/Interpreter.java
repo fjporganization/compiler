@@ -3,6 +3,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -61,93 +62,103 @@ public class Interpreter {
 		
 		System.out.println("START PL/0");
 		
-		do {
-			Instruction instruction = instructions.get(programCounter);
+		try {
+			do {
+				Instruction instruction = instructions.get(programCounter);
+				
+				if(InterpreterConstants.isShowDebug()) {
+					System.out.println(programCounter + " " +instruction.toString());
+				}
+				
+				switch(instruction.getCode()) {
+				case PUSH:
+					processPush(instruction);
+					break;
+					
+				case OPERATION:
+					processOperation(instruction);
+					break;
+					
+				case LOAD:
+					processLoad(instruction);
+					break;
+					
+				case STORE:
+					processStore(instruction);
+					break;
+					
+				case CALL:
+					processCall(instruction);
+					break;
+					
+				case RETURN:
+					processReturn(instruction);
+					break;
+					
+				case INCREMENT:
+					processIncrement(instruction);
+					break;
+					
+				case CONDITIONAL_JUMP:
+					processConditionalJump(instruction);
+					break;
+					
+				case JUMP:
+					processJump(instruction);
+					break;
+					
+				case READ_INTEGER:
+					processReadInteger(instruction);
+					break;
+					
+				case WRITE_INTEGER:
+					processWriteInteger(instruction);
+					break;
+					
+				case READ_REAL:
+					processReadReal(instruction);
+					break;
+					
+				case WRITE_REAL:
+					processWriteReal(instruction);
+					break;
+					
+				case OPERATION_REAL:
+					processFloatOperation(instruction);
+					break;
+					
+				case OPERATION_LOGIC:
+					processLogicOperation(instruction);
+					break;
+					
+				case REAL_TO_INTEGER:
+					processRealToInteger(instruction);
+					break;
+					
+				case INTEGER_TO_REAL:
+					processIntegerToReal(instruction);
+					break;
+					
+				case LOAD_FROM_ADDRESS:
+					processLoadFromAddress(instruction);
+					break;
+					
+				case STORE_AT_ADDRESS:
+					processStoreAtAddress(instruction);
+					break;
+					
+				default: 
+					System.err.println("INTERPRETER: Unknown instruction");
+				}
+				
+			}while(programCounter > 0);
 			
-			if(InterpreterConstants.isShowDebug()) {
-				System.out.println(programCounter + " " +instruction.toString());
-			}
-			
-			switch(instruction.getCode()) {
-			case PUSH:
-				processPush(instruction);
-				break;
-				
-			case OPERATION:
-				processOperation(instruction);
-				break;
-				
-			case LOAD:
-				processLoad(instruction);
-				break;
-				
-			case STORE:
-				processStore(instruction);
-				break;
-				
-			case CALL:
-				processCall(instruction);
-				break;
-				
-			case RETURN:
-				processReturn(instruction);
-				break;
-				
-			case INCREMENT:
-				processIncrement(instruction);
-				break;
-				
-			case CONDITIONAL_JUMP:
-				processConditionalJump(instruction);
-				break;
-				
-			case JUMP:
-				processJump(instruction);
-				break;
-				
-			case READ_INTEGER:
-				processReadInteger(instruction);
-				break;
-				
-			case WRITE_INTEGER:
-				processWriteInteger(instruction);
-				break;
-				
-			case READ_REAL:
-				processReadReal(instruction);
-				break;
-				
-			case WRITE_REAL:
-				processWriteReal(instruction);
-				break;
-				
-			case OPERATION_REAL:
-				processFloatOperation(instruction);
-				break;
-				
-			case OPERATION_LOGIC:
-				processLogicOperation(instruction);
-				break;
-				
-			case REAL_TO_INTEGER:
-				processRealToInteger(instruction);
-				break;
-				
-			case INTEGER_TO_REAL:
-				processIntegerToReal(instruction);
-				break;
-				
-			case LOAD_FROM_ADDRESS:
-				processLoadFromAddress(instruction);
-				break;
-				
-			case STORE_AT_ADDRESS:
-				processStoreAtAddress(instruction);
-				break;
-				
-			default: 
-				System.err.println("INTERPRETER: Unknown instruction");
-			}
+		}catch(IndexOutOfBoundsException e) {
+			System.err.println("INTERPRETER: Instruction addressation error");
+			System.exit(1);
+		}
+		
+		
 			
 			if(InterpreterConstants.isShowDebug()) {
 				System.out.println("PC: " + programCounter + ", SP: " + stackPointer);
@@ -159,9 +170,8 @@ public class Interpreter {
 				System.out.println();
 			}else if(InterpreterConstants.isShowStack()) {
 				System.out.println(Arrays.toString(Arrays.copyOfRange(stack, 1, stackPointer + 1)));
+				System.out.println();
 			}
-			
-		}while(programCounter > 0);
 		
 		System.out.println("END PL/0");
 	}
@@ -383,7 +393,17 @@ public class Interpreter {
 		
 		Scanner sc = new Scanner(System.in);
 		stackPointer++;
-		stack[stackPointer] = sc.nextInt();
+		
+		while(sc.hasNext()) {
+			try {
+				stack[stackPointer] = sc.nextInt();
+				break;
+			} catch (InputMismatchException e) {
+				System.err.println("Invalid input - enter integer number");
+				sc.next();
+			}
+		}
+		
 		sc.close();	
 		programCounter++;
 	}
@@ -411,7 +431,18 @@ public class Interpreter {
 		
 		Scanner sc = new Scanner(System.in);
 		stackPointer = stackPointer + 2;
-		double value = sc.nextDouble();
+		
+		double value = 0; 
+		
+		while(sc.hasNext()) {
+			try {
+				value = sc.nextDouble();
+				break;
+			} catch (InputMismatchException e) {
+				System.err.println("Invalid input - enter real number");
+				sc.next();
+			}
+		}
 		
 		stack[stackPointer - 1] = (int)value;
 		stack[stackPointer] = getRealPartOfNumber(value);
@@ -428,13 +459,8 @@ public class Interpreter {
 		checkStackOverflow(0);
 		checkStackUnderflow(2);
 		
-		double value = stack[stackPointer - 1] + 
-				(stack[stackPointer - 1] < 0 ? -stack[stackPointer] : stack[stackPointer])/
-				(Math.pow(10, (int)Math.log10(stack[stackPointer]) + 1));
-		
+		System.out.println(stack[stackPointer - 1] + "." + stack[stackPointer]);
 		stackPointer = stackPointer - 2;
-		
-		System.out.println(value);
 		programCounter++;
 	}
 	
