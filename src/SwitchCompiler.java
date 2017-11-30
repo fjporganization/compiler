@@ -12,12 +12,12 @@ public class SwitchCompiler extends CBaseListener {
     class SwitchObject {
         Queue<Instruction> insQueue;
         List<Instruction> insList;
-        int cmpAdr;
+        Instruction loadCmpValue;
 
-        SwitchObject(int cmpAdr){
+        SwitchObject(){
             insQueue = new LinkedBlockingQueue<>();
             insList = new ArrayList<>();
-            this.cmpAdr = cmpAdr;
+            this.loadCmpValue = null;
         }
     }
 
@@ -29,8 +29,7 @@ public class SwitchCompiler extends CBaseListener {
 
     @Override
     public void enterSwitchcondition(CParser.SwitchconditionContext ctx) {
-
-       switches.push(new SwitchObject(10)); // TODO incorrect cmpAdr
+        switches.push(new SwitchObject());
     }
 
     @Override
@@ -50,6 +49,10 @@ public class SwitchCompiler extends CBaseListener {
 
     @Override
     public void enterSwitchcase(CParser.SwitchcaseContext ctx) {
+        if(switches.peek().loadCmpValue == null) {
+            switches.peek().loadCmpValue = data.getOutput().remove(data.getOutput().size() - 1);
+        }
+
         // Get jump from last case block to set address
         Instruction lastJump = switches.peek().insQueue.poll();
         if(lastJump != null){
@@ -63,7 +66,7 @@ public class SwitchCompiler extends CBaseListener {
         Instruction lastJump = switches.peek().insQueue.poll();
 
         // Comparison
-        data.addInstruction(new Instruction(InstructionCodes.LOAD, data.getNestingLevel(), switches.peek().cmpAdr)); //TODO incorrect level
+        data.addInstruction(switches.peek().loadCmpValue);
         data.addInstruction(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.EQUALITY));
 
         // Jump to next next case
