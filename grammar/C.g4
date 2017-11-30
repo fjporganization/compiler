@@ -57,10 +57,11 @@ constantdeclaration
   ;
   
 assignment
-  : IDENTIFIER ASSIGNMENTOPERATOR expression SEMICOLON                                                  #standardAssignment
-  | (IDENTIFIER ASSIGNMENTOPERATOR)+ expression SEMICOLON                                               #multipleAssignment
-  | IDENTIFIER ASSIGNMENTOPERATOR logicalexpression QUESTIONMARK expression COLON expression SEMICOLON  #ternaryOperatorAssignment 
+  : IDENTIFIER ASSIGNMENTOPERATOR expression SEMICOLON                  #standardAssignment
+  | (IDENTIFIER ASSIGNMENTOPERATOR)+ expression SEMICOLON               #multipleAssignment
+  | IDENTIFIER ASSIGNMENTOPERATOR logicalexpression ternaryoperator		#ternaryOperatorAssignment 
   ;
+  
   
 parallelassignment
   : LEFTBRACE identifierlist RIGHTBRACE ASSIGNMENTOPERATOR LEFTBRACE valuelist RIGHTBRACE SEMICOLON
@@ -78,6 +79,19 @@ expression
   : arithmeticexpression
   | logicalexpression
   | stringexpression
+  | ternaryoperator
+  ;
+  
+ternaryoperator
+  : QUESTIONMARK ternaryassertive COLON ternarynegative SEMICOLON
+  ;
+  
+ternaryassertive
+  : expression
+  ;
+  
+ternarynegative
+  : expression
   ;
   
 arithmeticexpression

@@ -158,8 +158,6 @@ public class Interpreter {
 			System.exit(1);
 		}
 		
-		
-			
 			if(InterpreterConstants.isShowDebug()) {
 				System.out.println("PC: " + programCounter + ", SP: " + stackPointer);
 				

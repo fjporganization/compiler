@@ -157,6 +157,36 @@ public interface CListener extends ParseTreeListener {
 	 */
 	void exitExpression(CParser.ExpressionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link CParser#ternaryoperator}.
+	 * @param ctx the parse tree
+	 */
+	void enterTernaryoperator(CParser.TernaryoperatorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#ternaryoperator}.
+	 * @param ctx the parse tree
+	 */
+	void exitTernaryoperator(CParser.TernaryoperatorContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#ternaryassertive}.
+	 * @param ctx the parse tree
+	 */
+	void enterTernaryassertive(CParser.TernaryassertiveContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#ternaryassertive}.
+	 * @param ctx the parse tree
+	 */
+	void exitTernaryassertive(CParser.TernaryassertiveContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#ternarynegative}.
+	 * @param ctx the parse tree
+	 */
+	void enterTernarynegative(CParser.TernarynegativeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#ternarynegative}.
+	 * @param ctx the parse tree
+	 */
+	void exitTernarynegative(CParser.TernarynegativeContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code mulDivExp}
 	 * labeled alternative in {@link CParser#arithmeticexpression}.
 	 * @param ctx the parse tree

@@ -510,13 +510,48 @@ public class Compiler extends CBaseListener{
 		instructionStack.pop().setOperand(data.getCurrentInstructionAddress() + 1);
 	}
 	
+	/*
+	 * I/O 
+	 */
 	@Override
 	public void exitInputinteger(CParser.InputintegerContext ctx) { 
 		data.addInstruction(new Instruction(InstructionCodes.READ_INTEGER, 0, 0));
+		data.incStackPointer();
 	}
 	
 	@Override
 	public void exitOutputinteger(CParser.OutputintegerContext ctx) { 
 		data.addInstruction(new Instruction(InstructionCodes.WRITE_INTEGER, 0, 0));
+		data.decStackPointer();
+	}
+	
+	/*
+	 * Ternary operator
+	 */
+	@Override 
+	public void enterTernaryoperator(CParser.TernaryoperatorContext ctx) {
+		// condition has been processed yet
+		Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0);
+		data.decStackPointer();
+		data.addInstruction(conditionalJump);
+		instructionStack.add(conditionalJump);
+	}
+	
+	@Override 
+	public void exitTernaryassertive(CParser.TernaryassertiveContext ctx) { 
+		Instruction conditionalJump = instructionStack.pop();
+		// must jump to instruction beyond instruction for unconditional jump beyond negative branch, therefore +2  
+		conditionalJump.setOperand(data.getCurrentInstructionAddress() + 2);
+		
+		// jump beyond negative branch
+		Instruction jump = new Instruction(InstructionCodes.JUMP, 0);
+		data.addInstruction(jump);
+		instructionStack.add(jump);
+	}
+	
+	@Override 
+	public void exitTernarynegative(CParser.TernarynegativeContext ctx) { 
+		Instruction jump = instructionStack.pop();
+		jump.setOperand(data.getCurrentInstructionAddress() + 1);
 	}
 }
