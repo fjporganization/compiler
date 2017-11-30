@@ -42,8 +42,6 @@ statement
   | functioncall statement
   | parallelassignment
   | parallelassignment statement
-  | inputinteger
-  | inputinteger statement
   | outputinteger
   | outputinteger statement
   | //empty
@@ -106,7 +104,8 @@ stringexpression
   ;
   
 atom
-  : IDENTIFIER                                                                        #identifierAtom
+  : inputinteger																	  #integerIO	
+  | IDENTIFIER                                                                        #identifierAtom
   | NUMERICALVALUE                                                                    #numericAtom
   | STRINGVALUE                                                                       #stringAtom
   | LOGICALVALUE                                                                      #logicAtom
@@ -194,7 +193,7 @@ switchdefaultstatement
   ;
   
 inputinteger
-  : READINT LEFTPARENTHESE RIGHTPARENTHESE SEMICOLON
+  : READINT LEFTPARENTHESE RIGHTPARENTHESE
   ;
 
 outputinteger

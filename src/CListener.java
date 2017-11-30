@@ -313,6 +313,18 @@ public interface CListener extends ParseTreeListener {
 	 */
 	void exitStringConcatExp(CParser.StringConcatExpContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code integerIO}
+	 * labeled alternative in {@link CParser#atom}.
+	 * @param ctx the parse tree
+	 */
+	void enterIntegerIO(CParser.IntegerIOContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code integerIO}
+	 * labeled alternative in {@link CParser#atom}.
+	 * @param ctx the parse tree
+	 */
+	void exitIntegerIO(CParser.IntegerIOContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code identifierAtom}
 	 * labeled alternative in {@link CParser#atom}.
 	 * @param ctx the parse tree

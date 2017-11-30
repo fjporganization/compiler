@@ -339,6 +339,18 @@ public class CBaseListener implements CListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterIntegerIO(CParser.IntegerIOContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitIntegerIO(CParser.IntegerIOContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterIdentifierAtom(CParser.IdentifierAtomContext ctx) { }
 	/**
 	 * {@inheritDoc}
