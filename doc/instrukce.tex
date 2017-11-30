@@ -1,0 +1,113 @@
+\documentclass{article}
+\usepackage[czech]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[IL2]{fontenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{array}
+\usepackage{tabularx} 
+\usepackage{longtable}
+\usepackage{multirow}
+
+\begin{document}
+	
+	\begin{longtable}{|l| p{10cm}|}
+		\hline
+		Instrukce & Popis \\ 
+		\hline\hline
+		
+		\rule{0pt}{3ex} \texttt{LIT 0 M} & Vložení hodnoty: vloží literál \texttt{M} na vrchol zásobníku \\ \hline
+		
+		\rule{0pt}{3ex} \texttt{OPR 0 M} & Provádí aritmetické operace s celými čísly, konkrétní operace je udána hodnotou \texttt{M}. \\
+		
+		\rule{0pt}{4ex} \texttt{OPR 0 1} & Unární mínus: odebere hodnotu z vrcholu zásobníku a na vrchol zásobníku uloží její zápornou hodnotu. \\
+		
+		\rule{0pt}{4ex} \texttt{OPR 0 2} & Sčítání: odebere dvě hodnoty z vrcholu zásobníku a na vrchol zásobníku uloží jejich součet. \\
+		
+		\rule{0pt}{4ex} \texttt{OPR 0 3} & Odčítání: odebere dvě hodnoty z vrcholu zásobníku a na vrchol zásobníku uloží jejich rozdíl (první odebraná hodnota je menšitel, druhá odebraná hodnota je menšenec). \\
+		
+		\rule{0pt}{4ex} \texttt{OPR 0 4} & Násobení: odebere dvě hodnoty z vrcholu zásobníku a na vrchol zásobníku uloží jejich součin. \\
+		
+		\rule{0pt}{4ex} \texttt{OPR 0 5} & Dělení: odebere dvě hodnoty z vrcholu zásobníku a na vrchol zásobníku uloží jejich podíl (první odebraná hodnota je dělitel, druhá odebraná hodnota je dělenec). \\
+		
+		\rule{0pt}{4ex} \texttt{OPR 0 6} & Modulo: odebere dvě hodnoty z vrcholu zásobníku a na vrchol zásobníku uloží jejich zbytek po dělení (modulo). \\
+		
+		\rule{0pt}{4ex} \texttt{OPR 0 7} & Určení sudosti: odebere hodnotu z vrcholu zásobníku a na vrchol zásobníku uloží 1, pokud je hodnota sudá, jinak 0. \\
+		
+		\rule{0pt}{4ex} \texttt{OPR 0 8} & Rovnost: odebere dvě hodnoty z vrcholu zásobníku a na vrchol zásobníku uloží 1, pokud jsou si hodnoty rovny, jinak 0. \\
+		
+		\rule{0pt}{4ex} \texttt{OPR 0 9} & Nerovnost: odebere dvě hodnoty z vrcholu zásobníku a na vrchol zásobníku uloží 1, pokud jsou hodnoty rozdílné, jinak 0. \\
+		
+		\rule{0pt}{4ex} \texttt{OPR 0 10} & Menší: odebere dvě hodnoty z vrcholu zásobníku a na vrchol zásobníku uloží 1, pokud je druhá odebraná hodnota menší než první odebraná hodnota, jinak 0. \\
+		
+		\rule{0pt}{4ex} \texttt{OPR 0 11} & Větší nebo rovno: odebere dvě hodnoty z vrcholu zásobníku a na vrchol zásobníku uloží 1, pokud je druhá odebraná hodnota větší nebo rovna než první odebraná hodnota, jinak 0. \\
+		
+		\rule{0pt}{4ex} \texttt{OPR 0 12} & Větší: odebere dvě hodnoty z vrcholu zásobníku a na vrchol zásobníku uloží 1, pokud je druhá odebraná hodnota větší než první odebraná hodnota, jinak 0. \\
+		
+		\rule{0pt}{4ex} \texttt{OPR 0 13} & Menší nebo rovno: odebere dvě hodnoty z vrcholu zásobníku a na vrchol zásobníku uloží 1, pokud je druhá odebraná hodnota menší nebo rovna než první odebraná hodnota, jinak 0. \\ \hline
+		
+		\rule{0pt}{3ex} \texttt{LOD L M} & Načtení: načte hodnotu z vrcholu zasobníku na pozici \texttt{M} o \texttt{L} úrovní zanoření níže, načtenou hodnotu vloží na zásobník. \\
+		\hline
+		
+		\rule{0pt}{3ex} \texttt{STO L M} & Uložení: uloží hodnotu z vrcholu zasobníku na pozici \texttt{M} o \texttt{L} úrovní zanoření níže. \\ \hline
+		
+		\rule{0pt}{3ex} \texttt{CAL L M} & Volání procedury: zavolá proceduru na pozici \texttt{M} o \texttt{L} úrovní zanoření níže. \\ \hline
+		
+		\rule{0pt}{3ex} \texttt{RET 0 0} & Návrat z procedury: vrací se z procedury do volající procedury. \\ \hline
+		
+		\rule{0pt}{3ex} \texttt{INT 0 M} & Alokace na zásobníku: alokuje na vrcholu zásobníku místo pro \texttt{M} hodnot. \\ \hline
+		
+		\rule{0pt}{3ex} \texttt{JMC 0 M} & Podmíněný skok: odebere z vrcholu zásobníku hodnotu a pokud je rovna nule, skočí na instrukci \texttt{M}. \\ \hline
+		
+		\rule{0pt}{3ex} \texttt{JMP 0 M} & Skok: skočí na instrukci \texttt{M}. \\ \hline
+		
+		\rule{0pt}{3ex} \texttt{REA 0 0} & Načtení celého čísla: načte celé číslo ze vstupu a uloží jej na zásobník. \\ \hline
+		
+		\rule{0pt}{3ex} \texttt{WRI 0 0} & Výpis celého čísla: odebere hodnotu z vrcholu zásobníku a vypíše ji na výstup. \\ \hline
+		
+		\rule{0pt}{3ex} \texttt{RER 0 0} & Načtení reálného čísla: načte reálné číslo ze vstupu a uloží jej na zásobník. Nejprve na zásobník vloží celou část čísla, poté vloží desetinnou část čísla. \\ \hline
+		
+		\rule{0pt}{3ex} \texttt{WRR 0 0} & Výpis reálného čísla: odebere nejprve desetinnou a poté celou část čísla ze zásobníku, následně desetinné číslo vypíše na výstup.\\ \hline
+		
+		\rule{0pt}{3ex} \texttt{OPF 0 M} & Provádí aritmetické operace s reálnými čísly, konkrétní operace je udána hodnotou \texttt{M}. Na zásobníku je reálné číslo rozděleno na dvě části, a to celou a desetinnou část; reálné číslo tedy zabírá dvě pozice v zásobníku.\\
+		
+		\rule{0pt}{4ex} \texttt{OPF 0 1} & Unární mínus: odebere dvě hodnoty z vrcholu zásobníku reprezentující reálné číslo a na vrchol zásobníku uloží zápornou hodnotu číslo, mínus je uloženo jen před celou část. \\
+		
+		\rule{0pt}{4ex} \texttt{OPF 0 2} & Sčítání: odebere čtyři hodnoty z vrcholu zásobníku představující dvě reálná čísla a na vrchol zásobníku uloží dvě hodnoty představující součet odebraných čísel \\
+		
+		\rule{0pt}{4ex} \texttt{OPF 0 3} & Odčítání: odebere čtyři hodnoty z vrcholu zásobníku představující dvě reálná čísla a na vrchol zásobníku uloží dvě hodnoty představující rodzíl odebraných čísel (první odebrané číslo je menšitel, druhé odebrané číslo je menšenec). \\
+		
+		\rule{0pt}{4ex} \texttt{OPF 0 4} & Násobení: odebere čtyři hodnoty z vrcholu zásobníku představující dvě reálná čísla a na vrchol zásobníku uloží dvě hodnoty představující součin odebraných čísel \\
+		
+		\rule{0pt}{4ex} \texttt{OPF 0 5} & Dělení: odebere čtyři hodnoty z vrcholu zásobníku představující dvě reálná čísla a na vrchol zásobníku uloží dvě hodnoty představující podíl odebraných čísel (první odebrané číslo je dělitel, druhé odebrané číslo je dělenec). \\		
+		
+		\rule{0pt}{4ex} \texttt{OPF 0 8} & Rovnost: odebere čtyři hodnoty z vrcholu zásobníku představující dvě reálná čísla a na vrchol zásobníku uloží 1, pokud jsou si čísla rovna, jinak 0. \\
+		
+		\rule{0pt}{4ex} \texttt{OPF 0 9} & Nerovnost: odebere čtyři hodnoty z vrcholu zásobníku představující dvě reálná čísla a na vrchol zásobníku uloží 1, pokud jsou čísla rozdílná, jinak 0. \\
+		
+		\rule{0pt}{4ex} \texttt{OPF 0 10} & Menší: odebere čtyři hodnoty z vrcholu zásobníku představující dvě reálná čísla a na vrchol zásobníku uloží 1, pokud je druhé odebrané číslo menší než první odebrané číslo, jinak 0. \\
+		
+		\rule{0pt}{4ex} \texttt{OPF 0 11} & Větší nebo rovno: odebere čtyři hodnoty z vrcholu zásobníku představující dvě reálná čísla a na vrchol zásobníku uloží 1, pokud je druhé odebrané číslo větší nebo rovno než první odebrané číslo, jinak 0. \\
+		
+		\rule{0pt}{4ex} \texttt{OPF 0 12} & Větší: odebere čtyři hodnoty z vrcholu zásobníku představující dvě reálná čísla a na vrchol zásobníku uloží 1, pokud je druhé odebrané číslo větší než první odebrané číslo, jinak 0. \\
+		
+		\rule{0pt}{4ex} \texttt{OPF 0 13} & Menší nebo rovno: odebere čtyři hodnoty z vrcholu zásobníku představující dvě reálná čísla a na vrchol zásobníku uloží 1, pokud je druhé odebrané číslo menší nebo rovno než první odebrané číslo, jinak 0. \\ \hline
+		
+		\rule{0pt}{3ex} \texttt{OPL 0 M} & Provádí logické operace s logickými hodnotami, konkrétní operace je udána hodnotou \texttt{M}. Logické hodnoty jsou reprezentovány číselnými hodnoty, kdy nulová hodnota značí nepravdu, nenulová pravdu \\
+		
+		\rule{0pt}{4ex} \texttt{OPL 0 1} & Konjunkce (AND): odebere dvě hodnoty z vrcholu zásobníku reprezentující logické hodnoty a na zásobník uloží 1, pokud jsou obě logické hodnoty \texttt{pravda}. \\
+		
+		\rule{0pt}{4ex} \texttt{OPL 0 2} & Disjunkce (OR): odebere dvě hodnoty z vrcholu zásobníku reprezentující logické hodnoty a na zásobník uloží 1, pokud jsou alespoň jedna logická hodnota \texttt{pravda}. \\
+		
+		\rule{0pt}{4ex} \texttt{OPL 0 3} & Logická negace: odebere logickou hodnotu z vrcholu zásobníku a na zásobník vloží negaci odebrané hodnoty. \\ \hline
+		
+		\rule{0pt}{3ex} \texttt{RTI 0 0} & Reálné číslo na celé číslo: odebere dvě hodnoty představující reálné číslo z vrcholu zásobníku a na vrchol zasobníku vloží pouze celou část reálného čísla. \\ \hline
+		
+		\rule{0pt}{3ex} \texttt{ITR 0 0} & Celé číslo na reálné číslo: odebere jednu hodnotu z vrcholu zásobníku a na vrchol zasobníku vloží dvě hodnoty představující reálné číslo. \\ \hline
+		
+		\rule{0pt}{3ex} \texttt{LDA 0 M} & Načtení z absolutní adresy: na vrchol zásobníku vloží hodnotu nachazející se na absolutní pozici \texttt{M} (bez ohledu na zanoření). \\ \hline
+		
+		\rule{0pt}{3ex} \texttt{ITR 0 0} & Uložení na absolutní adresu: na absolutní pozici v zásobníku (bez ohledu na zanoření) uloží hodnotu nacházející se na vrcholu zásobníku. \\ \hline
+	\end{longtable}
+\end{document}
