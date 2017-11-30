@@ -57,12 +57,15 @@ constantdeclaration
   ;
   
 assignment
-  : IDENTIFIER ASSIGNMENTOPERATOR expression SEMICOLON                  #standardAssignment
+  : standardAssignment SEMICOLON                                        #standAssignment
   | (IDENTIFIER ASSIGNMENTOPERATOR)+ expression SEMICOLON               #multipleAssignment
   | IDENTIFIER ASSIGNMENTOPERATOR logicalexpression ternaryoperator		#ternaryOperatorAssignment 
   ;
-  
-  
+
+standardAssignment
+  : IDENTIFIER ASSIGNMENTOPERATOR expression
+  ;
+
 parallelassignment
   : LEFTBRACE identifierlist RIGHTBRACE ASSIGNMENTOPERATOR LEFTBRACE valuelist RIGHTBRACE SEMICOLON
   ;
@@ -149,11 +152,11 @@ forloop
   ;
 
 forinitialization
-  : IDENTIFIER ASSIGNMENTOPERATOR expression
+  : standardAssignment
   ;
     
 forafterthought
-  : IDENTIFIER ASSIGNMENTOPERATOR expression
+  : standardAssignment
   ;
   
 whileloop

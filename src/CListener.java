@@ -81,17 +81,17 @@ public interface CListener extends ParseTreeListener {
 	 */
 	void exitConstantdeclaration(CParser.ConstantdeclarationContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code standardAssignment}
+	 * Enter a parse tree produced by the {@code standAssignment}
 	 * labeled alternative in {@link CParser#assignment}.
 	 * @param ctx the parse tree
 	 */
-	void enterStandardAssignment(CParser.StandardAssignmentContext ctx);
+	void enterStandAssignment(CParser.StandAssignmentContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code standardAssignment}
+	 * Exit a parse tree produced by the {@code standAssignment}
 	 * labeled alternative in {@link CParser#assignment}.
 	 * @param ctx the parse tree
 	 */
-	void exitStandardAssignment(CParser.StandardAssignmentContext ctx);
+	void exitStandAssignment(CParser.StandAssignmentContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code multipleAssignment}
 	 * labeled alternative in {@link CParser#assignment}.
@@ -116,6 +116,16 @@ public interface CListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTernaryOperatorAssignment(CParser.TernaryOperatorAssignmentContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#standardAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void enterStandardAssignment(CParser.StandardAssignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#standardAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void exitStandardAssignment(CParser.StandardAssignmentContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CParser#parallelassignment}.
 	 * @param ctx the parse tree

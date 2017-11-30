@@ -99,13 +99,13 @@ public class CBaseListener implements CListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStandardAssignment(CParser.StandardAssignmentContext ctx) { }
+	@Override public void enterStandAssignment(CParser.StandAssignmentContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStandardAssignment(CParser.StandardAssignmentContext ctx) { }
+	@Override public void exitStandAssignment(CParser.StandAssignmentContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -130,6 +130,18 @@ public class CBaseListener implements CListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitTernaryOperatorAssignment(CParser.TernaryOperatorAssignmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStandardAssignment(CParser.StandardAssignmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStandardAssignment(CParser.StandardAssignmentContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
