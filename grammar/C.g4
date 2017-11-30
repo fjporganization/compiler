@@ -42,6 +42,10 @@ statement
   | functioncall statement
   | parallelassignment
   | parallelassignment statement
+  | inputinteger
+  | inputinteger statement
+  | outputinteger
+  | outputinteger statement
   | //empty
   ;
   
@@ -188,7 +192,15 @@ switchstatement
 switchdefaultstatement
   : statement
   ;
+  
+inputinteger
+  : READINT LEFTPARENTHESE RIGHTPARENTHESE SEMICOLON
+  ;
 
+outputinteger
+  : WRITEINT LEFTPARENTHESE arithmeticexpression RIGHTPARENTHESE SEMICOLON
+  ;
+  
 /*
  * Lexer rules
  */
@@ -199,6 +211,14 @@ STRINGVALUE
  
 WHITESPACE 
   : [ \r\t\f\n]+ -> skip
+  ;
+
+WRITEINT
+  : 'writeInt'
+  ;
+  
+READINT
+  : 'readInt'
   ;
 
 TYPEQUALIFIER
