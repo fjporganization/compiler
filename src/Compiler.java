@@ -19,9 +19,16 @@ public class Compiler extends CBaseListener{
 	private final Stack<Instruction> instructionStack;
 
 	private final Stack<Integer> addressStack;
-	
+
+	/**
+	 * Data which are shared across all compilers classes
+	 */
 	private final CompilerData data;
 
+	/**
+	 * Instruction Increment(INT) which is at beginning of function.
+	 * At the end of function is change operand to let space in stack for variables
+	 */
 	private Instruction intInstruction = null;
 
 	/**
@@ -40,6 +47,12 @@ public class Compiler extends CBaseListener{
 		this.addressStack = new Stack<>();
 	}
 
+	/**
+	 * Return object of Addressable which have input identifier and is in same scope or is defined globally
+	 *
+	 * @param identifier of searching object
+	 * @return found object or null
+	 */
 	private Addressable symbolTableGet(String identifier){
 		Addressable res = symbolTable.get(hashIdentifier(identifier, data.getNestingLevel()));
 
@@ -50,10 +63,23 @@ public class Compiler extends CBaseListener{
 		return res;
 	}
 
+	/**
+	 * Put input addressable to map with hashed key by function hashIdentifier
+	 *
+	 * @param identifier of saving object
+	 * @param addressable object which will be saved
+	 */
 	private void symbolTablePut(String identifier, Addressable addressable){
 		symbolTable.put(hashIdentifier(identifier, data.getNestingLevel()), addressable);
 	}
 
+	/**
+	 * Add before identifier nestingLevel. New identifier is unique for scope.
+	 *
+	 * @param identifier which will be hashed
+	 * @param nestingLevel number of scope
+	 * @return coded identifier
+	 */
 	private String hashIdentifier(String identifier, int nestingLevel){
 		return nestingLevel + identifier;
 	}
@@ -95,7 +121,7 @@ public class Compiler extends CBaseListener{
 
 		data.addInstruction(new Instruction(InstructionCodes.RETURN, 0 ,0));
 
-		// TODO should be removed symbolTable.removeAll(is in data.getNestingLevel());
+		// TODO should be removed symbolTable.removeAll(is in data.getNestingLevel()); (ONLY FOR MEMEORY OPTIMALIZATION)
 	}
 
 	private void shiftInstructions(){
