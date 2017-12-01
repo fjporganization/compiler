@@ -161,7 +161,7 @@ public class Interpreter {
 			}while(programCounter > 0);
 			
 		}catch(IndexOutOfBoundsException e) {
-			System.err.println("INTERPRETER: fjp.structures.Instruction addressation error");
+			System.err.println("INTERPRETER: Instruction addressation error");
 			System.exit(1);
 		}
 		

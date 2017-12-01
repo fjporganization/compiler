@@ -8,7 +8,7 @@ import java.util.Map;
 import fjp.structures.*;
 
 /**
- * Class contains all data which are shared between fjp.compilers.Compiler classes.
+ * Class contains all data which are shared between Compiler classes.
  */
 public class CompilerData {
 
@@ -160,7 +160,7 @@ public class CompilerData {
     // SYMBOL TABLE OPERATIONS =============
 
     /**
-     * Return object of fjp.structures.Addressable which have input identifier and is in same scope or is defined globally
+     * Return object of Addressable which have input identifier and is in same scope or is defined globally
      *
      * @param identifier of searching object
      * @return found object or null

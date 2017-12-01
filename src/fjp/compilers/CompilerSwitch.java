@@ -39,7 +39,7 @@ public class CompilerSwitch extends CBaseListener {
 
 
     /**
-     * Constructor of fjp.compilers.CompilerSwitch
+     * Constructor of CompilerSwitch
      * @param data contains data which are shared with all compiler classes
      */
     public CompilerSwitch(CompilerData data){

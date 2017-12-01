@@ -9,7 +9,7 @@ public class CompilerVariables extends CBaseListener {
     private final CompilerData data;
 
     /**
-     * Constructor of fjp.compilers.CompilerVariables
+     * Constructor of CompilerVariables
      * @param data contains data which are shared with all compiler classes
      */
     public CompilerVariables(CompilerData data){
@@ -27,7 +27,7 @@ public class CompilerVariables extends CBaseListener {
         DataType type = null;
 
         if(data.symbolTableGet(identifier) != null) {
-            System.err.println("fjp.structures.Identifier " + identifier + " is already declared");
+            System.err.println("Identifier " + identifier + " is already declared");
         }
 
         switch(dataType) {
@@ -59,7 +59,7 @@ public class CompilerVariables extends CBaseListener {
         DataType type = null;
 
         if(data.symbolTableGet(identifier) != null) {
-            System.err.println("fjp.structures.Identifier " + identifier + " is already declared");
+            System.err.println("Identifier " + identifier + " is already declared");
         }
 
         switch(dataType) {
@@ -94,7 +94,7 @@ public class CompilerVariables extends CBaseListener {
         DataType type = null;
 
         if(data.symbolTableGet(identifier) != null) {
-            System.err.println("fjp.structures.Identifier " + identifier + " is already declared");
+            System.err.println("Identifier " + identifier + " is already declared");
         }
 
         switch(dataType) {

@@ -9,7 +9,7 @@ import fjp.structures.*;
 public class Compiler extends CBaseListener {
 
 	/**
-	 * fjp.structures.Instruction Increment(INT) which is at beginning of function.
+	 * Instruction Increment(INT) which is at beginning of function.
 	 * At the end of function is change operand to let space in stack for variables
 	 */
 	private Instruction intInstruction = null;
@@ -19,7 +19,7 @@ public class Compiler extends CBaseListener {
 
 	
 	/**
-	 * Constructor of fjp.compilers.Compiler
+	 * Constructor of Compiler
 	 * @param data contains data which are shared with all compiler classes
 	 */
 	public Compiler(CompilerData data) {

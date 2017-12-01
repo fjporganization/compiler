@@ -18,7 +18,7 @@ public class CompilerCondition extends CBaseListener {
     private final CompilerData data;
 
     /**
-     * Constructor of fjp.compilers.CompilerCondition
+     * Constructor of CompilerCondition
      * @param data contains data which are shared with all compiler classes
      */
     public CompilerCondition(CompilerData data){

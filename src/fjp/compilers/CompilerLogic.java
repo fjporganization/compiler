@@ -9,7 +9,7 @@ public class CompilerLogic extends CBaseListener {
     private final CompilerData data;
 
     /**
-     * Constructor of fjp.compilers.CompilerLogic
+     * Constructor of CompilerLogic
      * @param data contains data which are shared with all compiler classes
      */
     public CompilerLogic(CompilerData data){

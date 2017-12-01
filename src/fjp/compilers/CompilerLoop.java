@@ -21,7 +21,7 @@ public class CompilerLoop extends CBaseListener {
     private final CompilerData data;
 
     /**
-     * Constructor of fjp.compilers.CompilerLoop
+     * Constructor of CompilerLoop
      * @param data contains data which are shared with all compiler classes
      */
     public CompilerLoop(CompilerData data){
