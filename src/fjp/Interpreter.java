@@ -734,8 +734,7 @@ public class Interpreter {
 			System.exit(1);
 		}
 		
-		stackPointer++;
-		stack[stackPointer] = stack[stack[stackPointer - 1]];
+		stack[stackPointer] = stack[stack[stackPointer]];
 		programCounter++;
 	}
 	
