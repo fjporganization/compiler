@@ -32,6 +32,9 @@ public class CompilerData {
 
     /** Number of variables which will be defined at the beginning of function/program */
     private int varCounter = 0;
+    
+    /** data type of the expression which is currently evaluated */
+    private DataType currentExpDataType;
 
     /**
      * Initialize data in class
@@ -126,7 +129,7 @@ public class CompilerData {
         return nestingLevel;
     }
 
-    /**
+	/**
      * Method increment nestingLevel.
      */
     public void incNestingLevel() {
@@ -206,4 +209,24 @@ public class CompilerData {
     private String hashIdentifier(String identifier, int nestingLevel){
         return nestingLevel + identifier;
     }
+    
+// EXPRESSION DATA TYPE ================
+    
+    /**
+     * Return currentExpDataType
+     * 
+	 * @return the currentExpDataType
+	 */
+	public DataType getCurrentExpDataType() {
+		return currentExpDataType;
+	}
+
+	/**
+	 * Set currentExpDataType
+	 * 
+	 * @param currentExpDataType the currentExpDataType to set
+	 */
+	public void setCurrentExpDataType(DataType currentExpDataType) {
+		this.currentExpDataType = currentExpDataType;
+	}
 }

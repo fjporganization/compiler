@@ -134,7 +134,8 @@ public class Compiler extends CBaseListener {
 		data.resetVarCounter();
 		intInstruction = null;
 	}
-
+	
+	
 	
 	/*
 	 * I/O 

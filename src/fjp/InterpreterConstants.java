@@ -6,9 +6,9 @@ public class InterpreterConstants {
 	
 	public static final boolean SHOW_STORE = true;
 	
-	public static final boolean SHOW_DEBUG = false;
+	public static final boolean SHOW_DEBUG = true;
 	
-	public static final boolean SHOW_STACK = false;
+	public static final boolean SHOW_STACK = true;
 
 	public static int getStackSize() {
 		return STACK_SIZE;
