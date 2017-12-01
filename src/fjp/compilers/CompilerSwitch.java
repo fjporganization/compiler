@@ -75,11 +75,7 @@ public class CompilerSwitch extends CBaseListener {
         // TODO expecting that value from expression is at the end of switch on top of stack
         // TODO exist instruction for remove value from stack?
         // remove last value from stack
-        data.addInstruction(new Instruction(InstructionCodes.PUSH, 0, 0));
-        Instruction store = new Instruction(InstructionCodes.STORE, 0, obj.loadCmpValue.getOperand());
-        data.addInstruction(store);
-        data.toShift.add(store);
-        data.addInstruction(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.ADDITION));
+        data.addInstruction(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, data.getCurrentInstructionAddress() + 2));
         data.decStackPointer();
     }
 
