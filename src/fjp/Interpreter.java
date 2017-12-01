@@ -161,13 +161,13 @@ public class Interpreter {
 				if(InterpreterConstants.isShowDebug()) {
 					System.out.println("PC: " + programCounter + ", SP: " + stackPointer);
 					
-					if(InterpreterConstants.isShowStack()) {
-						System.out.println(Arrays.toString(Arrays.copyOfRange(stack, 1, stackPointer + 1)));
+					if(InterpreterConstants.isShowStack() && stackPointer >= 0) {
+						System.out.println(Arrays.toString(Arrays.copyOfRange(stack, 0, stackPointer + 1)));
 					}
 					
 					System.out.println();
-				}else if(InterpreterConstants.isShowStack()) {
-					System.out.println(Arrays.toString(Arrays.copyOfRange(stack, 1, stackPointer + 1)));
+				}else if(InterpreterConstants.isShowStack() && stackPointer >= 0) {
+					System.out.println(Arrays.toString(Arrays.copyOfRange(stack, 0, stackPointer + 1)));
 					System.out.println();
 				}
 				
