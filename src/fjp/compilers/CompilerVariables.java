@@ -2,6 +2,9 @@ package fjp.compilers;
 
 import fjp.generated.*;
 import fjp.structures.*;
+import org.antlr.v4.runtime.tree.TerminalNode;
+
+import java.util.List;
 
 public class CompilerVariables extends CBaseListener {
 
@@ -190,6 +193,51 @@ public class CompilerVariables extends CBaseListener {
 
         //value of the assignment is on top of the stack, store current stack pointer
         data.addInstruction(new Instruction(code, nestingLevel, operand));
+        data.decStackPointer();
+    }
+
+    @Override
+    public void exitMultipleAssignment(CParser.MultipleAssignmentContext ctx) {
+
+        List<TerminalNode> identifiers = ctx.IDENTIFIER();
+
+        for(TerminalNode node : identifiers){
+
+            String identifier = node.getText();
+            Addressable variable = data.symbolTableGet(identifier);
+
+            if(variable == null) {
+                System.err.println("Unknown identifier: " + identifier);
+                System.exit(1);
+            }
+
+            if(!(variable instanceof Variable)) {
+                System.err.println(identifier + "is not variable");
+                System.exit(1);
+            }
+
+            // nestingLevel = 0 because is in same procedure
+            Instruction load = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer());
+            data.addInstruction(load);
+            data.toShift.add(load);
+
+            InstructionCodes code = InstructionCodes.STORE;
+            int nestingLevel = data.getNestingLevel() - variable.getNestingLevel();
+            int operand = variable.getAddress();
+
+            if(variable.getNestingLevel() == 0){
+                data.addInstruction(new Instruction(InstructionCodes.PUSH, 0, variable.getAddress()));
+
+                code = InstructionCodes.STORE_AT_ADDRESS;
+                nestingLevel = 0;
+                operand = 0;
+            }
+
+            //value of the assignment is on top of the stack, store current stack pointer
+            data.addInstruction(new Instruction(code, nestingLevel, operand));
+        }
+
+        data.addInstruction(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, data.getCurrentInstructionAddress() + 2));
         data.decStackPointer();
     }
 }
