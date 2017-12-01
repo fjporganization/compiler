@@ -240,4 +240,47 @@ public class CompilerVariables extends CBaseListener {
         data.addInstruction(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, data.getCurrentInstructionAddress() + 2));
         data.decStackPointer();
     }
+
+    @Override
+    public void exitParallelassignment(CParser.ParallelassignmentContext ctx) {
+        if(ctx.identifierlist().IDENTIFIER().size() != ctx.valuelist().expression().size()){
+            System.err.println("Parallel assignment: Number of identifiers is not equal to number of values.");
+            System.err.println(ctx.getText());
+            System.exit(1);
+        }
+
+        List<TerminalNode> identifiers = ctx.identifierlist().IDENTIFIER();
+
+        for(int i = identifiers.size() - 1; i >= 0; i--){
+
+            String identifier = identifiers.get(i).getText();
+            Addressable variable = data.symbolTableGet(identifier);
+
+            if(variable == null) {
+                System.err.println("Unknown identifier: " + identifier);
+                System.exit(1);
+            }
+
+            if(!(variable instanceof Variable)) {
+                System.err.println(identifier + "is not variable");
+                System.exit(1);
+            }
+
+            InstructionCodes code = InstructionCodes.STORE;
+            int nestingLevel = data.getNestingLevel() - variable.getNestingLevel();
+            int operand = variable.getAddress();
+
+            if(variable.getNestingLevel() == 0){
+                data.addInstruction(new Instruction(InstructionCodes.PUSH, 0, variable.getAddress()));
+
+                code = InstructionCodes.STORE_AT_ADDRESS;
+                nestingLevel = 0;
+                operand = 0;
+            }
+
+            //value of the assignment is on top of the stack, store current stack pointer
+            data.addInstruction(new Instruction(code, nestingLevel, operand));
+            data.decStackPointer();
+        }
+    }
 }
