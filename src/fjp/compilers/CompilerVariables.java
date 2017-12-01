@@ -1,8 +1,5 @@
 package fjp.compilers;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import fjp.generated.*;
 import fjp.structures.*;
 
@@ -11,16 +8,12 @@ public class CompilerVariables extends CBaseListener {
     /** Data which are shared across all compilers classes */
     private final CompilerData data;
 
-    /** table of symbol */
-    private final Map<String, Addressable> symbolTable;
-
     /**
      * Constructor of fjp.compilers.CompilerVariables
      * @param data contains data which are shared with all compiler classes
      */
     public CompilerVariables(CompilerData data){
         this.data = data;
-        this.symbolTable = new HashMap<>();
     }
 
     /**
@@ -33,7 +26,7 @@ public class CompilerVariables extends CBaseListener {
         int length = 0;
         DataType type = null;
 
-        if(symbolTableGet(identifier) != null) {
+        if(data.symbolTableGet(identifier) != null) {
             System.err.println("fjp.structures.Identifier " + identifier + " is already declared");
         }
 
@@ -52,7 +45,7 @@ public class CompilerVariables extends CBaseListener {
         data.incVarCounter();
 
         Variable var = new Variable(varAddress, data.getNestingLevel(), identifier, length, type);
-        symbolTablePut(identifier, var);
+        data.symbolTablePut(identifier, var);
     }
 
     /**
@@ -65,7 +58,7 @@ public class CompilerVariables extends CBaseListener {
         int length = 0;
         DataType type = null;
 
-        if(symbolTableGet(identifier) != null) {
+        if(data.symbolTableGet(identifier) != null) {
             System.err.println("fjp.structures.Identifier " + identifier + " is already declared");
         }
 
@@ -84,7 +77,7 @@ public class CompilerVariables extends CBaseListener {
         data.incVarCounter();
 
         Variable variable = new Variable(varAddress, data.getNestingLevel(), identifier, length, type);
-        symbolTablePut(identifier, variable);
+        data.symbolTablePut(identifier, variable);
 
         data.addInstruction(new Instruction(InstructionCodes.STORE, 0, varAddress));
         data.decStackPointer();
@@ -100,7 +93,7 @@ public class CompilerVariables extends CBaseListener {
         int length = 0;
         DataType type = null;
 
-        if(symbolTableGet(identifier) != null) {
+        if(data.symbolTableGet(identifier) != null) {
             System.err.println("fjp.structures.Identifier " + identifier + " is already declared");
         }
 
@@ -119,7 +112,7 @@ public class CompilerVariables extends CBaseListener {
         data.incVarCounter();
 
         Constant constant = new Constant(varAddress, data.getNestingLevel(), identifier, length, type);
-        symbolTablePut(identifier, constant);
+        data.symbolTablePut(identifier, constant);
 
         data.addInstruction(new Instruction(InstructionCodes.STORE, 0, varAddress));
         data.decStackPointer();
@@ -132,7 +125,7 @@ public class CompilerVariables extends CBaseListener {
     public void exitIdentifierAtom(CParser.IdentifierAtomContext ctx) {
         //load variable or constant identified by identifier onto the stack
         String identifier = ctx.IDENTIFIER().getText();
-        Addressable variable = symbolTableGet(identifier);
+        Addressable variable = data.symbolTableGet(identifier);
 
         if(variable == null) {
             System.err.println(identifier + " is unknown");
@@ -160,7 +153,7 @@ public class CompilerVariables extends CBaseListener {
     public void exitStandardAssignment(CParser.StandardAssignmentContext ctx) {
         String identifier =  ctx.IDENTIFIER().getText();
 
-        Addressable variable = symbolTableGet(identifier);
+        Addressable variable = data.symbolTableGet(identifier);
 
         if(variable == null) {
             System.err.println("Unknown identifier: " + identifier);
@@ -175,44 +168,5 @@ public class CompilerVariables extends CBaseListener {
         //value of the assignment is on top of the stack, store current stack pointer
         data.addInstruction(new Instruction(InstructionCodes.STORE, data.getNestingLevel() - variable.getNestingLevel(), variable.getAddress()));
         data.decStackPointer();
-    }
-
-    // SYMBOL TABLE OPERATIONS =============
-
-    /**
-     * Return object of fjp.structures.Addressable which have input identifier and is in same scope or is defined globally
-     *
-     * @param identifier of searching object
-     * @return found object or null
-     */
-    private Addressable symbolTableGet(String identifier){
-        Addressable res = symbolTable.get(hashIdentifier(identifier, data.getNestingLevel()));
-
-        if (res == null){
-            res = symbolTable.get(hashIdentifier(identifier, 0));
-        }
-
-        return res;
-    }
-
-    /**
-     * Put input addressable to map with hashed key by function hashIdentifier
-     *
-     * @param identifier of saving object
-     * @param addressable object which will be saved
-     */
-    private void symbolTablePut(String identifier, Addressable addressable){
-        symbolTable.put(hashIdentifier(identifier, data.getNestingLevel()), addressable);
-    }
-
-    /**
-     * Add before identifier nestingLevel. New identifier is unique for scope.
-     *
-     * @param identifier which will be hashed
-     * @param nestingLevel number of scope
-     * @return coded identifier
-     */
-    private String hashIdentifier(String identifier, int nestingLevel){
-        return nestingLevel + identifier;
     }
 }

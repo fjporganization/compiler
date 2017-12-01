@@ -1,7 +1,9 @@
 package fjp.compilers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import fjp.structures.*;
 
@@ -22,6 +24,9 @@ public class CompilerData {
     /** output instructions */
     private final List<Instruction> output;
 
+    /** table of symbol */
+    private final Map<String, Addressable> symbolTable;
+
     /** instruction whose operand need to be add about number of variables */
     public final List<Instruction> toShift;
 
@@ -37,6 +42,7 @@ public class CompilerData {
 
         this.output = new ArrayList<>();
         this.toShift = new ArrayList<>();
+        this.symbolTable = new HashMap<>();
     }
 
     // OUTPUT INSTRUCTIONS =================
@@ -149,5 +155,44 @@ public class CompilerData {
      */
     public void incVarCounter(){
         varCounter++;
+    }
+
+    // SYMBOL TABLE OPERATIONS =============
+
+    /**
+     * Return object of fjp.structures.Addressable which have input identifier and is in same scope or is defined globally
+     *
+     * @param identifier of searching object
+     * @return found object or null
+     */
+    public Addressable symbolTableGet(String identifier){
+        Addressable res = symbolTable.get(hashIdentifier(identifier, getNestingLevel()));
+
+        if (res == null){
+            res = symbolTable.get(hashIdentifier(identifier, 0));
+        }
+
+        return res;
+    }
+
+    /**
+     * Put input addressable to map with hashed key by function hashIdentifier
+     *
+     * @param identifier of saving object
+     * @param addressable object which will be saved
+     */
+    public void symbolTablePut(String identifier, Addressable addressable){
+        symbolTable.put(hashIdentifier(identifier, getNestingLevel()), addressable);
+    }
+
+    /**
+     * Add before identifier nestingLevel. New identifier is unique for scope.
+     *
+     * @param identifier which will be hashed
+     * @param nestingLevel number of scope
+     * @return coded identifier
+     */
+    private String hashIdentifier(String identifier, int nestingLevel){
+        return nestingLevel + identifier;
     }
 }
