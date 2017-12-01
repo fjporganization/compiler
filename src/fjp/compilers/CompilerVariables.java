@@ -1,7 +1,12 @@
+package fjp.compilers;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class CompilerVariables extends CBaseListener{
+import fjp.generated.*;
+import fjp.structures.*;
+
+public class CompilerVariables extends CBaseListener {
 
     /** Data which are shared across all compilers classes */
     private final CompilerData data;
@@ -10,7 +15,7 @@ public class CompilerVariables extends CBaseListener{
     private final Map<String, Addressable> symbolTable;
 
     /**
-     * Constructor of CompilerVariables
+     * Constructor of fjp.compilers.CompilerVariables
      * @param data contains data which are shared with all compiler classes
      */
     public CompilerVariables(CompilerData data){
@@ -29,7 +34,7 @@ public class CompilerVariables extends CBaseListener{
         DataType type = null;
 
         if(symbolTableGet(identifier) != null) {
-            System.err.println("Identifier " + identifier + " is already declared");
+            System.err.println("fjp.structures.Identifier " + identifier + " is already declared");
         }
 
         switch(dataType) {
@@ -61,7 +66,7 @@ public class CompilerVariables extends CBaseListener{
         DataType type = null;
 
         if(symbolTableGet(identifier) != null) {
-            System.err.println("Identifier " + identifier + " is already declared");
+            System.err.println("fjp.structures.Identifier " + identifier + " is already declared");
         }
 
         switch(dataType) {
@@ -96,7 +101,7 @@ public class CompilerVariables extends CBaseListener{
         DataType type = null;
 
         if(symbolTableGet(identifier) != null) {
-            System.err.println("Identifier " + identifier + " is already declared");
+            System.err.println("fjp.structures.Identifier " + identifier + " is already declared");
         }
 
         switch(dataType) {
@@ -175,7 +180,7 @@ public class CompilerVariables extends CBaseListener{
     // SYMBOL TABLE OPERATIONS =============
 
     /**
-     * Return object of Addressable which have input identifier and is in same scope or is defined globally
+     * Return object of fjp.structures.Addressable which have input identifier and is in same scope or is defined globally
      *
      * @param identifier of searching object
      * @return found object or null

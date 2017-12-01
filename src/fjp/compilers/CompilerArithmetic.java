@@ -1,4 +1,9 @@
-public class CompilerArithmetic extends CBaseListener{
+package fjp.compilers;
+
+import fjp.generated.*;
+import fjp.structures.*;
+
+public class CompilerArithmetic extends CBaseListener {
 
     /** Data which are shared across all compilers classes */
     private final CompilerData data;

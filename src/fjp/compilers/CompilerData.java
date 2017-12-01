@@ -1,8 +1,12 @@
+package fjp.compilers;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import fjp.structures.*;
+
 /**
- * Class contains all data which are shared between Compiler classes.
+ * Class contains all data which are shared between fjp.compilers.Compiler classes.
  */
 public class CompilerData {
 

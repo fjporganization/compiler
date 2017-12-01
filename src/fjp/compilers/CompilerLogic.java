@@ -1,10 +1,15 @@
-public class CompilerLogic extends CBaseListener{
+package fjp.compilers;
+
+import fjp.generated.*;
+import fjp.structures.*;
+
+public class CompilerLogic extends CBaseListener {
 
     /** Data which are shared across all compilers classes */
     private final CompilerData data;
 
     /**
-     * Constructor of CompilerLogic
+     * Constructor of fjp.compilers.CompilerLogic
      * @param data contains data which are shared with all compiler classes
      */
     public CompilerLogic(CompilerData data){

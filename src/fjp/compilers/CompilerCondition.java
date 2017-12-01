@@ -1,6 +1,11 @@
+package fjp.compilers;
+
 import java.util.Stack;
 
-public class CompilerCondition extends CBaseListener{
+import fjp.generated.*;
+import fjp.structures.*;
+
+public class CompilerCondition extends CBaseListener {
 
     /**
      * used for storing instructions, in which will be changed operands
@@ -13,7 +18,7 @@ public class CompilerCondition extends CBaseListener{
     private final CompilerData data;
 
     /**
-     * Constructor of CompilerCondition
+     * Constructor of fjp.compilers.CompilerCondition
      * @param data contains data which are shared with all compiler classes
      */
     public CompilerCondition(CompilerData data){

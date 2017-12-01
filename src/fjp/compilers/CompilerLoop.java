@@ -1,6 +1,11 @@
+package fjp.compilers;
+
 import java.util.Stack;
 
-public class CompilerLoop extends CBaseListener{
+import fjp.generated.*;
+import fjp.structures.*;
+
+public class CompilerLoop extends CBaseListener {
 
     /**
      * used for storing instructions, in which will be changed operands
@@ -16,7 +21,7 @@ public class CompilerLoop extends CBaseListener{
     private final CompilerData data;
 
     /**
-     * Constructor of CompilerLoop
+     * Constructor of fjp.compilers.CompilerLoop
      * @param data contains data which are shared with all compiler classes
      */
     public CompilerLoop(CompilerData data){

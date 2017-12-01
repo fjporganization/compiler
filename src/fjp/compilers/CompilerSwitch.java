@@ -1,8 +1,15 @@
+package fjp.compilers;
+
+import fjp.generated.CBaseListener;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import fjp.generated.*;
+import fjp.structures.*;
 
 /**
  * Create instructions which are connected witch switch command
@@ -32,7 +39,7 @@ public class CompilerSwitch extends CBaseListener {
 
 
     /**
-     * Constructor of CompilerSwitch
+     * Constructor of fjp.compilers.CompilerSwitch
      * @param data contains data which are shared with all compiler classes
      */
     public CompilerSwitch(CompilerData data){
