@@ -1,7 +1,3 @@
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,22 +6,23 @@ import java.util.List;
  */
 public class CompilerData {
 
+    /** Number of function declaration instructions */
     public static final short BASE_FUNC_STACK_SIZE = 3;
 
-    /**
-     * address of actual position of the stack (in the assembler)
-     */
+    /** address of actual position of the stack (in the assembler) */
     private int stackPointer;
-    /**
-     * current lexicographical level
-     */
+
+    /** current lexicographical level */
     private int nestingLevel;
-    /**
-     * output instructions
-     */
+
+    /** output instructions */
     private final List<Instruction> output;
 
+    /** instruction whose operand need to be add about number of variables */
     public final List<Instruction> toShift;
+
+    /** Number of variables which will be defined at the beginning of function/program */
+    private int varCounter = 0;
 
     /**
      * Initialize data in class
@@ -38,47 +35,11 @@ public class CompilerData {
         this.toShift = new ArrayList<>();
     }
 
-    /**
-     * Returns address of last added instructio.
-     * @return address of last added instructio
-     */
-    public int getCurrentInstructionAddress() {
-        return output.size() - 1;
-    }
-
-    /**
-     * writes generated instructions into the output file
-     */
-    public void writeToFile(String outputFileName) {
-        Writer bw = null;
-        int currentAddress = 0;
-
-        try {
-            bw = new BufferedWriter(new FileWriter(outputFileName));
-            for(Instruction instruction : output) {
-                if(instruction != null) {
-                    bw.write(currentAddress + " " + instruction.toString() + "\n");
-                    currentAddress++;
-                }
-            }
-
-        } catch (IOException e) {
-            System.err.println("Cannot write to the output file");
-        } finally {
-            try {
-                bw.close();
-            } catch (IOException e) {
-                System.err.println("Cannot close the output file");
-            }
-        }
-    }
-
-    public List<Instruction> getOutput(){
-        return output;
-    }
+    // OUTPUT INSTRUCTIONS =================
 
     /**
      * Add input instruction to end of list of all instructions.
+     *
      * @param instruction instruction which will be add to list
      */
     public void addInstruction(Instruction instruction){
@@ -86,13 +47,42 @@ public class CompilerData {
     }
 
     /**
+     * Return list of instructions.
+     *
+     * @return list of instructions
+     */
+    public List<Instruction> getOutput(){
+        return output;
+    }
+
+    /**
+     * Returns address of last added instruction.
+     *
+     * @return address of last added instruction
+     */
+    public int getCurrentInstructionAddress() {
+        return output.size() - 1;
+    }
+
+    // STACK POINTER =======================
+
+    /**
+     * Set stackpointer to default value -1.
+     */
+    public void resetStackPointer(){
+        stackPointer = -1;
+    }
+
+    /**
      * Method increment stackPointer
      */
     public void incStackPointer(){
         stackPointer ++;
-    }/**
+    }
 
+    /**
      * Method add value to stackPointer
+     *
      * @param value which is add to stackPointer
      */
     public void incStackPointer(int value){
@@ -106,28 +96,54 @@ public class CompilerData {
         stackPointer --;
     }
 
-    public void resetStackPointer(){
-        stackPointer = -1;
-    }
-
     /**
      * Return actual value of stack pointer.
+     *
      * @return value of stackPointer
      */
     public int getStackPointer() {
         return stackPointer;
     }
 
+    // SCOPE NUMBER ========================
 
     /**
      * Return nestingLevel.
+     *
      * @return nestingLevel
      */
     public int getNestingLevel() {
         return nestingLevel;
     }
 
+    /**
+     * Method increment nestingLevel.
+     */
     public void incNestingLevel() {
         nestingLevel++;
+    }
+
+    // VARIABLE COUNTER ====================
+
+    /**
+     * Set varCounter to default value 0.
+     */
+    public void resetVarCounter(){
+        varCounter = 0;
+    }
+
+    /**
+     * Return varCounter.
+     * @return varCounter
+     */
+    public int getVarCounter(){
+        return varCounter;
+    }
+
+    /**
+     * Method increment varCounter.
+     */
+    public void incVarCounter(){
+        varCounter++;
     }
 }

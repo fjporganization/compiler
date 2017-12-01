@@ -1,6 +1,4 @@
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.io.*;
 import java.util.List;
 
 import org.antlr.v4.runtime.*;
@@ -26,17 +24,54 @@ public class Main {
 		CompilerData data = new CompilerData();
 
 		Compiler compiler = new Compiler(data);
-		SwitchCompiler switchCompiler = new SwitchCompiler(data);
+		CompilerSwitch compilerSwitch = new CompilerSwitch(data);
+		CompilerLogic compilerLogic = new CompilerLogic(data);
+		CompilerVariables compilerVariables = new CompilerVariables(data);
+		CompilerArithmetic compilerArithmetic = new CompilerArithmetic(data);
+		CompilerCondition compilerCondition = new CompilerCondition(data);
+		CompilerLoop compilerLoop = new CompilerLoop(data);
 		
 		parser.addParseListener(compiler);
-		parser.addParseListener(switchCompiler);
+		parser.addParseListener(compilerSwitch);
+		parser.addParseListener(compilerLogic);
+		parser.addParseListener(compilerVariables);
+		parser.addParseListener(compilerArithmetic);
+		parser.addParseListener(compilerCondition);
+		parser.addParseListener(compilerLoop);
 		parser.start();
 		
-		data.writeToFile(outputFileName);
+		writeToFile(outputFileName, data.getOutput());
 		
 		Interpreter interpreter = new Interpreter();
 		interpreter.setInstructions(data.getOutput());
 		interpreter.interpret();
+	}
+
+	/**
+	 * Writes generated instructions into the output file.
+	 */
+	public static void writeToFile(String outputFileName, List<Instruction> output) {
+		Writer bw = null;
+		int currentAddress = 0;
+
+		try {
+			bw = new BufferedWriter(new FileWriter(outputFileName));
+			for(Instruction instruction : output) {
+				if(instruction != null) {
+					bw.write(currentAddress + " " + instruction.toString() + "\n");
+					currentAddress++;
+				}
+			}
+
+		} catch (IOException e) {
+			System.err.println("Cannot write to the output file");
+		} finally {
+			try {
+				bw.close();
+			} catch (IOException e) {
+				System.err.println("Cannot close the output file");
+			}
+		}
 	}
 
 }

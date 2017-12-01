@@ -7,16 +7,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Create instructions which are connected witch switch command
  */
-public class SwitchCompiler extends CBaseListener {
+public class CompilerSwitch extends CBaseListener {
 
-    /**
-     * Data which are shared across all compilers classes
-     */
+    /** Data which are shared across all compilers classes */
     private final CompilerData data;
 
-    /**
-     * Stack of nested switches
-     */
+    /** Stack of nested switches */
     private Stack<SwitchObject> switches;
 
     /**
@@ -35,7 +31,11 @@ public class SwitchCompiler extends CBaseListener {
     }
 
 
-    public SwitchCompiler(CompilerData data){
+    /**
+     * Constructor of CompilerSwitch
+     * @param data contains data which are shared with all compiler classes
+     */
+    public CompilerSwitch(CompilerData data){
         this.data = data;
         switches = new Stack<>();
     }
