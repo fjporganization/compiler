@@ -138,8 +138,15 @@ public class CompilerVariables extends CBaseListener {
             System.exit(1);
         }
 
-        Instruction instruction = new Instruction(InstructionCodes.LOAD,
-                data.getNestingLevel() - variable.getNestingLevel(), variable.getAddress());
+        InstructionCodes code = InstructionCodes.LOAD;
+        int nestingLevel = data.getNestingLevel() - variable.getNestingLevel();
+
+        if(variable.getNestingLevel() == 0){
+            code = InstructionCodes.LOAD_FROM_ADDRESS;
+            nestingLevel = 0;
+        }
+
+        Instruction instruction = new Instruction(code, nestingLevel, variable.getAddress());
 
         //instruction push 1 value onto the stack
         data.incStackPointer();
@@ -165,8 +172,16 @@ public class CompilerVariables extends CBaseListener {
             System.exit(1);
         }
 
+        InstructionCodes code = InstructionCodes.STORE;
+        int nestingLevel = data.getNestingLevel() - variable.getNestingLevel();
+
+        if(variable.getNestingLevel() == 0){
+            code = InstructionCodes.STORE_AT_ADDRESS;
+            nestingLevel = 0;
+        }
+
         //value of the assignment is on top of the stack, store current stack pointer
-        data.addInstruction(new Instruction(InstructionCodes.STORE, data.getNestingLevel() - variable.getNestingLevel(), variable.getAddress()));
+        data.addInstruction(new Instruction(code, nestingLevel, variable.getAddress()));
         data.decStackPointer();
     }
 }

@@ -186,6 +186,17 @@ public class CompilerData {
     }
 
     /**
+     * Put input addressable to map with hashed key by function hashIdentifier
+     *
+     * @param identifier of saving object
+     * @param addressable object which will be saved
+     * @param nestingLevel level of scope
+     */
+    public void symbolTablePut(String identifier, Addressable addressable, int nestingLevel){
+        symbolTable.put(hashIdentifier(identifier, nestingLevel), addressable);
+    }
+
+    /**
      * Add before identifier nestingLevel. New identifier is unique for scope.
      *
      * @param identifier which will be hashed
