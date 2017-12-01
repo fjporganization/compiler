@@ -1,5 +1,5 @@
-// Generated from C:/Users/Tomas/Programing/FJP/compiler/grammar\C.g4 by ANTLR 4.7
-package fjp.generated;
+package fjp.generated; 
+// Generated from ./grammar/C.g4 by ANTLR 4.7
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -400,6 +400,18 @@ public class CBaseListener implements CListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterFractionIO(CParser.FractionIOContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFractionIO(CParser.FractionIOContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterIdentifierAtom(CParser.IdentifierAtomContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -695,6 +707,30 @@ public class CBaseListener implements CListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitOutputinteger(CParser.OutputintegerContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterInputfrac(CParser.InputfracContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitInputfrac(CParser.InputfracContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOutputfrac(CParser.OutputfracContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOutputfrac(CParser.OutputfracContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

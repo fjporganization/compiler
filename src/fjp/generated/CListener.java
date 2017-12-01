@@ -1,5 +1,5 @@
-// Generated from C:/Users/Tomas/Programing/FJP/compiler/grammar\C.g4 by ANTLR 4.7
-package fjp.generated;
+package fjp.generated; 
+// Generated from ./grammar/C.g4 by ANTLR 4.7
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -366,6 +366,18 @@ public interface CListener extends ParseTreeListener {
 	 */
 	void exitIntegerIO(CParser.IntegerIOContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code fractionIO}
+	 * labeled alternative in {@link CParser#atom}.
+	 * @param ctx the parse tree
+	 */
+	void enterFractionIO(CParser.FractionIOContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code fractionIO}
+	 * labeled alternative in {@link CParser#atom}.
+	 * @param ctx the parse tree
+	 */
+	void exitFractionIO(CParser.FractionIOContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code identifierAtom}
 	 * labeled alternative in {@link CParser#atom}.
 	 * @param ctx the parse tree
@@ -623,4 +635,24 @@ public interface CListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitOutputinteger(CParser.OutputintegerContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#inputfrac}.
+	 * @param ctx the parse tree
+	 */
+	void enterInputfrac(CParser.InputfracContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#inputfrac}.
+	 * @param ctx the parse tree
+	 */
+	void exitInputfrac(CParser.InputfracContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#outputfrac}.
+	 * @param ctx the parse tree
+	 */
+	void enterOutputfrac(CParser.OutputfracContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#outputfrac}.
+	 * @param ctx the parse tree
+	 */
+	void exitOutputfrac(CParser.OutputfracContext ctx);
 }

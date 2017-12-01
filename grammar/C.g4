@@ -122,6 +122,7 @@ stringexpression
   
 atom
   : inputinteger																	  #integerIO	
+  | inputfrac																		  #fractionIO
   | IDENTIFIER                                                                        #identifierAtom
   | NUMERICALVALUE                                                                    #numericAtom
   | STRINGVALUE                                                                       #stringAtom
@@ -217,6 +218,14 @@ outputinteger
   : WRITEINT LEFTPARENTHESE arithmeticexpression RIGHTPARENTHESE SEMICOLON
   ;
   
+inputfrac
+  : READFRAC LEFTPARENTHESE RIGHTPARENTHESE
+  ;
+
+outputfrac
+  : WRITEINT LEFTPARENTHESE arithmeticexpression RIGHTPARENTHESE SEMICOLON
+  ;
+  
 /*
  * Lexer rules
  */
@@ -230,11 +239,19 @@ WHITESPACE
   ;
 
 WRITEINT
-  : 'writeInt'
+  : 'writeint'
   ;
   
 READINT
-  : 'readInt'
+  : 'readint'
+  ;
+  
+WRITEFRAC
+  : 'writefrac'
+  ;
+  
+READFRAC
+  : 'readfrac'
   ;
 
 TYPEQUALIFIER
@@ -246,6 +263,7 @@ TYPESPECIFIER
   | 'real'
   | 'boolean'
   | 'string'
+  | 'ratio'
   ;
   
 FUNCTIONRETURNTYPESPECIFIER
@@ -355,6 +373,7 @@ IDENTIFIER
 NUMERICALVALUE
   : (ADDITIONSUBTRACTIONOPERATOR)? (DIGIT)+
   | (ADDITIONSUBTRACTIONOPERATOR)? (DIGIT)+ '.' (DIGIT)+ 
+  | (ADDITIONSUBTRACTIONOPERATOR)? (DIGIT)+ '|' (DIGIT)+ 
   ;
 
 LEFTPARENTHESE
