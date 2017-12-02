@@ -24,31 +24,7 @@ public class CompilerVariables extends CBaseListener {
      */
     @Override
     public void exitDeclarationOnly(CParser.DeclarationOnlyContext ctx) {
-        String identifier = ctx.IDENTIFIER().getText();
-        String dataType = ctx.TYPESPECIFIER().getText();
-        int length = 0;
-        DataType type = null;
-
-        if(data.symbolTableGet(identifier) != null) {
-            System.err.println("Identifier " + identifier + " is already declared");
-        }
-
-        switch(dataType) {
-            case "int":
-                type = DataType.INT;
-                length = 0; //int has no overlap in the stack
-                break;
-            case "boolean":
-                type = DataType.BOOLEAN;
-                length = 0; //boolean has no overlap in the stack
-                break;
-        }
-
-        int varAddress = CompilerData.BASE_FUNC_STACK_SIZE + data.getVarCounter();
-        data.incVarCounter();
-
-        Variable var = new Variable(varAddress, data.getNestingLevel(), identifier, length, type);
-        data.symbolTablePut(identifier, var);
+        declaration(ctx.IDENTIFIER().getText(), ctx.TYPESPECIFIER().getText(), false);
     }
 
     /**
@@ -56,34 +32,17 @@ public class CompilerVariables extends CBaseListener {
      */
     @Override
     public void exitDeclarationAndInitialization(CParser.DeclarationAndInitializationContext ctx) {
-        String identifier = ctx.IDENTIFIER().getText();
-        String dataType = ctx.TYPESPECIFIER().getText();
-        int length = 0;
-        DataType type = null;
+        Addressable addressable = declaration(ctx.IDENTIFIER().getText(), ctx.TYPESPECIFIER().getText(), false);
 
-        if(data.symbolTableGet(identifier) != null) {
-            System.err.println("Identifier " + identifier + " is already declared");
+        if (data.popDataType() != addressable.getDataType()) {
+            System.err.println("Data type " + addressable.getDataType() + " is not expected in: " + addressable.getName());
+            System.exit(1);
         }
 
-        switch(dataType) {
-            case "int":
-                type = DataType.INT;
-                length = 0; //int has no overlap in the stack
-                break;
-            case "boolean":
-                type = DataType.BOOLEAN;
-                length = 0; //boolean has no overlap in the stack
-                break;
+        for (int i = 0; i < addressable.getLength(); i++){
+            data.addInstruction(new Instruction(InstructionCodes.STORE, 0, addressable.getAddress() + i));
+            data.decStackPointer();
         }
-
-        int varAddress = CompilerData.BASE_FUNC_STACK_SIZE + data.getVarCounter();
-        data.incVarCounter();
-
-        Variable variable = new Variable(varAddress, data.getNestingLevel(), identifier, length, type);
-        data.symbolTablePut(identifier, variable);
-
-        data.addInstruction(new Instruction(InstructionCodes.STORE, 0, varAddress));
-        data.decStackPointer();
     }
 
     /**
@@ -91,34 +50,58 @@ public class CompilerVariables extends CBaseListener {
      */
     @Override
     public void exitConstantdeclaration(CParser.ConstantdeclarationContext ctx) {
-        String identifier = ctx.IDENTIFIER().getText();
-        String dataType = ctx.TYPESPECIFIER().getText();
+
+        Addressable addressable = declaration(ctx.IDENTIFIER().getText(), ctx.TYPESPECIFIER().getText(), true);
+
+        if (data.popDataType() != addressable.getDataType()) {
+            System.err.println("Data type " + addressable.getDataType() + " is not expected in: " + addressable.getName());
+            System.exit(1);
+        }
+
+        for (int i = 0; i < addressable.getLength(); i++){
+            data.addInstruction(new Instruction(InstructionCodes.STORE, 0, addressable.getAddress() + i));
+            data.decStackPointer();
+        }
+    }
+
+    private Addressable declaration (String identifier, String dataType, boolean constant){
         int length = 0;
         DataType type = null;
 
         if(data.symbolTableGet(identifier) != null) {
             System.err.println("Identifier " + identifier + " is already declared");
+            System.exit(1);
         }
 
         switch(dataType) {
             case "int":
                 type = DataType.INT;
-                length = 0; //int has no overlap in the stack
+                length = 1;
                 break;
             case "boolean":
                 type = DataType.BOOLEAN;
-                length = 0; //boolean has no overlap in the stack
+                length = 1;
+                break;
+            case "ratio":
+                type = DataType.FRACTION;
+                length = 2;
                 break;
         }
 
+        // get alloc address
         int varAddress = CompilerData.BASE_FUNC_STACK_SIZE + data.getVarCounter();
-        data.incVarCounter();
+        data.incVarCounter(length);
 
-        Constant constant = new Constant(varAddress, data.getNestingLevel(), identifier, length, type);
-        data.symbolTablePut(identifier, constant);
+        // Create Variable or Constant
+        Addressable addressable;
+        if (constant) {
+            addressable = new Constant(varAddress, data.getNestingLevel(), identifier, length, type);
+        } else {
+            addressable = new Variable(varAddress, data.getNestingLevel(), identifier, length, type);
+        }
+        data.symbolTablePut(identifier, addressable);
 
-        data.addInstruction(new Instruction(InstructionCodes.STORE, 0, varAddress));
-        data.decStackPointer();
+        return addressable;
     }
 
     /**
@@ -127,37 +110,20 @@ public class CompilerVariables extends CBaseListener {
     @Override
     public void exitIdentifierAtom(CParser.IdentifierAtomContext ctx) {
         //load variable or constant identified by identifier onto the stack
-        String identifier = ctx.IDENTIFIER().getText();
-        Addressable variable = data.symbolTableGet(identifier);
+        Addressable variable = getAddressable(ctx.IDENTIFIER().getText());
 
-        if(variable == null) {
-            System.err.println(identifier + " is unknown");
-            System.exit(1);
+        data.pushDataType(variable.getDataType());
+
+        if (variable.getNestingLevel() == 0) {
+            // global variable
+            globalVariables(InstructionCodes.LOAD_FROM_ADDRESS, variable.getAddress(), variable.getLength());
+        } else {
+            // local variable
+            int nestingLevel = data.getNestingLevel() - variable.getNestingLevel();
+            localVariables(InstructionCodes.LOAD, variable.getAddress(), variable.getLength(), nestingLevel);
         }
 
-        //check if identifier is not name of function
-        if(!(variable instanceof Variable || variable instanceof Constant)) {
-            System.err.println(identifier + " is not constant or variable");
-            System.exit(1);
-        }
-
-        InstructionCodes code = InstructionCodes.LOAD;
-        int nestingLevel = data.getNestingLevel() - variable.getNestingLevel();
-        int operand = variable.getAddress();
-
-        if(variable.getNestingLevel() == 0){
-            data.addInstruction(new Instruction(InstructionCodes.PUSH, 0, variable.getAddress()));
-
-            code = InstructionCodes.LOAD_FROM_ADDRESS;
-            nestingLevel = 0;
-            operand = 0;
-        }
-
-        Instruction instruction = new Instruction(code, nestingLevel, operand);
-
-        //instruction push 1 value onto the stack
-        data.incStackPointer();
-        data.addInstruction(instruction);
+        data.incStackPointer(variable.getLength());
     }
 
     /**
@@ -165,80 +131,59 @@ public class CompilerVariables extends CBaseListener {
      */
     @Override
     public void exitStandardAssignment(CParser.StandardAssignmentContext ctx) {
-        String identifier =  ctx.IDENTIFIER().getText();
 
-        Addressable variable = data.symbolTableGet(identifier);
+        Addressable variable = getAddressable(ctx.IDENTIFIER().getText());
 
-        if(variable == null) {
-            System.err.println("Unknown identifier: " + identifier);
+        if (data.popDataType() != variable.getDataType()) {
+            System.err.println("Invalid data type: " + variable.getName());
             System.exit(1);
         }
-
-        if(!(variable instanceof Variable)) {
-            System.err.println(identifier + "is not variable");
-            System.exit(1);
-        }
-
-        InstructionCodes code = InstructionCodes.STORE;
-        int nestingLevel = data.getNestingLevel() - variable.getNestingLevel();
-        int operand = variable.getAddress();
 
         if(variable.getNestingLevel() == 0){
-            data.addInstruction(new Instruction(InstructionCodes.PUSH, 0, variable.getAddress()));
-
-            code = InstructionCodes.STORE_AT_ADDRESS;
-            nestingLevel = 0;
-            operand = 0;
+            globalVariables(InstructionCodes.STORE_AT_ADDRESS, variable.getAddress(), variable.getLength());
+        } else {
+            int nestingLevel = data.getNestingLevel() - variable.getNestingLevel();
+            localVariables(InstructionCodes.STORE, variable.getAddress(), variable.getLength(), nestingLevel);
         }
 
-        //value of the assignment is on top of the stack, store current stack pointer
-        data.addInstruction(new Instruction(code, nestingLevel, operand));
-        data.decStackPointer();
+        data.decStackPointer(variable.getLength());
     }
 
     @Override
     public void exitMultipleAssignment(CParser.MultipleAssignmentContext ctx) {
 
         List<TerminalNode> identifiers = ctx.IDENTIFIER();
+        DataType valueType = data.popDataType();
+        int length = valueType == DataType.FRACTION ? 2 : 1; // size of values on stack
 
         for(TerminalNode node : identifiers){
+            Addressable variable = getAddressable(node.getText());
 
-            String identifier = node.getText();
-            Addressable variable = data.symbolTableGet(identifier);
-
-            if(variable == null) {
-                System.err.println("Unknown identifier: " + identifier);
+            if (valueType != variable.getDataType()) {
+                System.err.println("Invalid data type: " + variable.getName());
                 System.exit(1);
             }
 
-            if(!(variable instanceof Variable)) {
-                System.err.println(identifier + "is not variable");
-                System.exit(1);
+            for (int i = 0; i < length; i++) {
+                // nestingLevel = 0 because is in same procedure
+                Instruction load = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1);
+                data.addInstruction(load);
+                data.toShift.add(load);
             }
-
-            // nestingLevel = 0 because is in same procedure
-            Instruction load = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer());
-            data.addInstruction(load);
-            data.toShift.add(load);
-
-            InstructionCodes code = InstructionCodes.STORE;
-            int nestingLevel = data.getNestingLevel() - variable.getNestingLevel();
-            int operand = variable.getAddress();
 
             if(variable.getNestingLevel() == 0){
-                data.addInstruction(new Instruction(InstructionCodes.PUSH, 0, variable.getAddress()));
-
-                code = InstructionCodes.STORE_AT_ADDRESS;
-                nestingLevel = 0;
-                operand = 0;
+                globalVariables(InstructionCodes.STORE_AT_ADDRESS, variable.getAddress(), variable.getLength());
+            } else {
+                int nestingLevel = data.getNestingLevel() - variable.getNestingLevel();
+                localVariables(InstructionCodes.STORE, variable.getAddress(), variable.getLength(), nestingLevel);
             }
-
-            //value of the assignment is on top of the stack, store current stack pointer
-            data.addInstruction(new Instruction(code, nestingLevel, operand));
         }
 
-        data.addInstruction(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, data.getCurrentInstructionAddress() + 2));
-        data.decStackPointer();
+        // remove values from stack
+        for (int i = 0; i < length; i++) {
+            data.addInstruction(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, data.getCurrentInstructionAddress() + 2));
+        }
+        data.decStackPointer(length);
     }
 
     @Override
@@ -253,34 +198,53 @@ public class CompilerVariables extends CBaseListener {
 
         for(int i = identifiers.size() - 1; i >= 0; i--){
 
-            String identifier = identifiers.get(i).getText();
-            Addressable variable = data.symbolTableGet(identifier);
+            Addressable variable = getAddressable(identifiers.get(i).getText());
 
-            if(variable == null) {
-                System.err.println("Unknown identifier: " + identifier);
+            if (data.popDataType() != variable.getDataType()) {
+                System.err.println("Invalid data type: " + variable.getName());
                 System.exit(1);
             }
-
-            if(!(variable instanceof Variable)) {
-                System.err.println(identifier + "is not variable");
-                System.exit(1);
-            }
-
-            InstructionCodes code = InstructionCodes.STORE;
-            int nestingLevel = data.getNestingLevel() - variable.getNestingLevel();
-            int operand = variable.getAddress();
 
             if(variable.getNestingLevel() == 0){
-                data.addInstruction(new Instruction(InstructionCodes.PUSH, 0, variable.getAddress()));
-
-                code = InstructionCodes.STORE_AT_ADDRESS;
-                nestingLevel = 0;
-                operand = 0;
+                globalVariables(InstructionCodes.STORE_AT_ADDRESS, variable.getAddress(), variable.getLength());
+            } else {
+                int nestingLevel = data.getNestingLevel() - variable.getNestingLevel();
+                localVariables(InstructionCodes.STORE, variable.getAddress(), variable.getLength(), nestingLevel);
             }
 
-            //value of the assignment is on top of the stack, store current stack pointer
-            data.addInstruction(new Instruction(code, nestingLevel, operand));
-            data.decStackPointer();
+            data.decStackPointer(variable.getLength());
+        }
+    }
+
+
+    private Addressable getAddressable(String identifier){
+        Addressable variable = data.symbolTableGet(identifier);
+
+        if(variable == null) {
+            System.err.println("Unknown identifier: " + identifier);
+            System.exit(1);
+        }
+
+        if(!(variable instanceof Variable)) {
+            System.err.println(identifier + "is not variable");
+            System.exit(1);
+        }
+
+        return variable;
+    }
+
+    private void localVariables(InstructionCodes code, int address, int length, int nestingLevel){
+
+        for (int i = 0; i < length; i++) {
+            data.addInstruction(new Instruction(code, nestingLevel, address + i));
+        }
+    }
+
+    private void globalVariables(InstructionCodes code, int address, int length){
+
+        for (int i = 0; i < length ; i++) {
+            data.addInstruction(new Instruction(InstructionCodes.PUSH, 0, address + i));
+            data.addInstruction(new Instruction(code, 0, 0));
         }
     }
 }
