@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import fjp.structures.*;
 
@@ -33,8 +34,8 @@ public class CompilerData {
     /** Number of variables which will be defined at the beginning of function/program */
     private int varCounter = 0;
     
-    /** data type of the expression which is currently evaluated */
-    private DataType currentExpDataType;
+    /** data types of the expression which is currently evaluated */
+    private final Stack<DataType> expDataTypeStack;
 
     /**
      * Initialize data in class
@@ -46,12 +47,13 @@ public class CompilerData {
         this.output = new ArrayList<>();
         this.toShift = new ArrayList<>();
         this.symbolTable = new HashMap<>();
+        this.expDataTypeStack = new Stack<>();
     }
 
     // OUTPUT INSTRUCTIONS =================
     
     /**
-     * Add input instruction to end of list of all instructions and change stack pointer.
+     * Add input instruction to end of list of all instructions and change stack pointer
      *
      * @param instruction instruction which will be add to list
      */
@@ -69,8 +71,6 @@ public class CompilerData {
     	}else {
     		stackPointer += instruction.getCode().getStackChange();
     	}
-    	
-    	System.out.println();
     }
     
     /**
@@ -233,23 +233,17 @@ public class CompilerData {
         return nestingLevel + identifier;
     }
     
-// EXPRESSION DATA TYPE ================
+    // EXPRESSION DATA TYPE ================
     
-    /**
-     * Return currentExpDataType
-     * 
-	 * @return the currentExpDataType
-	 */
-	public DataType getCurrentExpDataType() {
-		return currentExpDataType;
-	}
-
-	/**
-	 * Set currentExpDataType
-	 * 
-	 * @param currentExpDataType the currentExpDataType to set
-	 */
-	public void setCurrentExpDataType(DataType currentExpDataType) {
-		this.currentExpDataType = currentExpDataType;
-	}
+    public void pushDataType(DataType type) {
+    	expDataTypeStack.push(type);
+    }
+    
+    public DataType popDataType() {
+    	return expDataTypeStack.pop();
+    }
+    
+    public DataType getLastNoPoping() {
+    	return expDataTypeStack.peek();
+    }
 }
