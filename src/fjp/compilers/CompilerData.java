@@ -49,7 +49,30 @@ public class CompilerData {
     }
 
     // OUTPUT INSTRUCTIONS =================
-
+    
+    /**
+     * Add input instruction to end of list of all instructions and change stack pointer.
+     *
+     * @param instruction instruction which will be add to list
+     */
+    public void addInstructionChangeStackPointer(Instruction instruction) {
+    	addInstruction(instruction);
+    	
+    	if(instruction.getCode() == InstructionCodes.OPERATION) {
+    		stackPointer += OperationCode.getOpCodeByCode(instruction.getOperand()).getIntegerStackChange();
+    	}else if(instruction.getCode() == InstructionCodes.OPERATION_REAL) {
+    		stackPointer += OperationCode.getOpCodeByCode(instruction.getOperand()).getRealStackChange();
+    	}else if(instruction.getCode() == InstructionCodes.OPERATION_LOGIC) {
+    		stackPointer += LogicCode.getOpCodeByCode(instruction.getOperand()).getStackChange();
+    	}else if(instruction.getCode() == InstructionCodes.INCREMENT) {
+    		stackPointer += instruction.getOperand();
+    	}else {
+    		stackPointer += instruction.getCode().getStackChange();
+    	}
+    	
+    	System.out.println();
+    }
+    
     /**
      * Add input instruction to end of list of all instructions.
      *

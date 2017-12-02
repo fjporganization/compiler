@@ -21,9 +21,11 @@ public class CompilerLogic extends CBaseListener {
      */
     @Override
     public void exitLogicNegation(CParser.LogicNegationContext ctx) {
-        Instruction instruction = new Instruction(InstructionCodes.OPERATION, 0, OperationCode.LOGIC_NEGATION);
+    	// TODO
+    	
+        //Instruction instruction = new Instruction(InstructionCodes.OPERATION, 0, OperationCode.LOGIC_NEGATION);
         //no change of stack pointer
-        data.addInstruction(instruction);
+        //data.addInstruction(instruction);
     }
 
     /**
