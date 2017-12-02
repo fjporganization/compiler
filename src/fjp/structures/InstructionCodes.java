@@ -20,6 +20,8 @@ public enum InstructionCodes {
 	INTEGER_TO_REAL("ITR", +1),
 	LOAD_FROM_ADDRESS("LDA", 0),
 	STORE_AT_ADDRESS("STA", -2),
+	READ_FRAC("REF", +2),
+	WRITE_FRAC("WRF", -2);
 	;
 		
 	private String operation;

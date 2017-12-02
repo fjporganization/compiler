@@ -134,23 +134,4 @@ public class Compiler extends CBaseListener {
 		data.resetVarCounter();
 		intInstruction = null;
 	}
-	
-	
-	
-	/*
-	 * I/O 
-	 */
-	@Override
-	public void exitInputinteger(CParser.InputintegerContext ctx) { 
-		data.addInstruction(new Instruction(InstructionCodes.READ_INTEGER, 0, 0));
-		data.incStackPointer();
-	}
-	
-	@Override
-	public void exitOutputinteger(CParser.OutputintegerContext ctx) { 
-		data.addInstruction(new Instruction(InstructionCodes.WRITE_INTEGER, 0, 0));
-		data.decStackPointer();
-	}
-	
-
 }

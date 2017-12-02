@@ -154,8 +154,17 @@ public class Interpreter {
 					processStoreAtAddress(instruction);
 					break;
 					
+				case READ_FRAC:
+					processReadFrac(instruction);
+					break;
+					
+				case WRITE_FRAC:
+					processWriteFrac(instruction);
+					break;
+					
 				default: 
 					System.err.println("INTERPRETER: Unknown instruction");
+					System.exit(1);
 				}
 				
 				if(InterpreterConstants.isShowDebug()) {
@@ -180,7 +189,7 @@ public class Interpreter {
 		
 		System.out.println("END PL/0");
 	}
-	
+
 	/**
 	 * Push literal M onto the stack
 	 * @param instruction instruction to be executed
@@ -284,9 +293,6 @@ public class Interpreter {
 			int result = stack[stackPointer - 1] <= stack[stackPointer] ? 1 : 0;
 			stackPointer--;
 			stack[stackPointer] = result;
-			
-		}else if(code == OperationCode.LOGIC_NEGATION.getCode()) {
-			stack[stackPointer] = stack[stackPointer] == 0 ? 1 : 0;
 			
 		}else {
 			System.err.println("INTERPRETER: Unknown operation code");
@@ -728,6 +734,49 @@ public class Interpreter {
 	 */
 	private void processJump(Instruction instruction) {
 		programCounter = instruction.getOperand();
+	}
+	
+	private void processReadFrac(Instruction instruction) {
+		checkStackOverflow(2);
+		
+		Scanner sc = new Scanner(System.in);
+		stackPointer = stackPointer + 2;
+		
+		String value[] = null; 
+		int numerator = 0;
+		int denominator = 0;
+		
+		while(sc.hasNext()) {
+			try {
+				value = sc.next().split("\\|");
+				numerator = Integer.parseInt(value[0]);
+				denominator = Integer.parseInt(value[1]);
+				
+				if(denominator == 0) {
+					System.err.println("Invalid input - division by zero");
+					continue;
+				}
+				
+				break;
+			} catch (InputMismatchException e) {
+				System.err.println("Invalid input - enter fraction (example: 1|2)");
+				sc.next();
+			}
+		}
+		
+		stack[stackPointer - 1] = numerator;
+		stack[stackPointer] = denominator;
+		
+		sc.close();	
+		programCounter++;
+	}
+	
+	private void processWriteFrac(Instruction instruction) {
+		checkStackUnderflow(2);
+		
+		System.out.println(stack[stackPointer - 1] + "|" + stack[stackPointer]);
+		stackPointer = stackPointer - 2;
+		programCounter++;
 	}
 	
 	/**

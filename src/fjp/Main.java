@@ -37,6 +37,7 @@ public class Main {
 		CompilerArithmetic compilerArithmetic = new CompilerArithmetic(data);
 		CompilerCondition compilerCondition = new CompilerCondition(data);
 		CompilerLoop compilerLoop = new CompilerLoop(data);
+		CompilerIO compilerIO = new CompilerIO(data);
 		
 		parser.addParseListener(compiler);
 		parser.addParseListener(compilerSwitch);
@@ -45,6 +46,7 @@ public class Main {
 		parser.addParseListener(compilerArithmetic);
 		parser.addParseListener(compilerCondition);
 		parser.addParseListener(compilerLoop);
+		parser.addParseListener(compilerIO);
 		parser.start();
 		
 		writeToFile(outputFileName, data.getOutput());
