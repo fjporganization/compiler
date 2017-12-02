@@ -46,10 +46,15 @@ public class CompilerLogic extends CBaseListener {
         	convertFractionsCommonDivisor();
         	//after proceed as integer
         	
-        	case INT:
+        case INT:
         	Instruction instruction = new Instruction(InstructionCodes.OPERATION, 0, operationCode);
             data.addInstructionChangeStackPointer(instruction);
             break;
+        
+        case BOOLEAN:
+        	System.err.println("Incompatible data types");
+        	break;
+            //case for boolean is not necessary, as the boolean causes error in DataConversions.checkDataTypes(data)
         }
         
         shiftFractionInStack();
@@ -80,9 +85,21 @@ public class CompilerLogic extends CBaseListener {
         	convertFractionsCommonDivisor();
         	//proceed as integer
         	
-        	case INT:
+        case INT:
         	Instruction instruction = new Instruction(InstructionCodes.OPERATION, 0, operationCode);
             data.addInstructionChangeStackPointer(instruction);
+            break;
+        
+        case BOOLEAN:
+        	//converts true (any non-zero value) to 1
+        	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 0));
+        	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.INEQUALITY));
+        	
+        	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer()));
+        	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 0));
+        	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.INEQUALITY));
+        	
+            data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, operationCode));
             break;
         }
         

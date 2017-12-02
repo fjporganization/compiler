@@ -21,7 +21,10 @@ public class DataConversions {
     	DataType right = data.popDataType();
     	DataType left = data.popDataType();
     	
-    	if(left == DataType.INT && right == DataType.INT) {
+    	if(left == DataType.BOOLEAN && right == DataType.BOOLEAN) {
+    		return DataType.BOOLEAN;
+    		
+    	}else if(left == DataType.INT && right == DataType.INT) {
     		return DataType.INT;
     		
     	}else if(left == DataType.FRACTION && right == DataType.FRACTION) {

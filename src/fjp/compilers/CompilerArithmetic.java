@@ -55,6 +55,11 @@ public class CompilerArithmetic extends CBaseListener {
     		shiftFractionInStack();
     		data.pushDataType(DataType.FRACTION);
     		break;
+    		
+    	case BOOLEAN:
+    		System.err.println("Incompatible data types");
+    		System.exit(1);
+    		break;
     	}
     }
 
@@ -102,6 +107,11 @@ public class CompilerArithmetic extends CBaseListener {
     		data.pushDataType(DataType.FRACTION);
     		shiftFractionInStack();
     		
+    		break;
+    		
+    	case BOOLEAN:
+    		System.err.println("Incompatible data types");
+    		System.exit(1);
     		break;
     	}
     }
