@@ -170,7 +170,7 @@ public class CompilerArithmetic extends CBaseListener {
      */
     @Override 
     public void exitExpression(CParser.ExpressionContext ctx) { 
-    	if(data.popDataType() == DataType.FRACTION) {
+    	if(data.peekDataType() == DataType.FRACTION) {
     		shortenFraction();
     	}
     }
