@@ -47,10 +47,10 @@
 		
 		\rule{0pt}{4ex} \texttt{OPR 0 13} & Menší nebo rovno: odebere dvě hodnoty z vrcholu zásobníku a na vrchol zásobníku uloží 1, pokud je druhá odebraná hodnota menší nebo rovna než první odebraná hodnota, jinak 0. \\ \hline
 		
-		\rule{0pt}{3ex} \texttt{LOD L M} & Načtení: načte hodnotu z vrcholu zasobníku na pozici \texttt{M} o \texttt{L} úrovní zanoření níže, načtenou hodnotu vloží na zásobník. \\
+		\rule{0pt}{3ex} \texttt{LOD L M} & Načtení: načte hodnotu z vrcholu zásobníku na pozici \texttt{M} o \texttt{L} úrovní zanoření níže, načtenou hodnotu vloží na zásobník. \\
 		\hline
 		
-		\rule{0pt}{3ex} \texttt{STO L M} & Uložení: uloží hodnotu z vrcholu zasobníku na pozici \texttt{M} o \texttt{L} úrovní zanoření níže. \\ \hline
+		\rule{0pt}{3ex} \texttt{STO L M} & Uložení: uloží hodnotu z vrcholu zásobníku na pozici \texttt{M} o \texttt{L} úrovní zanoření níže. \\ \hline
 		
 		\rule{0pt}{3ex} \texttt{CAL L M} & Volání procedury: zavolá proceduru na pozici \texttt{M} o \texttt{L} úrovní zanoření níže. \\ \hline
 		
@@ -72,7 +72,7 @@
 		
 		\rule{0pt}{3ex} \texttt{OPF 0 M} & Provádí aritmetické operace s reálnými čísly, konkrétní operace je udána hodnotou \texttt{M}. Na zásobníku je reálné číslo rozděleno na dvě části, a to celou a desetinnou část; reálné číslo tedy zabírá dvě pozice v zásobníku.\\
 		
-		\rule{0pt}{4ex} \texttt{OPF 0 1} & Unární mínus: odebere dvě hodnoty z vrcholu zásobníku reprezentující reálné číslo a na vrchol zásobníku uloží zápornou hodnotu číslo, mínus je uloženo jen před celou část. \\
+		\rule{0pt}{4ex} \texttt{OPF 0 1} & Unární mínus: odebere dvě hodnoty z vrcholu zásobníku reprezentující reálné číslo a na vrchol zásobníku uloží zápornou hodnotu čísla, mínus je uloženo jen před celou část. \\
 		
 		\rule{0pt}{4ex} \texttt{OPF 0 2} & Sčítání: odebere čtyři hodnoty z vrcholu zásobníku představující dvě reálná čísla a na vrchol zásobníku uloží dvě hodnoty představující součet odebraných čísel \\
 		
@@ -108,6 +108,10 @@
 		
 		\rule{0pt}{3ex} \texttt{LDA 0 0} & Načtení z absolutní adresy: odebere z vrcholu zásobníku hodnotu představující absolutní adresu, na vrchol zásobníku vloží hodnotu nacházející se na odebrané absolutní adrese (bez ohledu na zanoření). \\ \hline
 		
-		\rule{0pt}{3ex} \texttt{STA 0 0} & Uložení na absolutní adresu: odebere ze zásobníku hodnotu představující absolutní pozici v zásobníku (bez ohledu na zanoření), na kterou uloží hodnotu odebranou ze zásobníku \\ \hline
+		\rule{0pt}{3ex} \texttt{STA 0 0} & Uložení na absolutní adresu: odebere ze zásobníku hodnotu představující absolutní pozici v zásobníku (bez ohledu na zanoření), na kterou uloží hodnotu odebranou ze zásobníku. \\ \hline
+		
+		\rule{0pt}{3ex} \texttt{REF 0 0} & Načtení zlomku: načte zlomek ze vstupu a uloží jej na zásobník. Na zásobník nejprve vloží čitatele, poté jmenovatele. \\ \hline
+		
+		\rule{0pt}{3ex} \texttt{WRF 0 0} & Výpis zlomku: odebere nejprve jmenovatele a poté čitatele zlomku, odebraný zlomek vypíše na výstup. \\ \hline
 	\end{longtable}
 \end{document}
