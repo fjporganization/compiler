@@ -28,7 +28,9 @@ public class CompilerSwitch extends CBaseListener {
     private class SwitchObject {
         Queue<Instruction> insQueue;
         List<Instruction> insList;
-        Instruction loadCmpValue;
+        Instruction loadCmpValue [] = null;
+        int valueLenght;
+        DataType valueType;
 
         SwitchObject(){
             insQueue = new LinkedBlockingQueue<>();
@@ -75,8 +77,10 @@ public class CompilerSwitch extends CBaseListener {
         // TODO expecting that value from expression is at the end of switch on top of stack
         // TODO exist instruction for remove value from stack?
         // remove last value from stack
-        data.addInstruction(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, data.getCurrentInstructionAddress() + 2));
-        data.decStackPointer();
+        for (int i = 0; i < obj.valueLenght; i++) {
+            data.addInstruction(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, data.getCurrentInstructionAddress() + 2));
+            data.decStackPointer();
+        }
     }
 
 
@@ -87,13 +91,21 @@ public class CompilerSwitch extends CBaseListener {
     public void enterSwitchcase(CParser.SwitchcaseContext ctx) {
         // first switch case create load instruction to last value from stack
         // new instruction will be added in all switch case branches
-        if(switches.peek().loadCmpValue == null) {
-            switches.peek().loadCmpValue = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer());
-            data.toShift.add(switches.peek().loadCmpValue);
+        SwitchObject mSwitch = switches.peek();
+
+        if(mSwitch.loadCmpValue == null) {
+            mSwitch.valueType = data.popDataType();
+            mSwitch.valueLenght = mSwitch.valueType == DataType.FRACTION ? 2 : 1;
+            mSwitch.loadCmpValue = new Instruction[mSwitch.valueLenght];
+            for (int i = 0; i < mSwitch.valueLenght; i++) {
+                int address = data.getCurrentInstructionAddress() - mSwitch.valueLenght - 1 + i;
+                mSwitch.loadCmpValue[i] = new Instruction(InstructionCodes.LOAD, 0, address);
+                data.toShift.add(mSwitch.loadCmpValue[i]);
+            }
         }
 
         // Get jump from last case block to set address
-        Instruction lastJump = switches.peek().insQueue.poll();
+        Instruction lastJump = mSwitch.insQueue.poll();
         if(lastJump != null){
             lastJump.setOperand(data.getCurrentInstructionAddress() + 1);
         }
@@ -108,8 +120,10 @@ public class CompilerSwitch extends CBaseListener {
         Instruction lastJump = switches.peek().insQueue.poll();
 
         // Comparison
-        data.addInstruction(switches.peek().loadCmpValue);
-        data.incStackPointer();
+        for (int i = 0; i < switches.peek().valueLenght; i++) {
+            data.addInstruction(switches.peek().loadCmpValue[i]);
+            data.incStackPointer();
+        }
         data.addInstruction(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.EQUALITY));
 
         // Jump to next next case
