@@ -131,10 +131,9 @@ public class CompilerArithmetic extends CBaseListener {
         
         if(literal.contains("|")) { //fraction
         	
-        	String[] inputData = literal.split("|");
+        	String[] inputData = literal.split("\\|");
         	String numerator = inputData[0];
-        	int denominator = Integer.parseInt(inputData[2]);
-        	
+        	int denominator = Integer.parseInt(inputData[1]);
         	if(denominator == 0) {
         		System.err.println("Division by zero");
         		System.exit(1);
@@ -154,7 +153,7 @@ public class CompilerArithmetic extends CBaseListener {
     @Override 
     public void exitExpression(CParser.ExpressionContext ctx) { 
     	if(data.popDataType() == DataType.FRACTION) {
-    		//shortenFraction();
+    		shortenFraction();
     	}
     }
     
@@ -166,7 +165,7 @@ public class CompilerArithmetic extends CBaseListener {
     	
     	sortPartsFraction();
     	calculateLargestCommonDivisor();
-    	//dividePartsFraction(addressOriginalFraction);
+    	dividePartsFraction(addressOriginalFraction);
     }
     
     /**
@@ -192,38 +191,50 @@ public class CompilerArithmetic extends CBaseListener {
     }
     
     /**
-     * calculates largest common divisor of 
+     * calculates largest common divisor of numerator and denominator
      */
     public void calculateLargestCommonDivisor() {
-    	// copy fraction
+    	//Euclidean algorithm
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 0));
-    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 0));
+    	Instruction condJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, data.getCurrentInstructionAddress());
     	
-		//Euclidean algorithm
+		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 0));
+		
 		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.MODULUS));
-		Instruction condition = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, data.getCurrentInstructionAddress());
+		
+		// shift stack - erase first operand, which is now not necessary
+		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 0));
+		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 2));
+		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 0));
 		
 		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() + 1));
-		
-		//negation for conditional jump
 		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 0));
-		
 		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.EQUALITY));
-		/*
-		data.addInstructionChangeStackPointer(condition);
 		
-		*/
+		data.addInstructionChangeStackPointer(condJump);
+		
+		//remove zero computed in last step of algorithm
+		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, data.getCurrentInstructionAddress() + 2));
+		
 		// at the top of the stack is the largest common divisor
     }
     
     public void dividePartsFraction(int addressOriginalFraction) {
     	//divide numerator by the largest common divisor
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, addressOriginalFraction + 1));
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 0));
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.DIVISION));
+    	
+    	//divide denominator by the largest common divisor
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, addressOriginalFraction + 2));
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1));
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.DIVISION));
-    			
-    	//divide denominator by the largest common divisor
-    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, addressOriginalFraction + 1));
-    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 2));
-    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.DIVISION));
+    	
+    	//replace old fraction i the stack with shortened fraction
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 2));
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 2));
+    	
+    	//remove the computed largest common divisor
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, data.getCurrentInstructionAddress() + 2));
     }
 }
