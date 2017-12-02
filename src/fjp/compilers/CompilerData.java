@@ -59,18 +59,24 @@ public class CompilerData {
      */
     public void addInstructionChangeStackPointer(Instruction instruction) {
     	addInstruction(instruction);
-    	
-    	if(instruction.getCode() == InstructionCodes.OPERATION) {
-    		stackPointer += OperationCode.getOpCodeByCode(instruction.getOperand()).getIntegerStackChange();
-    	}else if(instruction.getCode() == InstructionCodes.OPERATION_REAL) {
-    		stackPointer += OperationCode.getOpCodeByCode(instruction.getOperand()).getRealStackChange();
-    	}else if(instruction.getCode() == InstructionCodes.OPERATION_LOGIC) {
-    		stackPointer += LogicCode.getOpCodeByCode(instruction.getOperand()).getStackChange();
-    	}else if(instruction.getCode() == InstructionCodes.INCREMENT) {
-    		stackPointer += instruction.getOperand();
-    	}else {
-    		stackPointer += instruction.getCode().getStackChange();
-    	}
+
+    	switch (instruction.getCode()){
+            case OPERATION:
+                stackPointer += OperationCode.getOpCodeByCode(instruction.getOperand()).getIntegerStackChange();
+                break;
+            case OPERATION_REAL:
+                stackPointer += OperationCode.getOpCodeByCode(instruction.getOperand()).getRealStackChange();
+                break;
+            case OPERATION_LOGIC:
+                stackPointer += LogicCode.getOpCodeByCode(instruction.getOperand()).getStackChange();
+                break;
+            case INCREMENT:
+                stackPointer += instruction.getOperand();
+                break;
+            default:
+                stackPointer += instruction.getCode().getStackChange();
+                break;
+        }
     }
     
     /**
@@ -133,6 +139,13 @@ public class CompilerData {
     }
 
     /**
+     * Method decrement value of stackPointer.
+     */
+    public void decStackPointer(int value){
+        stackPointer -= value;
+    }
+
+    /**
      * Return actual value of stack pointer.
      *
      * @return value of stackPointer
@@ -181,6 +194,15 @@ public class CompilerData {
      */
     public void incVarCounter(){
         varCounter++;
+    }
+
+    /**
+     * Method increment varCounter about count.
+     *
+     * @param count size of increment
+     */
+    public void incVarCounter(int count){
+        varCounter += count;
     }
 
     // SYMBOL TABLE OPERATIONS =============
