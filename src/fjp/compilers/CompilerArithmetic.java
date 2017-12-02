@@ -3,6 +3,10 @@ package fjp.compilers;
 import fjp.generated.*;
 import fjp.structures.*;
 
+/**
+ * Provides arithmetic compiler functionality 
+ *
+ */
 public class CompilerArithmetic extends CBaseListener {
 
     /** Data which are shared across all compilers classes */
@@ -120,7 +124,7 @@ public class CompilerArithmetic extends CBaseListener {
      * after numeric operations with fractions in the stack persists original fractions
      * stores resulting fraction to the position of first fraction and erases second fraction from top of the stack
      */
-    public void shiftFractionInStack() {
+    private void shiftFractionInStack() {
     	// store resulting fraction
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 3));
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 3));
@@ -160,6 +164,10 @@ public class CompilerArithmetic extends CBaseListener {
         }
     }
     
+    /**
+     * on end of expression evaluation checks if the expression is ratio data type
+     * eventually converts fraction into fraction with numerator and denominator as low as possible
+     */
     @Override 
     public void exitExpression(CParser.ExpressionContext ctx) { 
     	if(data.popDataType() == DataType.FRACTION) {
@@ -167,10 +175,70 @@ public class CompilerArithmetic extends CBaseListener {
     	}
     }
     
+    @Override 
+    public void exitDataTypeConversion(CParser.DataTypeConversionContext ctx) { 
+    	DataType currentType = data.popDataType();
+    	String newType = ctx.TYPESPECIFIER().getText();
+    	
+    	switch(newType) {
+    	case "int":
+    		switch(currentType) {
+    		case INT: //everything is OK
+    			break;
+    			
+    		case FRACTION:
+    			data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.DIVISION));
+    			break;
+    			
+    		case BOOLEAN:
+    			System.err.println("Incompatible explicit conversion");
+    			System.exit(1);
+    			break;
+    		}
+    		
+    		data.pushDataType(DataType.INT);
+    		break;
+    	
+    	case "ratio":
+    		switch(currentType) {
+    		case INT: 
+    			data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 1)); //just add denominator 1
+    			break;
+    			
+    		case FRACTION: //everything is OK
+    			break;
+    			
+    		case BOOLEAN:
+    			System.err.println("Incompatible explicit conversion");
+    			System.exit(1);
+    			break;
+    		}
+    		
+    		data.pushDataType(DataType.FRACTION);
+    		break;
+    		
+    	case "boolean":
+    		switch(currentType) {
+    		case INT: 
+    			
+    		case FRACTION: 
+    			System.err.println("Incompatible explicit conversion");
+    			System.exit(1);
+    			break;
+    			
+    		case BOOLEAN: //everything is OK
+    			break;
+    		}
+    		
+    		data.pushDataType(DataType.BOOLEAN);
+    		break;
+    	}
+    }
+    
     /**
      * Adds instructions for fraction shortening by Euclidean algorithm
      */
-    public void shortenFraction() {  	
+    private void shortenFraction() {  	
     	int addressOriginalFraction = data.getStackPointer() - 1;
     	
     	sortPartsFraction();
@@ -181,7 +249,7 @@ public class CompilerArithmetic extends CBaseListener {
     /**
      * sorts numerator and denominator of fraction, greater first
      */
-    public void sortPartsFraction() {
+    private void sortPartsFraction() {
     	// determine which part of fraction is greater
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 0));
 		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 0));
@@ -195,15 +263,23 @@ public class CompilerArithmetic extends CBaseListener {
 		//denominator is greater
 		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() + 1));
 		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1));
+		Instruction jump = new Instruction(InstructionCodes.JUMP, 0);
+		data.addInstructionChangeStackPointer(jump);
 		
+		data.decStackPointer(); //stack pointer was incremented twice, decremented for negative branch
+		data.decStackPointer();
+		
+		//numerator is greater
 		conditionalJump.setOperand(data.getCurrentInstructionAddress() + 1);
-		
+		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 0));
+		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 0));
+		jump.setOperand(data.getCurrentInstructionAddress() + 1);
     }
     
     /**
      * calculates largest common divisor of numerator and denominator
      */
-    public void calculateLargestCommonDivisor() {
+    private void calculateLargestCommonDivisor() {
     	//Euclidean algorithm
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 0));
     	Instruction condJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, data.getCurrentInstructionAddress());
@@ -229,7 +305,11 @@ public class CompilerArithmetic extends CBaseListener {
 		// at the top of the stack is the largest common divisor
     }
     
-    public void dividePartsFraction(int addressOriginalFraction) {
+    /**
+     * divides parts of fraction by largest common divisor => converts fraction into fraction which numerator and denominator are as low as possible
+     * @param addressOriginalFraction address of orginila fraction in the stack
+     */
+    private void dividePartsFraction(int addressOriginalFraction) {
     	//divide numerator by the largest common divisor
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, addressOriginalFraction + 1));
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 0));

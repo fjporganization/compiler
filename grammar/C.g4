@@ -99,7 +99,8 @@ ternarynegative
   ;
   
 arithmeticexpression
-  : LEFTPARENTHESE arithmeticexpression RIGHTPARENTHESE                               #parenthesesArithmeticExp
+  : LEFTPARENTHESE TYPESPECIFIER RIGHTPARENTHESE arithmeticexpression                 #dataTypeConversion
+  | LEFTPARENTHESE arithmeticexpression RIGHTPARENTHESE                               #parenthesesArithmeticExp
   | arithmeticexpression MULTIPLICATIONDIVISIONOPERATOR arithmeticexpression          #mulDivExp
   | arithmeticexpression ADDITIONSUBTRACTIONOPERATOR arithmeticexpression             #addSubExp
   | atom                                                                              #arithmeticAtom

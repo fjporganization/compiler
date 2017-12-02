@@ -234,6 +234,18 @@ public interface CListener extends ParseTreeListener {
 	 */
 	void exitArithmeticAtom(CParser.ArithmeticAtomContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code dataTypeConversion}
+	 * labeled alternative in {@link CParser#arithmeticexpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterDataTypeConversion(CParser.DataTypeConversionContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code dataTypeConversion}
+	 * labeled alternative in {@link CParser#arithmeticexpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitDataTypeConversion(CParser.DataTypeConversionContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code addSubExp}
 	 * labeled alternative in {@link CParser#arithmeticexpression}.
 	 * @param ctx the parse tree

@@ -268,6 +268,18 @@ public class CBaseListener implements CListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterDataTypeConversion(CParser.DataTypeConversionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDataTypeConversion(CParser.DataTypeConversionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterAddSubExp(CParser.AddSubExpContext ctx) { }
 	/**
 	 * {@inheritDoc}
