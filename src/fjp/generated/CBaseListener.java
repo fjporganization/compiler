@@ -364,30 +364,6 @@ public class CBaseListener implements CListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStringExpAtom(CParser.StringExpAtomContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStringExpAtom(CParser.StringExpAtomContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterStringConcatExp(CParser.StringConcatExpContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStringConcatExp(CParser.StringConcatExpContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterIntegerIO(CParser.IntegerIOContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -431,18 +407,6 @@ public class CBaseListener implements CListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitNumericAtom(CParser.NumericAtomContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterStringAtom(CParser.StringAtomContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStringAtom(CParser.StringAtomContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

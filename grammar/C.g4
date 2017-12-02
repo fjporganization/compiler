@@ -44,6 +44,8 @@ statement
   | parallelassignment statement
   | outputinteger
   | outputinteger statement
+  | outputfrac
+  | outputfrac statement
   | //empty
   ;
   
@@ -81,7 +83,6 @@ valuelist
 expression
   : arithmeticexpression
   | logicalexpression
-  | stringexpression
   | ternaryoperator
   ;
   
@@ -112,21 +113,14 @@ logicalexpression
   | logicalexpression LOGICALAND logicalexpression                                    #LogicalAndExp
   | logicalexpression LOGICALOR logicalexpression                                     #LogicalOrExp
   | atom                                                                              #logicalAtom
-  
-  ;
-  
-stringexpression
-  : stringexpression STRINGCONCATENATION stringexpression                             #stringConcatExp
-  | atom                                                                              #stringExpAtom
   ;
   
 atom
-  : inputinteger																	  #integerIO	
-  | inputfrac																		  #fractionIO
-  | IDENTIFIER                                                                        #identifierAtom
-  | NUMERICALVALUE                                                                    #numericAtom
-  | STRINGVALUE                                                                       #stringAtom
-  | LOGICALVALUE                                                                      #logicAtom
+  : inputinteger		  #integerIO	
+  | inputfrac					#fractionIO
+  | IDENTIFIER        #identifierAtom
+  | NUMERICALVALUE    #numericAtom
+  | LOGICALVALUE      #logicAtom
   ;
   
 functiondeclaration
@@ -223,7 +217,7 @@ inputfrac
   ;
 
 outputfrac
-  : WRITEINT LEFTPARENTHESE arithmeticexpression RIGHTPARENTHESE SEMICOLON
+  : WRITEFRAC LEFTPARENTHESE arithmeticexpression RIGHTPARENTHESE SEMICOLON
   ;
   
 /*
@@ -260,9 +254,7 @@ TYPEQUALIFIER
 
 TYPESPECIFIER
   : 'int'
-  | 'real'
   | 'boolean'
-  | 'string'
   | 'ratio'
   ;
   
@@ -371,8 +363,7 @@ IDENTIFIER
   ;
 
 NUMERICALVALUE
-  : (ADDITIONSUBTRACTIONOPERATOR)? (DIGIT)+
-  | (ADDITIONSUBTRACTIONOPERATOR)? (DIGIT)+ '.' (DIGIT)+ 
+  : (ADDITIONSUBTRACTIONOPERATOR)? (DIGIT)+ 
   | (ADDITIONSUBTRACTIONOPERATOR)? (DIGIT)+ '|' (DIGIT)+ 
   ;
 

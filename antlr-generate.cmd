@@ -18,4 +18,8 @@ echo package fjp.generated; > CParser.java.new
 type CParser.java >> CParser.java.new
 move /y CParser.java.new CParser.java
 
+cd ..
+cd ..
+cd ..
+
 

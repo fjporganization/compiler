@@ -330,30 +330,6 @@ public interface CListener extends ParseTreeListener {
 	 */
 	void exitLogicalOrExp(CParser.LogicalOrExpContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code stringExpAtom}
-	 * labeled alternative in {@link CParser#stringexpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterStringExpAtom(CParser.StringExpAtomContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code stringExpAtom}
-	 * labeled alternative in {@link CParser#stringexpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitStringExpAtom(CParser.StringExpAtomContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code stringConcatExp}
-	 * labeled alternative in {@link CParser#stringexpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterStringConcatExp(CParser.StringConcatExpContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code stringConcatExp}
-	 * labeled alternative in {@link CParser#stringexpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitStringConcatExp(CParser.StringConcatExpContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code integerIO}
 	 * labeled alternative in {@link CParser#atom}.
 	 * @param ctx the parse tree
@@ -401,18 +377,6 @@ public interface CListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitNumericAtom(CParser.NumericAtomContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code stringAtom}
-	 * labeled alternative in {@link CParser#atom}.
-	 * @param ctx the parse tree
-	 */
-	void enterStringAtom(CParser.StringAtomContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code stringAtom}
-	 * labeled alternative in {@link CParser#atom}.
-	 * @param ctx the parse tree
-	 */
-	void exitStringAtom(CParser.StringAtomContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code logicAtom}
 	 * labeled alternative in {@link CParser#atom}.
