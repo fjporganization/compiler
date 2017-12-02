@@ -44,7 +44,7 @@ public class CompilerLogic extends CBaseListener {
         switch(type) {            
         case FRACTION:
         	convertFractionsCommonDivisor();
-        	//proceed as integer
+        	//after proceed as integer
         	
         	case INT:
         	Instruction instruction = new Instruction(InstructionCodes.OPERATION, 0, operationCode);
@@ -52,6 +52,7 @@ public class CompilerLogic extends CBaseListener {
             break;
         }
         
+        shiftFractionInStack();
         data.pushDataType(DataType.BOOLEAN);
     }
 
@@ -85,7 +86,21 @@ public class CompilerLogic extends CBaseListener {
             break;
         }
         
+        shiftFractionInStack();
         data.pushDataType(DataType.BOOLEAN);
+    }
+    
+    /**
+     * after comparison operations with fractions in the stack persists original fractions
+     * stores resulting fraction to the position of first fraction and erases second fraction from top of the stack
+     */
+    public void shiftFractionInStack() {
+    	// store resulting fraction
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 2));
+    	
+    	//remove second operand
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, data.getCurrentInstructionAddress() + 2));
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, data.getCurrentInstructionAddress() + 2));
     }
     
     /**

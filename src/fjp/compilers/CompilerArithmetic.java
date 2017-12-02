@@ -52,6 +52,7 @@ public class CompilerArithmetic extends CBaseListener {
  
     		}
     		
+    		shiftFractionInStack();
     		data.pushDataType(DataType.FRACTION);
     		break;
     	}
@@ -99,9 +100,24 @@ public class CompilerArithmetic extends CBaseListener {
     		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.MULTIPLICATION));
     		
     		data.pushDataType(DataType.FRACTION);
+    		shiftFractionInStack();
     		
     		break;
     	}
+    }
+    
+    /**
+     * after numeric operations with fractions in the stack persists original fractions
+     * stores resulting fraction to the position of first fraction and erases second fraction from top of the stack
+     */
+    public void shiftFractionInStack() {
+    	// store resulting fraction
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 3));
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 3));
+    	
+    	//remove second operand
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, data.getCurrentInstructionAddress() + 2));
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, data.getCurrentInstructionAddress() + 2));
     }
        	
 
