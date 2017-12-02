@@ -17,7 +17,7 @@ public class CompilerArithmetic extends CBaseListener {
      */
     @Override
     public void exitMulDivExp(CParser.MulDivExpContext ctx) {
-    	DataType result = checkDataTypes();
+    	DataType result = DataConversions.checkDataTypes(data);
     	
     	switch(result) {
     	case INT:
@@ -64,7 +64,7 @@ public class CompilerArithmetic extends CBaseListener {
     @Override
     public void exitAddSubExp(CParser.AddSubExpContext ctx) {
     	OperationCode operationCode;
-    	DataType result = checkDataTypes();
+    	DataType result = DataConversions.checkDataTypes(data);
     	
     	switch(result) {
     	case INT:
@@ -103,40 +103,7 @@ public class CompilerArithmetic extends CBaseListener {
     		break;
     	}
     }
-    
-    /**
-     * checks which data types are currently in the stack, eventually implicitly converts into same data types
-     * @return
-     */
-    public DataType checkDataTypes() {
-    	DataType right = data.popDataType();
-    	DataType left = data.popDataType();
-    	
-    	if(left == DataType.INT && right == DataType.INT) {
-    		return DataType.INT;
-    		
-    	}else if(left == DataType.FRACTION && right == DataType.FRACTION) {
-    		return DataType.FRACTION;
-    		
-    	}else if(left == DataType.FRACTION && right == DataType.INT) {
-    		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 1));
-    		return DataType.FRACTION;
-    		
-    	}else if(left == DataType.INT && right == DataType.FRACTION) {
-    		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1));
-    		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 1));
-    		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 2));
-    		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 2));
-    		return DataType.FRACTION;
-    		
-    	}else {
-    		System.err.println("Incompatible data types");
-        	System.exit(1);
-    	}
-    	return null;
-    }
-    	
-    	
+       	
 
     /**
      * Processes numeric atom (single numeric value) (pushes the value of the variable onto the stack)

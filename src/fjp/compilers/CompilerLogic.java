@@ -50,12 +50,24 @@ public class CompilerLogic extends CBaseListener {
                 operationCode = OperationCode.LESS_EQUAL;
                 break;
         }
+        
+        DataType type = DataConversions.checkDataTypes(data);
+        
+        switch(type) {            
+        case FRACTION:
+        	convertFractionsCommonDivisor();
+        	//proceed as integer
+        	
+        	case INT:
+        	Instruction instruction = new Instruction(InstructionCodes.OPERATION, 0, operationCode);
 
-        Instruction instruction = new Instruction(InstructionCodes.OPERATION, 0, operationCode);
-
-        //instruction pops 2 values from the stack (operands) and push 1 value (result)
-        data.decStackPointer();
-        data.addInstruction(instruction);
+            //instruction pops 2 values from the stack (operands) and push 1 value (result)
+            data.decStackPointer();
+            data.addInstruction(instruction);
+            break;
+        }
+        
+        data.pushDataType(DataType.BOOLEAN);
     }
 
     /**
@@ -74,12 +86,40 @@ public class CompilerLogic extends CBaseListener {
                 operationCode = OperationCode.INEQUALITY.getCode();
                 break;
         }
+        
+        DataType type = DataConversions.checkDataTypes(data);
+        
+        switch(type) {            
+        case FRACTION:
+        	convertFractionsCommonDivisor();
+        	//proceed as integer
+        	
+        	case INT:
+        	Instruction instruction = new Instruction(InstructionCodes.OPERATION, 0, operationCode);
 
-        Instruction instruction = new Instruction(InstructionCodes.OPERATION, 0, operationCode);
-        //instruction pops 2 values from the stack (operands) and push 1 value (result)
-        data.decStackPointer();
-
-        data.addInstruction(instruction);
+            //instruction pops 2 values from the stack (operands) and push 1 value (result)
+            data.decStackPointer();
+            data.addInstruction(instruction);
+            break;
+        }
+        
+        data.pushDataType(DataType.BOOLEAN);
+    }
+    
+    /**
+     * converts two fractions on the stack to numerators of fractions with common divisor
+     */
+    public void convertFractionsCommonDivisor() {
+    	//multiply numerator of first fraction by denominator of second fraction
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 2));
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.MULTIPLICATION));
+    	
+    	//multiply denominator of first fraction by numerator of first fraction
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1));
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1));
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.MULTIPLICATION));
+    	
+    	//now are on the top of the stack two integer values, which represents numerators of given fractions converted to common divisor
     }
 
     /**
@@ -120,5 +160,7 @@ public class CompilerLogic extends CBaseListener {
         Instruction instruction = new Instruction(InstructionCodes.PUSH, 0, value);
         data.incStackPointer();
         data.addInstruction(instruction);
+        
+        data.pushDataType(DataType.BOOLEAN);
     }
 }

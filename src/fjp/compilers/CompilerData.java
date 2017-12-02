@@ -235,15 +235,30 @@ public class CompilerData {
     
     // EXPRESSION DATA TYPE ================
     
+    /**
+     * push data type of atom or interim result onto the expression data type stack
+     * 
+     * @param type data type to be pushed onto the stack
+     */
     public void pushDataType(DataType type) {
     	expDataTypeStack.push(type);
     }
     
+    /**
+     * pops data type of last item on the stack from the expression data type stack
+     * 
+     * @return popped data type of last item on the stack from the expression data type stack
+     */
     public DataType popDataType() {
     	return expDataTypeStack.pop();
     }
     
-    public DataType getLastNoPoping() {
+    /**
+     * peeks data type of last item on the stack from the expression data type stack
+     * 
+     * @return peeked data type of last item on the stack from the expression data type stack
+     */
+    public DataType peekDataType() {
     	return expDataTypeStack.peek();
     }
 }
