@@ -39,7 +39,7 @@ public class CompilerVariables extends CBaseListener {
             System.exit(1);
         }
 
-        for (int i = 0; i < addressable.getLength(); i++){
+        for (int i = addressable.getLength() - 1; i >= 0; i--){
             data.addInstruction(new Instruction(InstructionCodes.STORE, 0, addressable.getAddress() + i));
             data.decStackPointer();
         }
@@ -58,7 +58,7 @@ public class CompilerVariables extends CBaseListener {
             System.exit(1);
         }
 
-        for (int i = 0; i < addressable.getLength(); i++){
+        for (int i = addressable.getLength() - 1; i >= 0; i--){
             data.addInstruction(new Instruction(InstructionCodes.STORE, 0, addressable.getAddress() + i));
             data.decStackPointer();
         }
@@ -235,14 +235,14 @@ public class CompilerVariables extends CBaseListener {
 
     private void localVariables(InstructionCodes code, int address, int length, int nestingLevel){
 
-        for (int i = 0; i < length; i++) {
+        for (int i = length - 1; i >= 0; i--){
             data.addInstruction(new Instruction(code, nestingLevel, address + i));
         }
     }
 
     private void globalVariables(InstructionCodes code, int address, int length){
 
-        for (int i = 0; i < length ; i++) {
+        for (int i = length - 1; i >= 0; i--){
             data.addInstruction(new Instruction(InstructionCodes.PUSH, 0, address + i));
             data.addInstruction(new Instruction(code, 0, 0));
         }
