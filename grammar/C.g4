@@ -59,8 +59,8 @@ constantdeclaration
   ;
   
 assignment
-  : standardAssignment SEMICOLON                                        #standAssignment
-  | (IDENTIFIER ASSIGNMENTOPERATOR)+ expression SEMICOLON               #multipleAssignment
+  : standardAssignment SEMICOLON                                      #standAssignment
+  | (IDENTIFIER ASSIGNMENTOPERATOR)+ expression SEMICOLON             #multipleAssignment
   | IDENTIFIER ASSIGNMENTOPERATOR logicalexpression ternaryoperator		#ternaryOperatorAssignment 
   ;
 
@@ -138,8 +138,7 @@ functioncall
   ;
   
 functioncallarguments
-  : expression (COMMA functioncallarguments)*
-  | //empty
+  : //empty
   ;
   
 forloop
@@ -161,7 +160,6 @@ whileloop
 whilestatement
   : LEFTBRACE statement RIGHTBRACE
   ;
-
 
 dowhileloop
   : DOWHILEKEYWORD LEFTBRACE statement RIGHTBRACE WHILELOOPKEYWORD LEFTPARENTHESE logicalexpression RIGHTPARENTHESE SEMICOLON 
@@ -223,10 +221,6 @@ outputfrac
 /*
  * Lexer rules
  */
- 
-STRINGVALUE
-  : '"' (~('"' | '\\' | '\r' | '\n') | '\\' ('"' | '\\'))* '"'
-  ;
  
 WHITESPACE 
   : [ \r\t\f\n]+ -> skip
