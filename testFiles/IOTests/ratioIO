@@ -1,4 +1,4 @@
 void main(){
-  ratio a = readfrac();
-  writefrac(a);
+  ratio a = 10|3;
+  ratio b = a;
 }
