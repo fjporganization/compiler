@@ -1,0 +1,4 @@
+void main(){
+  ratio a = readfrac();
+  writefrac(a);
+}
