@@ -1,0 +1,10 @@
+void main(){
+
+    int a;
+    boolean b = true;
+
+    for(a = 6; a > 3 && b; a = a - 2){
+        a = a + 1;
+        b = false;
+    }
+}

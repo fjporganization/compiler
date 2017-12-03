@@ -30,13 +30,30 @@ class LoopTests extends CompilerTestsBase {
     @DisplayName("Do While - simple expression")
     void testDoWhile1() {
         testFiles(path + "doWhile1", path + "doWhile1.pl0");
-    }@Test
+    }
 
+    @Test
     @DisplayName("Do While - two loops")
     void testDoWhile2() {
         testFiles(path + "doWhile2", path + "doWhile2.pl0");
     }
 
+    @Test
+    @DisplayName("For - simple expression")
+    void testFor1() {
+        testFiles(path + "for1", path + "for1.pl0");
+    }
 
+    @Test
+    @DisplayName("For - sophisticate expression")
+    void testFor2() {
+        testFiles(path + "for2", path + "for2.pl0");
+    }
+
+    @Test
+    @DisplayName("For - two for loops")
+    void testFor3() {
+        testFiles(path + "for3", path + "for3.pl0");
+    }
 
 }
