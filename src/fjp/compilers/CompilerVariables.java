@@ -116,11 +116,11 @@ public class CompilerVariables extends CBaseListener {
 
         if (variable.getNestingLevel() == 0) {
             // global variable
-            globalVariables(InstructionCodes.LOAD_FROM_ADDRESS, variable.getAddress(), variable.getLength());
+            globalVariablesLoad(InstructionCodes.LOAD_FROM_ADDRESS, variable.getAddress(), variable.getLength());
         } else {
             // local variable
             int nestingLevel = data.getNestingLevel() - variable.getNestingLevel();
-            localVariables(InstructionCodes.LOAD, variable.getAddress(), variable.getLength(), nestingLevel);
+            localVariablesLoad(InstructionCodes.LOAD, variable.getAddress(), variable.getLength(), nestingLevel);
         }
 
         data.incStackPointer(variable.getLength());
@@ -140,10 +140,10 @@ public class CompilerVariables extends CBaseListener {
         }
 
         if(variable.getNestingLevel() == 0){
-            globalVariables(InstructionCodes.STORE_AT_ADDRESS, variable.getAddress(), variable.getLength());
+            globalVariablesStore(InstructionCodes.STORE_AT_ADDRESS, variable.getAddress(), variable.getLength());
         } else {
             int nestingLevel = data.getNestingLevel() - variable.getNestingLevel();
-            localVariables(InstructionCodes.STORE, variable.getAddress(), variable.getLength(), nestingLevel);
+            localVariablesStore(InstructionCodes.STORE, variable.getAddress(), variable.getLength(), nestingLevel);
         }
 
         data.decStackPointer(variable.getLength());
@@ -172,10 +172,10 @@ public class CompilerVariables extends CBaseListener {
             }
 
             if(variable.getNestingLevel() == 0){
-                globalVariables(InstructionCodes.STORE_AT_ADDRESS, variable.getAddress(), variable.getLength());
+                globalVariablesStore(InstructionCodes.STORE_AT_ADDRESS, variable.getAddress(), variable.getLength());
             } else {
                 int nestingLevel = data.getNestingLevel() - variable.getNestingLevel();
-                localVariables(InstructionCodes.STORE, variable.getAddress(), variable.getLength(), nestingLevel);
+                localVariablesStore(InstructionCodes.STORE, variable.getAddress(), variable.getLength(), nestingLevel);
             }
         }
 
@@ -206,10 +206,10 @@ public class CompilerVariables extends CBaseListener {
             }
 
             if(variable.getNestingLevel() == 0){
-                globalVariables(InstructionCodes.STORE_AT_ADDRESS, variable.getAddress(), variable.getLength());
+                globalVariablesStore(InstructionCodes.STORE_AT_ADDRESS, variable.getAddress(), variable.getLength());
             } else {
                 int nestingLevel = data.getNestingLevel() - variable.getNestingLevel();
-                localVariables(InstructionCodes.STORE, variable.getAddress(), variable.getLength(), nestingLevel);
+                localVariablesStore(InstructionCodes.STORE, variable.getAddress(), variable.getLength(), nestingLevel);
             }
 
             data.decStackPointer(variable.getLength());
@@ -233,16 +233,31 @@ public class CompilerVariables extends CBaseListener {
         return variable;
     }
 
-    private void localVariables(InstructionCodes code, int address, int length, int nestingLevel){
+    private void localVariablesStore(InstructionCodes code, int address, int length, int nestingLevel){
 
         for (int i = length - 1; i >= 0; i--){
             data.addInstruction(new Instruction(code, nestingLevel, address + i));
         }
     }
 
-    private void globalVariables(InstructionCodes code, int address, int length){
+    private void globalVariablesStore(InstructionCodes code, int address, int length){
 
         for (int i = length - 1; i >= 0; i--){
+            data.addInstruction(new Instruction(InstructionCodes.PUSH, 0, address + i));
+            data.addInstruction(new Instruction(code, 0, 0));
+        }
+    }
+
+    private void localVariablesLoad(InstructionCodes code, int address, int length, int nestingLevel){
+
+        for (int i = 0; i < length; i++){
+            data.addInstruction(new Instruction(code, nestingLevel, address + i));
+        }
+    }
+
+    private void globalVariablesLoad(InstructionCodes code, int address, int length){
+
+        for (int i = 0; i < length; i++){
             data.addInstruction(new Instruction(InstructionCodes.PUSH, 0, address + i));
             data.addInstruction(new Instruction(code, 0, 0));
         }
