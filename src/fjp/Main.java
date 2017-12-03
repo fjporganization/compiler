@@ -6,6 +6,7 @@ import java.util.List;
 import fjp.compilers.*;
 import fjp.compilers.Compiler;
 import fjp.generated.*;
+import fjp.interpreter.Interpreter;
 import fjp.structures.Instruction;
 import org.antlr.v4.runtime.*;
 
@@ -37,11 +38,7 @@ public class Main {
 		String outputFileName = getPLFileName(args);
 
 		writeToFile(outputFileName, data.getOutput());
-
-		// TODO remove should be in separate main function
-		Interpreter interpreter = new Interpreter();
-		interpreter.setInstructions(data.getOutput());
-		interpreter.interpret();
+		
 	}
 
 	/**
