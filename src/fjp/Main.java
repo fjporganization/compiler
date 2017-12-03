@@ -21,11 +21,10 @@ public class Main {
 			System.exit(1);
 		}
 
-		new Main(args);
+		new Main().compile(args);
 	}
 
-	public Main(String [] args){
-
+	public void compile(String [] args){
 		CharStream input = readFile(args[0]);
 		CLexer lexer = new CLexer(input);
 		CParser parser = new CParser(new CommonTokenStream(lexer));
@@ -38,12 +37,11 @@ public class Main {
 		String outputFileName = getPLFileName(args);
 
 		writeToFile(outputFileName, data.getOutput());
-		
 	}
 
 	/**
 	 * Create file name of new created file from input arguments.
-	 * 
+	 *
 	 * @param args array contains input file name and optionally output file name
 	 * @return created name
 	 */
