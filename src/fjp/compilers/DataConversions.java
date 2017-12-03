@@ -35,10 +35,31 @@ public class DataConversions {
     		return DataType.FRACTION;
     		
     	}else if(left == DataType.INT && right == DataType.FRACTION) {
-    		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1));
+    		Instruction instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1);
+    		data.toShift.add(instruction);
+    		data.addInstructionChangeStackPointer(instruction);
+    		
     		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 1));
-    		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 2));
-    		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 2));
+    		
+    		instruction = new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 3);
+    		data.toShift.add(instruction);
+    		data.addInstructionChangeStackPointer(instruction);
+    		
+    		instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1);
+    		data.toShift.add(instruction);
+    		data.addInstructionChangeStackPointer(instruction);
+    		
+    		instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1);
+    		data.toShift.add(instruction);
+    		data.addInstructionChangeStackPointer(instruction);
+    		
+    		instruction = new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 3);
+    		data.toShift.add(instruction);
+    		data.addInstructionChangeStackPointer(instruction);
+    		
+    		instruction = new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 1);
+    		data.toShift.add(instruction);
+    		data.addInstructionChangeStackPointer(instruction);
     		return DataType.FRACTION;
     		
     	}else {
