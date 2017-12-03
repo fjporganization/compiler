@@ -110,6 +110,10 @@ public class CompilerLogic extends CBaseListener {
         	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 0));
         	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.INEQUALITY));
         	
+        	instruction = new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 2);
+        	data.addInstructionChangeStackPointer(instruction);
+        	data.toShift.add(instruction);
+        	
             data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, operationCode));
             break;
         }
@@ -193,6 +197,10 @@ public class CompilerLogic extends CBaseListener {
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 0));
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.INEQUALITY));
     	
+    	instruction = new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 2);
+    	data.addInstructionChangeStackPointer(instruction);
+    	data.toShift.add(instruction);
+    	
         data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.ADDITION));
         // sum of two trues must be 2 (T = true = 1; F = false = 0)
         data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 2));
@@ -221,6 +229,10 @@ public class CompilerLogic extends CBaseListener {
     	
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 0));
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.INEQUALITY));
+    	
+    	instruction = new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 2);
+    	data.addInstructionChangeStackPointer(instruction);
+    	data.toShift.add(instruction);
     	
         data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.ADDITION));
         // sum of (T,T | T,F | F,T) must be >= 1 (T = true = 1; F = false = 0)
