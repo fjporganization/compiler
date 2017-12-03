@@ -76,4 +76,10 @@ class ArithmeticTests extends CompilerTestsBase{
 	void testImplicitIntToRatio() {
 		testFiles("arithmeticTests/implicitConversion", "arithmeticTests/implicitConversion.pl0");
 	}
+	
+	@Test
+	@DisplayName("Ratio saving")
+	void testRatioStack() {
+		testFiles("arithmeticTests/ratioVariable", "arithmeticTests/ratioVariable.pl0");
+	}
 }
