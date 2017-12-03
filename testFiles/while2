@@ -1,0 +1,8 @@
+boolean a = true;
+
+void method(){
+
+    while(a){
+        a = false;
+    }
+}
