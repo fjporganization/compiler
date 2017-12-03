@@ -56,4 +56,9 @@ class LoopTests extends CompilerTestsBase {
         testFiles(path + "for3", path + "for3.pl0");
     }
 
+    @Test
+    @DisplayName("Combination of all loops")
+    void testAllLoops() {
+        testFiles(path + "allLoops", path + "allLoops.pl0");
+    }
 }
