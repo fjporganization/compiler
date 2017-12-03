@@ -1,0 +1,3 @@
+void main(){
+  int a = (int)30|10;
+}

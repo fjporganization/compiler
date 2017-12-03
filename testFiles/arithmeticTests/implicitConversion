@@ -1,0 +1,3 @@
+void main(){
+  ratio a = 2 * 3|4;
+}
