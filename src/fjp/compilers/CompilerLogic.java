@@ -22,6 +22,7 @@ public class CompilerLogic extends CBaseListener {
     @Override
     public void exitRelationalLogicExp(CParser.RelationalLogicExpContext ctx) {
         OperationCode operationCode = null;
+        Instruction instruction;
         String operator = ctx.RELATIONALOPERATOR().getText();
 
         switch(operator) {
@@ -44,10 +45,13 @@ public class CompilerLogic extends CBaseListener {
         switch(type) {            
         case FRACTION:
         	convertFractionsCommonDivisor();
-        	//after proceed as integer
+        	instruction = new Instruction(InstructionCodes.OPERATION, 0, operationCode);
+            data.addInstructionChangeStackPointer(instruction);
+            shiftFractionInStack();
+            break;
         	
         case INT:
-        	Instruction instruction = new Instruction(InstructionCodes.OPERATION, 0, operationCode);
+        	instruction = new Instruction(InstructionCodes.OPERATION, 0, operationCode);
             data.addInstructionChangeStackPointer(instruction);
             break;
         
@@ -57,7 +61,7 @@ public class CompilerLogic extends CBaseListener {
             //case for boolean is not necessary, as the boolean causes error in DataConversions.checkDataTypes(data)
         }
         
-        shiftFractionInStack();
+       
         data.pushDataType(DataType.BOOLEAN);
     }
 
@@ -67,6 +71,7 @@ public class CompilerLogic extends CBaseListener {
     @Override
     public void exitEqualityLogicExp(CParser.EqualityLogicExpContext ctx) {
         int operationCode = -1;
+        Instruction instruction;
         String operator = ctx.EQUALITYOPERATOR().getText();
 
         switch(operator) {
@@ -83,10 +88,13 @@ public class CompilerLogic extends CBaseListener {
         switch(type) {            
         case FRACTION:
         	convertFractionsCommonDivisor();
-        	//proceed as integer
+        	instruction = new Instruction(InstructionCodes.OPERATION, 0, operationCode);
+            data.addInstructionChangeStackPointer(instruction);
+            shiftFractionInStack();
+            break;
         	
         case INT:
-        	Instruction instruction = new Instruction(InstructionCodes.OPERATION, 0, operationCode);
+        	instruction = new Instruction(InstructionCodes.OPERATION, 0, operationCode);
             data.addInstructionChangeStackPointer(instruction);
             break;
         
@@ -95,7 +103,10 @@ public class CompilerLogic extends CBaseListener {
         	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 0));
         	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.INEQUALITY));
         	
-        	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer()));
+        	instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1);
+        	data.addInstructionChangeStackPointer(instruction);
+        	data.toShift.add(instruction); 
+        	
         	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 0));
         	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.INEQUALITY));
         	
@@ -103,7 +114,6 @@ public class CompilerLogic extends CBaseListener {
             break;
         }
         
-        shiftFractionInStack();
         data.pushDataType(DataType.BOOLEAN);
     }
     
@@ -113,7 +123,9 @@ public class CompilerLogic extends CBaseListener {
      */
     public void shiftFractionInStack() {
     	// store resulting fraction
-    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 2));
+    	Instruction instruction = new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 3);
+    	data.addInstructionChangeStackPointer(instruction);
+    	data.toShift.add(instruction);
     	
     	//remove second operand
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, data.getCurrentInstructionAddress() + 2));
@@ -125,12 +137,21 @@ public class CompilerLogic extends CBaseListener {
      */
     public void convertFractionsCommonDivisor() {
     	//multiply numerator of first fraction by denominator of second fraction
-    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 2));
+    	Instruction instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 3);
+    	data.addInstructionChangeStackPointer(instruction);
+    	data.toShift.add(instruction);
+    	
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.MULTIPLICATION));
     	
     	//multiply denominator of first fraction by numerator of first fraction
-    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1));
-    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1));
+    	instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 2);
+    	data.addInstructionChangeStackPointer(instruction);
+    	data.toShift.add(instruction); 
+    	
+    	instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 2);
+    	data.addInstructionChangeStackPointer(instruction);
+    	data.toShift.add(instruction);
+    	
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.MULTIPLICATION));
     	
     	//now are on the top of the stack two integer values, which represents numerators of given fractions converted to common divisor
@@ -165,7 +186,10 @@ public class CompilerLogic extends CBaseListener {
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 0));
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.INEQUALITY));
     	
-    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer()));
+    	Instruction instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1);
+    	data.addInstructionChangeStackPointer(instruction);
+    	data.toShift.add(instruction);
+    	
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 0));
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.INEQUALITY));
     	
@@ -191,7 +215,10 @@ public class CompilerLogic extends CBaseListener {
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 0));
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.INEQUALITY));
     	
-    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer()));
+    	Instruction instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1);
+    	data.addInstructionChangeStackPointer(instruction);
+    	data.toShift.add(instruction);
+    	
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 0));
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.INEQUALITY));
     	
