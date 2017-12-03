@@ -1,9 +1,9 @@
-package test;
+package test.compiler;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class LoopTests extends FjpTests{
+class LoopTests extends CompilerTestsBase {
 
     @Test
     @DisplayName("While - int < 10 expression")

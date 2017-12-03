@@ -1,4 +1,4 @@
-package test;
+package test.compiler;
 
 import fjp.Main;
 import org.junit.jupiter.api.AfterEach;
@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FjpTests {
+class CompilerTestsBase {
 
     private static final String outFileName = "out.test";
     private static final String testPath = "testFiles/";
