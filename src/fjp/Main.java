@@ -34,8 +34,7 @@ public class Main {
 		parser.start();
 
 		// Write compiled data to file
-		String outputFileName = args.length == 2 ? args[1] :
-				args[0].substring(0, args[0].lastIndexOf(".")) + outputFileExtension;
+		String outputFileName = getPLFileName(args);
 
 		writeToFile(outputFileName, data.getOutput());
 
@@ -43,6 +42,24 @@ public class Main {
 		Interpreter interpreter = new Interpreter();
 		interpreter.setInstructions(data.getOutput());
 		interpreter.interpret();
+	}
+
+	/**
+	 * Create file name of new created file from input arguments.
+	 * 
+	 * @param args array contains input file name and optionally output file name
+	 * @return created name
+	 */
+	private String getPLFileName(String []args){
+		if(args.length == 2) {
+			return args[1];
+		}
+
+		if(args[0].contains(".")){
+			return args[0].substring(0, args[0].lastIndexOf(".")) + outputFileExtension;
+		}
+
+		return args[0] + outputFileExtension;
 	}
 
 	/**
