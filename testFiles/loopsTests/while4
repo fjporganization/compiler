@@ -1,0 +1,17 @@
+void main(){
+
+    int a = 0;
+    int b = 0;
+    boolean c = true;
+
+    while(a < 10){
+        a = a + 1;
+        while(b < 5) {
+            while(c){
+                c = false;
+                b = 10;
+            }
+            c = true;
+        }
+    }
+}

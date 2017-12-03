@@ -1,0 +1,12 @@
+boolean b = false;
+
+void main(){
+
+    int a = 0;
+
+    do {
+        do {
+            a = a + 2;
+        } while (a != 4);
+    } while(b);
+}
