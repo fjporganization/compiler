@@ -1,0 +1,7 @@
+void main(){
+  int a = -(3 + 2);
+  int b = -6;
+  int c = +5;
+  int d = 4;
+  int e = -(7 + 8) + -(9 + 10);
+}

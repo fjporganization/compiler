@@ -31,6 +31,18 @@ class ArithmeticTests extends CompilerTestsBase{
 		testFiles("arithmeticTests/intDivision", "arithmeticTests/intDivision.pl0");
 	}
 	
+	@Test
+	@DisplayName("Integer operators precedence")
+	void testIntPrecedence() {
+		testFiles("arithmeticTests/intPrecedence", "arithmeticTests/intPrecedence.pl0");
+	}
+	
+	@Test
+	@DisplayName("Integer unary operators")
+	void testIntUnary() {
+		testFiles("arithmeticTests/intUnaryOperator", "arithmeticTests/intUnaryOperator.pl0");
+	}
+	
 	// fractions tests =====================
 	
 	@Test
@@ -55,6 +67,12 @@ class ArithmeticTests extends CompilerTestsBase{
 	@DisplayName("Division of two fractions")
 	void testRatioDiv() {
 		testFiles("arithmeticTests/ratioDivision", "arithmeticTests/ratioDivision.pl0");
+	}
+	
+	@Test
+	@DisplayName("Fraction operators precedence and unary operators")
+	void testRatioPrecedence() {
+		testFiles("arithmeticTests/ratioPrecedenceUnary", "arithmeticTests/ratioPrecedenceUnary.pl0");
 	}
 	
 	// type conversion tests =========================
