@@ -106,18 +106,6 @@ public interface CListener extends ParseTreeListener {
 	 */
 	void exitMultipleAssignment(CParser.MultipleAssignmentContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ternaryOperatorAssignment}
-	 * labeled alternative in {@link CParser#assignment}.
-	 * @param ctx the parse tree
-	 */
-	void enterTernaryOperatorAssignment(CParser.TernaryOperatorAssignmentContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code ternaryOperatorAssignment}
-	 * labeled alternative in {@link CParser#assignment}.
-	 * @param ctx the parse tree
-	 */
-	void exitTernaryOperatorAssignment(CParser.TernaryOperatorAssignmentContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link CParser#standardAssignment}.
 	 * @param ctx the parse tree
 	 */

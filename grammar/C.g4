@@ -60,12 +60,13 @@ constantdeclaration
   
 assignment
   : standardAssignment SEMICOLON                                      #standAssignment
-  | (IDENTIFIER ASSIGNMENTOPERATOR)+ expression SEMICOLON             #multipleAssignment
-  | IDENTIFIER ASSIGNMENTOPERATOR logicalexpression ternaryoperator		#ternaryOperatorAssignment 
+  | (IDENTIFIER ASSIGNMENTOPERATOR)+ expression SEMICOLON             #multipleAssignment 
   ;
+  
 
 standardAssignment
   : IDENTIFIER ASSIGNMENTOPERATOR expression
+  | IDENTIFIER ASSIGNMENTOPERATOR logicalexpression ternaryoperator
   ;
 
 parallelassignment
@@ -87,7 +88,7 @@ expression
   ;
   
 ternaryoperator
-  : QUESTIONMARK ternaryassertive COLON ternarynegative SEMICOLON
+  : QUESTIONMARK ternaryassertive COLON ternarynegative
   ;
   
 ternaryassertive
