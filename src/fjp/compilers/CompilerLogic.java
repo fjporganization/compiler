@@ -40,7 +40,7 @@ public class CompilerLogic extends CBaseListener {
                 break;
         }
         
-        DataType type = DataConversions.checkDataTypes(data);
+        DataType type = DataConversions.checkDataTypes(data, ctx);
         
         switch(type) {            
         case FRACTION:
@@ -83,7 +83,7 @@ public class CompilerLogic extends CBaseListener {
                 break;
         }
         
-        DataType type = DataConversions.checkDataTypes(data);
+        DataType type = DataConversions.checkDataTypes(data, ctx);
         
         switch(type) {            
         case FRACTION:

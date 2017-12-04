@@ -37,7 +37,7 @@ public class CompilerArithmetic extends CBaseListener {
      */
     @Override
     public void exitMulDivExp(CParser.MulDivExpContext ctx) {
-    	DataType result = DataConversions.checkDataTypes(data);
+    	DataType result = DataConversions.checkDataTypes(data, ctx);
     	Instruction instruction;
     	
     	switch(result) {
@@ -95,7 +95,7 @@ public class CompilerArithmetic extends CBaseListener {
     @Override
     public void exitAddSubExp(CParser.AddSubExpContext ctx) {
     	OperationCode operationCode;
-    	DataType result = DataConversions.checkDataTypes(data);
+    	DataType result = DataConversions.checkDataTypes(data, ctx);
     	
     	switch(result) {
     	case INT:
