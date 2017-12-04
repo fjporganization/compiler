@@ -38,6 +38,10 @@ public class CompilerCondition extends CBaseListener {
     @Override
     public void enterSimplecondition(CParser.SimpleconditionContext ctx) {
         //method is called AFTER parser processed block 'if(condition)', so condition is already processed and evaluated
+    	if(data.popDataType() != DataType.BOOLEAN) {
+    		Error.throwError(ctx, "In if condition must be boolean data type");
+    	}
+    	
         Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0);
         data.addInstructionChangeStackPointer(conditionalJump);
         instructionStack.add(conditionalJump);
@@ -65,6 +69,10 @@ public class CompilerCondition extends CBaseListener {
     @Override
     public void enterIfelsecondition(CParser.IfelseconditionContext ctx) {
         //method is called AFTER parser processed block 'if(condition)' so condition is already processed
+    	if(data.popDataType() != DataType.BOOLEAN) {
+    		Error.throwError(ctx, "In if condition must be boolean data type");
+    	}
+    	
         Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0);
         data.addInstructionChangeStackPointer(conditionalJump);
         instructionStack.add(conditionalJump);
@@ -109,6 +117,10 @@ public class CompilerCondition extends CBaseListener {
     @Override
     public void enterTernaryoperator(CParser.TernaryoperatorContext ctx) {
         // condition has been processed yet
+    	if(data.popDataType() != DataType.BOOLEAN) {
+    		Error.throwError(ctx, "In if condition must be boolean data type");
+    	}
+    	
         Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0);
         data.addInstructionChangeStackPointer(conditionalJump);
         instructionStack.add(conditionalJump);
