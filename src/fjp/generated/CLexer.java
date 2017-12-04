@@ -1,4 +1,5 @@
 package fjp.generated; 
+
 // Generated from ./grammar/C.g4 by ANTLR 4.7
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
