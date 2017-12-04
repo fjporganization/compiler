@@ -100,7 +100,8 @@ ternarynegative
   ;
   
 arithmeticexpression
-  : LEFTPARENTHESE TYPESPECIFIER RIGHTPARENTHESE arithmeticexpression                 #dataTypeConversion
+  : ADDITIONSUBTRACTIONOPERATOR arithmeticexpression								  #unaryOperator
+  | LEFTPARENTHESE TYPESPECIFIER RIGHTPARENTHESE arithmeticexpression                 #dataTypeConversion
   | LEFTPARENTHESE arithmeticexpression RIGHTPARENTHESE                               #parenthesesArithmeticExp
   | arithmeticexpression MULTIPLICATIONDIVISIONOPERATOR arithmeticexpression          #mulDivExp
   | arithmeticexpression ADDITIONSUBTRACTIONOPERATOR arithmeticexpression             #addSubExp
@@ -118,8 +119,8 @@ logicalexpression
   ;
   
 atom
-  : inputinteger		  #integerIO	
-  | inputfrac					#fractionIO
+  : inputinteger	  #integerIO	
+  | inputfrac		  #fractionIO
   | IDENTIFIER        #identifierAtom
   | NUMERICALVALUE    #numericAtom
   | LOGICALVALUE      #logicAtom
@@ -359,8 +360,8 @@ IDENTIFIER
   ;
 
 NUMERICALVALUE
-  : (ADDITIONSUBTRACTIONOPERATOR)? (DIGIT)+ 
-  | (ADDITIONSUBTRACTIONOPERATOR)? (DIGIT)+ '|' (DIGIT)+ 
+  : (DIGIT)+ 
+  | (DIGIT)+ '|' (DIGIT)+ 
   ;
 
 LEFTPARENTHESE

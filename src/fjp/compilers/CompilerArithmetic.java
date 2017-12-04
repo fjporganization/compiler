@@ -290,6 +290,16 @@ public class CompilerArithmetic extends CBaseListener {
     }
     
     /**
+     * Processes unary operators
+     */
+    @Override 
+    public void exitUnaryOperator(CParser.UnaryOperatorContext ctx) { 
+    	if(ctx.ADDITIONSUBTRACTIONOPERATOR().getText().equals("-")) {
+    		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.NEGATION));
+    	}
+    }
+    
+    /**
      * Adds instructions for fraction shortening by Euclidean algorithm
      */
     private void shortenFraction() {  	
