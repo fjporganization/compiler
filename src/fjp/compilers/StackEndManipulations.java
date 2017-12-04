@@ -3,6 +3,10 @@ package fjp.compilers;
 import fjp.structures.Instruction;
 import fjp.structures.InstructionCodes;
 
+/**
+ * Provides functionality for manipulating stack last added values (indexing stack from the end)
+ *
+ */
 public class StackEndManipulations {
 	
 	/**

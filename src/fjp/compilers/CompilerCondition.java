@@ -91,7 +91,7 @@ public class CompilerCondition extends CBaseListener {
 
     /**
      * Processes end of the if-else condition negative branch
-     * Completes instruction with jump on the end of assertive branch -
+     * Completes instruction with jump in the end of assertive branch -
      * adds address to jump beyond the negative branch statements block
      */
     @Override
@@ -116,8 +116,8 @@ public class CompilerCondition extends CBaseListener {
     
     /**
      * Processes end of assertive branch of ternary operator
-     * Fulfill the conditional jump instruction with next instruction address
-     * to jump to negative branch
+     * Fulfill the next instruction address in conditional jump instruction
+     * to jump into the negative branch
      */
     @Override
     public void exitTernaryassertive(CParser.TernaryassertiveContext ctx) {
@@ -133,8 +133,8 @@ public class CompilerCondition extends CBaseListener {
     
     /**
      * Processes end of negative branch of ternary operator
-     * Fulfill the jump instruction in the end of assertive branch
-     * with next instruction address to jump beyond negative branch 
+     * Fulfill the next instruction address in jump instruction 
+     * to jump beyond the negative branch 
      */
     @Override
     public void exitTernarynegative(CParser.TernarynegativeContext ctx) {

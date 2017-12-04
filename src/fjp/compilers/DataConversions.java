@@ -30,11 +30,11 @@ public class DataConversions {
     	}else if(left == DataType.FRACTION && right == DataType.FRACTION) {
     		return DataType.FRACTION;
     		
-    	}else if(left == DataType.FRACTION && right == DataType.INT) {
+    	}else if(left == DataType.FRACTION && right == DataType.INT) { //convert right integer to ratio
     		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 1));
     		return DataType.FRACTION;
     		
-    	}else if(left == DataType.INT && right == DataType.FRACTION) {
+    	}else if(left == DataType.INT && right == DataType.FRACTION) { //convert left integer to ratio
     		Instruction instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1);
     		data.toShift.add(instruction);
     		data.addInstructionChangeStackPointer(instruction);
