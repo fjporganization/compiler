@@ -126,5 +126,15 @@ public class CompilerCondition extends CBaseListener {
     public void exitTernarynegative(CParser.TernarynegativeContext ctx) {
         Instruction jump = instructionStack.pop();
         jump.setOperand(data.getCurrentInstructionAddress() + 1);
+        
+        DataType assertiveExpression = data.popDataType();
+    	DataType negativeExpression = data.popDataType();
+    	
+    	if(assertiveExpression != negativeExpression) {
+    		System.out.println("Incompatible data types in ternary operator");
+    		System.exit(1);
+    	}
+    	
+    	data.pushDataType(assertiveExpression);
     }
 }

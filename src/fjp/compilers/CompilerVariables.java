@@ -215,6 +215,30 @@ public class CompilerVariables extends CBaseListener {
             data.decStackPointer(variable.getLength());
         }
     }
+    
+    /**
+     * Processes ternary operator assignment
+     */
+    @Override 
+    public void exitTernaryOperatorAssignment(CParser.TernaryOperatorAssignmentContext ctx) { 
+    	//value for assignment is on top of the stack
+    	
+    	Addressable variable = getAddressable(ctx.IDENTIFIER().getText());
+
+        if (data.popDataType() != variable.getDataType()) {
+            System.err.println("Invalid data type: " + variable.getName());
+            System.exit(1);
+        }
+
+        if(variable.getNestingLevel() == 0){
+            globalVariablesStore(InstructionCodes.STORE_AT_ADDRESS, variable.getAddress(), variable.getLength());
+        } else {
+            int nestingLevel = data.getNestingLevel() - variable.getNestingLevel();
+            localVariablesStore(InstructionCodes.STORE, variable.getAddress(), variable.getLength(), nestingLevel);
+        }
+
+        data.decStackPointer(variable.getLength());
+    }
 
 
     private Addressable getAddressable(String identifier){
