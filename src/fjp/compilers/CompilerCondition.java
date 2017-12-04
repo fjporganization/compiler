@@ -5,6 +5,10 @@ import java.util.Stack;
 import fjp.generated.*;
 import fjp.structures.*;
 
+/**
+ * Provides functionality for parsing conditions
+ *
+ */
 public class CompilerCondition extends CBaseListener {
 
     /**
@@ -33,11 +37,9 @@ public class CompilerCondition extends CBaseListener {
      */
     @Override
     public void enterSimplecondition(CParser.SimpleconditionContext ctx) {
-        //method is called AFTER parser processed block 'if(condition)' so condition is already processed
+        //method is called AFTER parser processed block 'if(condition)', so condition is already processed and evaluated
         Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0);
-        // pops one value
-        data.decStackPointer();
-        data.addInstruction(conditionalJump);
+        data.addInstructionChangeStackPointer(conditionalJump);
         instructionStack.add(conditionalJump);
     }
 
@@ -64,8 +66,7 @@ public class CompilerCondition extends CBaseListener {
     public void enterIfelsecondition(CParser.IfelseconditionContext ctx) {
         //method is called AFTER parser processed block 'if(condition)' so condition is already processed
         Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0);
-        data.decStackPointer();
-        data.addInstruction(conditionalJump);
+        data.addInstructionChangeStackPointer(conditionalJump);
         instructionStack.add(conditionalJump);
     }
 
@@ -83,7 +84,7 @@ public class CompilerCondition extends CBaseListener {
 
         // jump beyond negative branch
         Instruction jump = new Instruction(InstructionCodes.JUMP, 0);
-        data.addInstruction(jump);
+        data.addInstructionChangeStackPointer(jump);
         instructionStack.add(jump);
     }
 
@@ -100,16 +101,24 @@ public class CompilerCondition extends CBaseListener {
     }
 
     // TERNARY OPERATOR ====================
-
+    
+    /**
+     * Processes beginning of the ternary operator
+     * Prepares instruction for conditional jump
+     */
     @Override
     public void enterTernaryoperator(CParser.TernaryoperatorContext ctx) {
         // condition has been processed yet
         Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0);
-        data.decStackPointer();
-        data.addInstruction(conditionalJump);
+        data.addInstructionChangeStackPointer(conditionalJump);
         instructionStack.add(conditionalJump);
     }
-
+    
+    /**
+     * Processes end of assertive branch of ternary operator
+     * Fulfill the conditional jump instruction with next instruction address
+     * to jump to negative branch
+     */
     @Override
     public void exitTernaryassertive(CParser.TernaryassertiveContext ctx) {
         Instruction conditionalJump = instructionStack.pop();
@@ -118,10 +127,15 @@ public class CompilerCondition extends CBaseListener {
 
         // jump beyond negative branch
         Instruction jump = new Instruction(InstructionCodes.JUMP, 0);
-        data.addInstruction(jump);
+        data.addInstructionChangeStackPointer(jump);
         instructionStack.add(jump);
     }
-
+    
+    /**
+     * Processes end of negative branch of ternary operator
+     * Fulfill the jump instruction in the end of assertive branch
+     * with next instruction address to jump beyond negative branch 
+     */
     @Override
     public void exitTernarynegative(CParser.TernarynegativeContext ctx) {
         Instruction jump = instructionStack.pop();
@@ -131,8 +145,7 @@ public class CompilerCondition extends CBaseListener {
     	DataType negativeExpression = data.popDataType();
     	
     	if(assertiveExpression != negativeExpression) {
-    		System.out.println("Incompatible data types in ternary operator");
-    		System.exit(1);
+    		Error.throwError(ctx, "Incompatible data types in ternary operators - data types in both expressions of ternary operator may not differs");
     	}
     	
     	data.pushDataType(assertiveExpression);
