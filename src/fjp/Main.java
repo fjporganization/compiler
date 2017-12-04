@@ -1,6 +1,7 @@
 package fjp;
 
 import java.io.*;
+import java.util.EmptyStackException;
 import java.util.List;
 
 import fjp.compilers.*;
@@ -38,6 +39,14 @@ public class Main {
 			System.err.println(e.getMessage());
 			return;
 		}
+
+		// TODO delete only for testing ==================================
+		try {
+			if (data.popDataType() != null) {
+				System.err.println("DATA TYPE STACK IS NOT EMPTY");
+			}
+		} catch (EmptyStackException e){ }
+		// TODO ==========================================================
 
 		// Write compiled data to file
 		String outputFileName = getPLFileName(args);
