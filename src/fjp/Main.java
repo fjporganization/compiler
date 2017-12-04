@@ -9,6 +9,7 @@ import fjp.generated.*;
 import fjp.interpreter.Interpreter;
 import fjp.structures.Instruction;
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 public class Main {
 
@@ -31,7 +32,12 @@ public class Main {
 
 		CompilerData data = new CompilerData();
 		registerCompilers(parser, data);
-		parser.start();
+		try {
+			parser.start();
+		} catch (ParseCancellationException e){
+			System.err.println(e.getMessage());
+			return;
+		}
 
 		// Write compiled data to file
 		String outputFileName = getPLFileName(args);

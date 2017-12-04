@@ -2,6 +2,7 @@ package fjp.compilers;
 
 import fjp.generated.*;
 import fjp.structures.*;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.List;
@@ -24,7 +25,11 @@ public class CompilerVariables extends CBaseListener {
      */
     @Override
     public void exitDeclarationOnly(CParser.DeclarationOnlyContext ctx) {
-        declaration(ctx.IDENTIFIER().getText(), ctx.TYPESPECIFIER().getText(), false);
+        Addressable addressable = declaration(ctx.IDENTIFIER().getText(), ctx.TYPESPECIFIER().getText(), false);
+
+        if (addressable == null){
+            Error.throwError(ctx, "Identifier " + ctx.IDENTIFIER().getText() + " is already declared");
+        }
     }
 
     /**
@@ -34,9 +39,14 @@ public class CompilerVariables extends CBaseListener {
     public void exitDeclarationAndInitialization(CParser.DeclarationAndInitializationContext ctx) {
         Addressable addressable = declaration(ctx.IDENTIFIER().getText(), ctx.TYPESPECIFIER().getText(), false);
 
+        if (addressable == null){
+            Error.throwError(ctx, "Identifier " + ctx.IDENTIFIER().getText() + " is already declared");
+            return;
+        }
+
         if (data.popDataType() != addressable.getDataType()) {
-            System.err.println("Data type " + addressable.getDataType() + " is not expected in: " + addressable.getName());
-            System.exit(1);
+            String message = "Data type " + addressable.getDataType() + " is not expected in: " + addressable.getName();
+            Error.throwError(ctx, message);
         }
 
         for (int i = addressable.getLength() - 1; i >= 0; i--){
@@ -53,9 +63,14 @@ public class CompilerVariables extends CBaseListener {
 
         Addressable addressable = declaration(ctx.IDENTIFIER().getText(), ctx.TYPESPECIFIER().getText(), true);
 
+        if (addressable == null){
+            Error.throwError(ctx, "Identifier " + ctx.IDENTIFIER().getText() + " is already declared");
+            return;
+        }
+
         if (data.popDataType() != addressable.getDataType()) {
-            System.err.println("Data type " + addressable.getDataType() + " is not expected in: " + addressable.getName());
-            System.exit(1);
+            String message = "Data type " + addressable.getDataType() + " is not expected in: " + addressable.getName();
+            Error.throwError(ctx, message);
         }
 
         for (int i = addressable.getLength() - 1; i >= 0; i--){
@@ -69,8 +84,7 @@ public class CompilerVariables extends CBaseListener {
         DataType type = null;
 
         if(data.symbolTableGet(identifier) != null) {
-            System.err.println("Identifier " + identifier + " is already declared");
-            System.exit(1);
+            return null;
         }
 
         switch(dataType) {
@@ -110,7 +124,7 @@ public class CompilerVariables extends CBaseListener {
     @Override
     public void exitIdentifierAtom(CParser.IdentifierAtomContext ctx) {
         //load variable or constant identified by identifier onto the stack
-        Addressable variable = getAddressable(ctx.IDENTIFIER().getText());
+        Addressable variable = getAddressable(ctx.IDENTIFIER().getText(), ctx);
 
         data.pushDataType(variable.getDataType());
 
@@ -132,11 +146,10 @@ public class CompilerVariables extends CBaseListener {
     @Override
     public void exitStandardAssignment(CParser.StandardAssignmentContext ctx) {
 
-        Addressable variable = getAddressable(ctx.IDENTIFIER().getText());
+        Addressable variable = getAddressable(ctx.IDENTIFIER().getText(), ctx);
 
         if (data.popDataType() != variable.getDataType()) {
-            System.err.println("Invalid data type: " + variable.getName());
-            System.exit(1);
+            Error.throwError(ctx, "Invalid data type: " + variable.getName());
         }
 
         if(variable.getNestingLevel() == 0){
@@ -157,11 +170,10 @@ public class CompilerVariables extends CBaseListener {
         int length = valueType == DataType.FRACTION ? 2 : 1; // size of values on stack
 
         for(TerminalNode node : identifiers){
-            Addressable variable = getAddressable(node.getText());
+            Addressable variable = getAddressable(node.getText(), ctx);
 
             if (valueType != variable.getDataType()) {
-                System.err.println("Invalid data type: " + variable.getName());
-                System.exit(1);
+                Error.throwError(ctx, "Invalid data type: " + variable.getName());
             }
 
             for (int i = 0; i < length; i++) {
@@ -189,20 +201,19 @@ public class CompilerVariables extends CBaseListener {
     @Override
     public void exitParallelassignment(CParser.ParallelassignmentContext ctx) {
         if(ctx.identifierlist().IDENTIFIER().size() != ctx.valuelist().expression().size()){
-            System.err.println("Parallel assignment: Number of identifiers is not equal to number of values.");
-            System.err.println(ctx.getText());
-            System.exit(1);
+            String message = "Parallel assignment: Number of identifiers is not equal to number of values.\n";
+            message += ctx.getText();
+            Error.throwError(ctx, message);
         }
 
         List<TerminalNode> identifiers = ctx.identifierlist().IDENTIFIER();
 
         for(int i = identifiers.size() - 1; i >= 0; i--){
 
-            Addressable variable = getAddressable(identifiers.get(i).getText());
+            Addressable variable = getAddressable(identifiers.get(i).getText(), ctx);
 
             if (data.popDataType() != variable.getDataType()) {
-                System.err.println("Invalid data type: " + variable.getName());
-                System.exit(1);
+                Error.throwError(ctx, "Invalid data type: " + variable.getName());
             }
 
             if(variable.getNestingLevel() == 0){
@@ -217,17 +228,15 @@ public class CompilerVariables extends CBaseListener {
     }
 
 
-    private Addressable getAddressable(String identifier){
+    private Addressable getAddressable(String identifier, ParserRuleContext ctx){
         Addressable variable = data.symbolTableGet(identifier);
 
         if(variable == null) {
-            System.err.println("Unknown identifier: " + identifier);
-            System.exit(1);
+            Error.throwError(ctx, "Unknown identifier: " + identifier);
         }
 
         if(!(variable instanceof Variable)) {
-            System.err.println(identifier + "is not variable");
-            System.exit(1);
+            Error.throwError(ctx,identifier + "is not a variable");
         }
 
         return variable;
