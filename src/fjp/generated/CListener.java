@@ -270,6 +270,18 @@ public interface CListener extends ParseTreeListener {
 	 */
 	void exitEqualityLogicExp(CParser.EqualityLogicExpContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code arithmeticExpAtom}
+	 * labeled alternative in {@link CParser#logicalexpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterArithmeticExpAtom(CParser.ArithmeticExpAtomContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code arithmeticExpAtom}
+	 * labeled alternative in {@link CParser#logicalexpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitArithmeticExpAtom(CParser.ArithmeticExpAtomContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code logicNegation}
 	 * labeled alternative in {@link CParser#logicalexpression}.
 	 * @param ctx the parse tree

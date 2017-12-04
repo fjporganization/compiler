@@ -111,11 +111,12 @@ arithmeticexpression
 logicalexpression
   : LEFTPARENTHESE logicalexpression RIGHTPARENTHESE                                  #parenthesesLogicExp
   | LOGICALNEGATION logicalexpression                                                 #logicNegation
-  | logicalexpression RELATIONALOPERATOR logicalexpression                            #relationalLogicExp
+  | logicalexpression RELATIONALOPERATOR logicalexpression   						  #relationalLogicExp
   | logicalexpression EQUALITYOPERATOR logicalexpression                              #equalityLogicExp
   | logicalexpression LOGICALAND logicalexpression                                    #LogicalAndExp
   | logicalexpression LOGICALOR logicalexpression                                     #LogicalOrExp
   | atom                                                                              #logicalAtom
+  | arithmeticexpression															  #arithmeticExpAtom
   ;
   
 atom
