@@ -295,7 +295,30 @@ public class CompilerArithmetic extends CBaseListener {
     @Override 
     public void exitUnaryOperator(CParser.UnaryOperatorContext ctx) { 
     	if(ctx.ADDITIONSUBTRACTIONOPERATOR().getText().equals("-")) {
-    		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.NEGATION));
+    		DataType current = data.peekDataType();
+    		
+    		switch(current) {
+    		case INT:
+    			data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.NEGATION));
+    			break;
+    			
+    		case FRACTION:
+    			Instruction instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1);
+    			data.addInstructionChangeStackPointer(instruction);
+    			data.toShift.add(instruction);
+    			
+    			data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.NEGATION));
+    			
+    			instruction = new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 2);
+    			data.addInstructionChangeStackPointer(instruction);
+    			data.toShift.add(instruction);
+    			
+    			break;
+    			
+    		case BOOLEAN:
+    			System.err.println("Incompatible data types");
+    			System.exit(1);
+    		}
     	}
     }
     
