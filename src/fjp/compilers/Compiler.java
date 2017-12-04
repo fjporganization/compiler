@@ -57,13 +57,12 @@ public class Compiler extends CBaseListener {
 			Addressable func = data.symbolTableGet(pair.getKey());
 
 			if(func == null) {
-				System.err.println("Unknown function identifier: " + pair.getKey());
-				System.exit(1);
+				Error.throwError(ctx, "Unknown function identifier: " + pair.getKey());
 			}
 
 			if(!(func instanceof Function)) {
-				System.err.println(pair.getKey() + "is not function");
-				System.exit(1);
+				Error.throwError(ctx,pair.getKey() + "is not function");
+				return;
 			}
 
 			pair.getValue().setOperand(func.getAddress());
@@ -98,7 +97,7 @@ public class Compiler extends CBaseListener {
 		String identifier = ctx.IDENTIFIER().getText();
 
 		if(data.symbolTableGet(identifier) != null) {
-			System.err.println("Identifier " + identifier + " is already declared");
+			Error.throwError(ctx,"Identifier " + identifier + " is already declared");
 		}
 
 		Function func = new Function(intInstructionAdr, identifier);
