@@ -130,7 +130,21 @@ public class CompilerSwitch extends CBaseListener {
             data.addInstruction(switches.peek().loadCmpValue[i]);
             data.incStackPointer();
         }
+        
+        if(type == DataType.FRACTION) { // must convert fractions to common divisor when data type is ratio
+        	//multiply numerator of first fraction by denominator of second fraction
+        	StackEndManipulations.loadFromStackEnd(3, data);
+        	data.addInstruction(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.MULTIPLICATION));
+        	data.decStackPointer();
+        	StackEndManipulations.storeAtStackEnd(3, data); //save to index of first fraction numerator
+        	
+        	//multiply denominator of first fraction by numerator of second fraction
+        	data.addInstruction(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.MULTIPLICATION));
+        	data.decStackPointer();
+        }
+        
         data.addInstruction(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.EQUALITY));
+        data.decStackPointer();
 
         // Jump to next next case
         Instruction jump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, -1);
