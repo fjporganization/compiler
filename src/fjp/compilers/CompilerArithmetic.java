@@ -8,10 +8,26 @@ import fjp.structures.*;
  *
  */
 public class CompilerArithmetic extends CBaseListener {
+	
+	/** Symbol of multiplication operator*/
+	private static final String MULTIPLICATION_OPERATOR = "*";
+	
+	/** Symbol of addition operator*/
+	private static final String ADDITION_OPERATOR = "+";
+	
+	/** Symbol of unary minus */
+	private static final String UNARY_MINUS = "-";
+	
+	/** Symbol of fraction bar */
+	private static final String FRACTION_BAR = "|";
 
     /** Data which are shared across all compilers classes */
     private final CompilerData data;
-
+    
+    /**
+     * Constructor of the arithmetic compiler
+     * @param data compiler data that are shared across all compiler classes
+     */
     public CompilerArithmetic(CompilerData data){
         this.data = data;
     }
@@ -26,7 +42,7 @@ public class CompilerArithmetic extends CBaseListener {
     	
     	switch(result) {
     	case INT:
-    		OperationCode operationCode = ctx.MULTIPLICATIONDIVISIONOPERATOR().getText().equals("*") ?
+    		OperationCode operationCode = ctx.MULTIPLICATIONDIVISIONOPERATOR().getText().equals(MULTIPLICATION_OPERATOR) ?
                     OperationCode.MULTIPLICATION : OperationCode.DIVISION;
 
             instruction = new Instruction(InstructionCodes.OPERATION, 0, operationCode);
@@ -35,50 +51,29 @@ public class CompilerArithmetic extends CBaseListener {
             break;
             
     	case FRACTION:
-    		if(ctx.MULTIPLICATIONDIVISIONOPERATOR().getText().equals("*")) {
+    		if(ctx.MULTIPLICATIONDIVISIONOPERATOR().getText().equals(MULTIPLICATION_OPERATOR)) {
     			// multiply numerator of first fraction by numerator of second fraction
-    			instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 3);
-    			data.toShift.add(instruction);
-    			data.addInstructionChangeStackPointer(instruction);
+    			StackEndManipulations.loadFromStackEnd(3, data);
+    			StackEndManipulations.loadFromStackEnd(2, data);
     			
-    			instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 2);
-    			data.toShift.add(instruction);
-    			data.addInstructionChangeStackPointer(instruction);
-    			
-        		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.MULTIPLICATION));
+    			data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.MULTIPLICATION));
         		
         		// multiply denominator of first fraction by denominator of second fraction
-        		instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 3);
-    			data.toShift.add(instruction);
-    			data.addInstructionChangeStackPointer(instruction);
-    			
-    			instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 2);
-    			data.toShift.add(instruction);
-    			data.addInstructionChangeStackPointer(instruction);
+    			StackEndManipulations.loadFromStackEnd(3, data);
+    			StackEndManipulations.loadFromStackEnd(2, data);
     			
         		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.MULTIPLICATION));
         		
-    		} else {
+    		} else { //division
     			// multiply numerator of first fraction by denominator of second fraction
-    			instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 3);
-    			data.toShift.add(instruction);
-    			data.addInstructionChangeStackPointer(instruction);
-    			
-    			instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1);
-    			data.toShift.add(instruction);
-    			data.addInstructionChangeStackPointer(instruction);
+    			StackEndManipulations.loadFromStackEnd(3, data);
+    			StackEndManipulations.loadFromStackEnd(1, data);
     			
     			data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.MULTIPLICATION));
         		
     			//multiply denominator of first fraction by numerator of second fraction
-    			
-    			instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 3);
-    			data.toShift.add(instruction);
-    			data.addInstructionChangeStackPointer(instruction);
-    			
-    			instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 3);
-    			data.toShift.add(instruction);
-    			data.addInstructionChangeStackPointer(instruction);
+    			StackEndManipulations.loadFromStackEnd(3, data);
+    			StackEndManipulations.loadFromStackEnd(3, data);
     			
     			data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.MULTIPLICATION));
     		}
@@ -88,8 +83,7 @@ public class CompilerArithmetic extends CBaseListener {
     		break;
     		
     	case BOOLEAN:
-    		System.err.println("Incompatible data types");
-    		System.exit(1);
+    		Error.throwError(ctx, "Incompatible data types - trying to multiply / divide boolean");
     		break;
     	}
     }
@@ -105,7 +99,7 @@ public class CompilerArithmetic extends CBaseListener {
     	
     	switch(result) {
     	case INT:
-    		operationCode = ctx.ADDITIONSUBTRACTIONOPERATOR().getText().equals("+") ?
+    		operationCode = ctx.ADDITIONSUBTRACTIONOPERATOR().getText().equals(ADDITION_OPERATOR) ?
                     OperationCode.ADDITION : OperationCode.SUBTRACTION;
 
             Instruction instruction = new Instruction(InstructionCodes.OPERATION, 0, operationCode);
@@ -116,24 +110,14 @@ public class CompilerArithmetic extends CBaseListener {
             
     	case FRACTION:
     		// multiply numerator of first fraction by denominator of second fraction
-    		instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 3);
-			data.toShift.add(instruction);
-			data.addInstructionChangeStackPointer(instruction);
-			
-			instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1);
-			data.toShift.add(instruction);
-			data.addInstructionChangeStackPointer(instruction);
+    		StackEndManipulations.loadFromStackEnd(3, data);
+    		StackEndManipulations.loadFromStackEnd(1, data);
     		
 			data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.MULTIPLICATION));
     		
     		// multiply numerator of second fraction by denominator of first fraction
-			instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 2);
-			data.toShift.add(instruction);
-			data.addInstructionChangeStackPointer(instruction);
-			
-			instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 4);
-			data.toShift.add(instruction);
-			data.addInstructionChangeStackPointer(instruction);
+			StackEndManipulations.loadFromStackEnd(2, data);
+			StackEndManipulations.loadFromStackEnd(4, data);
 			
 			data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.MULTIPLICATION));
     		
@@ -143,13 +127,8 @@ public class CompilerArithmetic extends CBaseListener {
     		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, operationCode));
     		
     		// compute resulting denominator by multiplicating denominators of both fractions
-    		instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 3);
-			data.toShift.add(instruction);
-			data.addInstructionChangeStackPointer(instruction);
-			
-			instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 2);
-			data.toShift.add(instruction);
-			data.addInstructionChangeStackPointer(instruction);
+    		StackEndManipulations.loadFromStackEnd(3, data);
+    		StackEndManipulations.loadFromStackEnd(2, data);
 			
     		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.MULTIPLICATION));
     		
@@ -159,31 +138,10 @@ public class CompilerArithmetic extends CBaseListener {
     		break;
     		
     	case BOOLEAN:
-    		System.err.println("Incompatible data types");
-    		System.exit(1);
+    		Error.throwError(ctx, "Incompatible data types - trying to add / subtract boolean");
     		break;
     	}
-    }
-    
-    /**
-     * after numeric operations with fractions in the stack persists original fractions
-     * stores resulting fraction to the position of first fraction and erases second fraction from top of the stack
-     */
-    private void shiftFractionInStack() {
-    	// store resulting fraction
-    	Instruction instruction = new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 4);
-		data.toShift.add(instruction);
-		data.addInstructionChangeStackPointer(instruction);
-		
-		instruction = new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 4);
-		data.toShift.add(instruction);
-		data.addInstructionChangeStackPointer(instruction);
-    	
-    	//remove second operand
-    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, data.getCurrentInstructionAddress() + 2));
-    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, data.getCurrentInstructionAddress() + 2));
-    }
-       	
+    }  	
 
     /**
      * Processes numeric atom (single numeric value) (pushes the value of the variable onto the stack)
@@ -193,14 +151,13 @@ public class CompilerArithmetic extends CBaseListener {
         //load given literal onto the stack
         String literal = ctx.getText();
         
-        if(literal.contains("|")) { //fraction
+        if(literal.contains(FRACTION_BAR)) { //fraction
         	
-        	String[] inputData = literal.split("\\|");
+        	String[] inputData = literal.split("\\" + FRACTION_BAR); //must escape |
         	String numerator = inputData[0];
         	int denominator = Integer.parseInt(inputData[1]);
         	if(denominator == 0) {
-        		System.err.println("Division by zero");
-        		System.exit(1);
+        		Error.throwError(ctx, "Denominator of ratio data type cannot be zero");
         	}
         	
         	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, numerator));
@@ -209,8 +166,7 @@ public class CompilerArithmetic extends CBaseListener {
     		        	
         }else { //integer
         	Instruction instruction = new Instruction(InstructionCodes.PUSH, 0, literal);
-            data.addInstruction(instruction);
-            data.incStackPointer();
+            data.addInstructionChangeStackPointer(instruction);
             data.pushDataType(DataType.INT);
         }
     }
@@ -245,8 +201,7 @@ public class CompilerArithmetic extends CBaseListener {
     			break;
     			
     		case BOOLEAN:
-    			System.err.println("Incompatible explicit conversion");
-    			System.exit(1);
+    			Error.throwError(ctx, "Cannot convert integer to boolean");
     			break;
     		}
     		
@@ -263,8 +218,7 @@ public class CompilerArithmetic extends CBaseListener {
     			break;
     			
     		case BOOLEAN:
-    			System.err.println("Incompatible explicit conversion");
-    			System.exit(1);
+    			Error.throwError(ctx, "Cannot convert ratio to boolean");
     			break;
     		}
     		
@@ -273,11 +227,12 @@ public class CompilerArithmetic extends CBaseListener {
     		
     	case "boolean":
     		switch(currentType) {
-    		case INT: 
+    		case INT:
+    			Error.throwError(ctx, "Cannot convert boolean to integer");
+    			break;
     			
     		case FRACTION: 
-    			System.err.println("Incompatible explicit conversion");
-    			System.exit(1);
+    			Error.throwError(ctx, "Cannot convert boolean to ratio");
     			break;
     			
     		case BOOLEAN: //everything is OK
@@ -294,32 +249,41 @@ public class CompilerArithmetic extends CBaseListener {
      */
     @Override 
     public void exitUnaryOperator(CParser.UnaryOperatorContext ctx) { 
-    	if(ctx.ADDITIONSUBTRACTIONOPERATOR().getText().equals("-")) {
-    		DataType current = data.peekDataType();
-    		
-    		switch(current) {
-    		case INT:
-    			data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.NEGATION));
-    			break;
-    			
-    		case FRACTION:
-    			Instruction instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1);
-    			data.addInstructionChangeStackPointer(instruction);
-    			data.toShift.add(instruction);
-    			
-    			data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.NEGATION));
-    			
-    			instruction = new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 2);
-    			data.addInstructionChangeStackPointer(instruction);
-    			data.toShift.add(instruction);
-    			
-    			break;
-    			
-    		case BOOLEAN:
-    			System.err.println("Incompatible data types");
-    			System.exit(1);
-    		}
-    	}
+    	DataType current = data.peekDataType();
+		
+		switch(current) {
+		case INT:
+			if(ctx.ADDITIONSUBTRACTIONOPERATOR().getText().equals(UNARY_MINUS)) {
+				data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.NEGATION));
+	    	}
+			break;
+			
+		case FRACTION:
+			if(ctx.ADDITIONSUBTRACTIONOPERATOR().getText().equals(UNARY_MINUS)) {
+				StackEndManipulations.loadFromStackEnd(1, data);
+				data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.NEGATION));
+				StackEndManipulations.storeAtStackEnd(2, data);
+			}
+			break;
+			
+		case BOOLEAN:
+			Error.throwError(ctx, "Unary operators are not applicable to boolean data type");
+			break;
+		}
+    }
+    
+    /**
+     * after numeric operations with fractions in the stack persists original fractions
+     * stores resulting fraction to the position of first fraction and erases second fraction from top of the stack
+     */
+    private void shiftFractionInStack() {
+    	// store resulting fraction in position of original fraction
+    	StackEndManipulations.storeAtStackEnd(4, data);
+    	StackEndManipulations.storeAtStackEnd(4, data);
+    	
+    	//remove second operand
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, data.getCurrentInstructionAddress() + 2));
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, data.getCurrentInstructionAddress() + 2));
     }
     
     /**
@@ -335,17 +299,9 @@ public class CompilerArithmetic extends CBaseListener {
      * sorts numerator and denominator of fraction, greater first
      */
     private void sortPartsFraction() {
-    	Instruction instruction;
-    	
     	// determine which part of fraction is greater
-    	instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1);
-		data.toShift.add(instruction);
-		data.addInstructionChangeStackPointer(instruction);
-		
-		instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1);
-		data.toShift.add(instruction);
-		data.addInstructionChangeStackPointer(instruction);
-		
+    	StackEndManipulations.loadFromStackEnd(1, data);
+    	StackEndManipulations.loadFromStackEnd(1, data);
 		
 		// push greater part first
 		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.LESS_THAN));
@@ -355,31 +311,19 @@ public class CompilerArithmetic extends CBaseListener {
 		data.addInstructionChangeStackPointer(conditionalJump);
 		
 		//denominator is greater
-		
-		instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer());
-		data.toShift.add(instruction);
-		data.addInstructionChangeStackPointer(instruction);
-		
-		instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 2);
-		data.toShift.add(instruction);
-		data.addInstructionChangeStackPointer(instruction);
+		StackEndManipulations.loadFromStackEnd(0, data);
+		StackEndManipulations.loadFromStackEnd(2, data);
 		
 		Instruction jump = new Instruction(InstructionCodes.JUMP, 0);
 		data.addInstructionChangeStackPointer(jump);
 		
-		data.decStackPointer(); //only one branch of conditional jump will be executed
-		data.decStackPointer();
+		data.decStackPointer(2); //only one branch of conditional jump will be executed, so we need to decrease stack pointer
 		
 		//numerator is greater
 		conditionalJump.setOperand(data.getCurrentInstructionAddress() + 1);
 		
-		instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1);
-		data.toShift.add(instruction);
-		data.addInstructionChangeStackPointer(instruction);
-		
-		instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1);
-		data.toShift.add(instruction);
-		data.addInstructionChangeStackPointer(instruction);
+		StackEndManipulations.loadFromStackEnd(1, data);
+		StackEndManipulations.loadFromStackEnd(1, data);
 		
 		jump.setOperand(data.getCurrentInstructionAddress() + 1);
 		
@@ -389,40 +333,22 @@ public class CompilerArithmetic extends CBaseListener {
      * calculates largest common divisor of numerator and denominator
      */
     private void calculateLargestCommonDivisor() {
-    	Instruction instruction;
     	Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0);
     	
     	//Euclidean algorithm
-    	instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1);
-		data.toShift.add(instruction);
-		data.addInstructionChangeStackPointer(instruction);
-		
+    	StackEndManipulations.loadFromStackEnd(1, data);
 		conditionalJump.setOperand(data.getCurrentInstructionAddress());
-		
-		instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1);
-		data.toShift.add(instruction);
-		data.addInstructionChangeStackPointer(instruction);
+		StackEndManipulations.loadFromStackEnd(1, data);
 		
 		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.MODULUS));
 		
 		// shift stack - remove first operand, which is now not necessary any more
-		instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1);
-		data.toShift.add(instruction);
-		data.addInstructionChangeStackPointer(instruction);
+		StackEndManipulations.loadFromStackEnd(1, data);
+		StackEndManipulations.storeAtStackEnd(3, data);
+		StackEndManipulations.storeAtStackEnd(1, data);
+		StackEndManipulations.loadFromStackEnd(0, data);
 		
-		instruction = new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 3);
-		data.toShift.add(instruction);
-		data.addInstructionChangeStackPointer(instruction);
-		
-		instruction = new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 1);
-		data.toShift.add(instruction);
-		data.addInstructionChangeStackPointer(instruction);
-		
-		instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer());
-		data.toShift.add(instruction);
-		data.addInstructionChangeStackPointer(instruction);
-		
-		//check if modulus is equal to zeor
+		//check if modulus is equal to zero
 		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 0));
 		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.EQUALITY));
 		data.addInstructionChangeStackPointer(conditionalJump);
@@ -436,19 +362,11 @@ public class CompilerArithmetic extends CBaseListener {
      * divides parts of fraction by largest common divisor => converts fraction into fraction which numerator and denominator are as low as possible
      */
     private void dividePartsFraction() {
-    	Instruction instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 2);
-		data.toShift.add(instruction);
-		data.addInstructionChangeStackPointer(instruction);
-		
-		instruction = new Instruction(InstructionCodes.LOAD, 0, data.getStackPointer() - 1);
-		data.toShift.add(instruction);
-		data.addInstructionChangeStackPointer(instruction);
+    	StackEndManipulations.loadFromStackEnd(2, data);
+    	StackEndManipulations.loadFromStackEnd(1, data);
 		
 		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.DIVISION));
-		
-		instruction = new Instruction(InstructionCodes.STORE, 0, data.getStackPointer() - 3);
-		data.toShift.add(instruction);
-		data.addInstructionChangeStackPointer(instruction);
+		StackEndManipulations.storeAtStackEnd(3, data);
 		
 		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.DIVISION));
     }
