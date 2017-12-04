@@ -112,4 +112,10 @@ class LogicTests extends CompilerTestsBase{
 	void testBooleanInequality() {
 		testFiles("logicTests/booleanInequality", "logicTests/booleanInequality.pl0");
 	}
+	
+	@Test
+	@DisplayName("complex logic expression")
+	void testComplexExpression() {
+		testFiles("logicTests/complexExpression", "logicTests/complexExpression.pl0");
+	}
 }

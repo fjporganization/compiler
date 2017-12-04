@@ -22,5 +22,10 @@ class ConditionsTests extends CompilerTestsBase{
 	void testTernaryOperator() {
 		testFiles("conditionsTests/ternary", "conditionsTests/ternary.pl0");
 	}
-
+	
+	@Test
+	@DisplayName("Complex conditions")
+	void testComplexIf() {
+		testFiles("conditionsTests/complexIf", "conditionsTests/complexIf.pl0");
+	}
 }
