@@ -98,7 +98,7 @@ public class CompilerSwitch extends CBaseListener {
             mSwitch.valueLenght = mSwitch.valueType == DataType.FRACTION ? 2 : 1;
             mSwitch.loadCmpValue = new Instruction[mSwitch.valueLenght];
             for (int i = 0; i < mSwitch.valueLenght; i++) {
-                int address = data.getCurrentInstructionAddress() - mSwitch.valueLenght - 1 + i;
+                int address = data.getStackPointer() - mSwitch.valueLenght + 1 + i;
                 mSwitch.loadCmpValue[i] = new Instruction(InstructionCodes.LOAD, 0, address);
                 data.toShift.add(mSwitch.loadCmpValue[i]);
             }
@@ -118,6 +118,12 @@ public class CompilerSwitch extends CBaseListener {
     public void enterSwitchstatement(CParser.SwitchstatementContext ctx) {
         // Get jump from last case block to set address
         Instruction lastJump = switches.peek().insQueue.poll();
+
+        DataType type = data.popDataType();
+        if(type != switches.peek().valueType){
+            String msg = "Incompatible data type. Expected: " + switches.peek().valueType + " but is: " + type;
+            Error.throwError(ctx, msg);
+        }
 
         // Comparison
         for (int i = 0; i < switches.peek().valueLenght; i++) {
