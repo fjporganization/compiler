@@ -118,4 +118,10 @@ class LogicTests extends CompilerTestsBase{
 	void testComplexExpression() {
 		testFiles("logicTests/complexExpression", "logicTests/complexExpression.pl0");
 	}
+	
+	@Test
+	@DisplayName("logic precedence")
+	void testLogicPrecedence() {
+		testFiles("logicTests/logicPrecedence", "logicTests/logicPrecedence.pl0");
+	}
 }

@@ -1,0 +1,4 @@
+void main(){
+  boolean x = !false;
+  boolean a = 31|25 > -15|-20 && 2 + 3 >= 5 || (true || !false && (true || true));
+}
