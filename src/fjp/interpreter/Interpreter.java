@@ -153,7 +153,7 @@ public class Interpreter {
 					
 				default: 
 					System.err.println("INTERPRETER: Unknown instruction");
-					System.exit(1);
+					programCounter = 0;
 				}
 				
 				showPostInstructionDebug();
@@ -162,7 +162,6 @@ public class Interpreter {
 			
 		}catch(IndexOutOfBoundsException e) {
 			System.err.println("INTERPRETER: Instruction addressation error");
-			System.exit(1);
 		}
 		
 		System.out.println("END PL/0");
@@ -173,7 +172,9 @@ public class Interpreter {
 	 * @param instruction instruction to be executed
 	 */
 	private void processPush(Instruction instruction) {
-		checkStackOverflow(1); //we will push 1 item onto the stack
+		if(checkStackOverflow(1) == false) {
+			return;
+		}  //we will push 1 item onto the stack
 		
 		stackPointer++;
 		stack[stackPointer] = instruction.getOperand();
@@ -195,7 +196,11 @@ public class Interpreter {
 			stack[stackPointer] = stack[stackPointer] % 2 == 0 ? 1 : 0;
 			
 		}else {
-			checkStackUnderflow(1); //we will pop 2 items from the stack and pop 1 item onto the stack
+			if(checkStackUnderflow(1) == false) {
+				return;
+			}
+			
+			//we will pop 2 items from the stack and pop 1 item onto the stack
 			stackPointer--;
 			
 			if(code == OperationCode.ADDITION.getCode()) {
@@ -233,7 +238,7 @@ public class Interpreter {
 				
 			}else {
 				System.err.println("INTERPRETER: Unknown operation code");
-				System.exit(1);
+				programCounter = 0;
 			}
 			
 		}
@@ -244,7 +249,10 @@ public class Interpreter {
 	 * @param instruction instruction to be executed
 	 */
 	private void processLoad(Instruction instruction) {
-		checkStackOverflow(1); //we will push 1 item onto the stack
+		//we will push 1 item onto the stack
+		if(checkStackOverflow(1) == false) {
+			return;
+		}
 		
 		int address = findLowerBase(base, instruction.getNestingLevel()) + instruction.getOperand();
 		stackPointer++;
@@ -257,7 +265,10 @@ public class Interpreter {
 	 * @param instruction instruction to be executed
 	 */
 	private void processStore(Instruction instruction) {
-		checkStackUnderflow(1); //we will pop 1 item from the stack
+		//we will pop 1 item from the stack
+		if(checkStackUnderflow(1) == false) {
+			return;
+		}
 		
 		int address = findLowerBase(base, instruction.getNestingLevel()) + instruction.getOperand();
 		stack[address] = stack[stackPointer];
@@ -275,7 +286,9 @@ public class Interpreter {
 	 * @param instruction instruction to be executed
 	 */
 	private void processCall(Instruction instruction) {
-		checkStackOverflow(3); //we will push 3 items onto the stack
+		if(checkStackOverflow(3) == false) {
+			return;
+		} 
 		
 		int lowerBase = findLowerBase(base, instruction.getNestingLevel());
 		stack[stackPointer + 1] = lowerBase;
@@ -289,7 +302,9 @@ public class Interpreter {
 	 * Returns from the procedure
 	 */
 	private void processReturn() {
-		checkStackOverflow(3);
+		if(checkStackOverflow(3) == false) {
+			return;
+		} 
 		
 		stackPointer = base - 1;
 		base = stack[stackPointer + 2];
@@ -301,7 +316,9 @@ public class Interpreter {
 	 * @param instruction instruction to be executed
 	 */
 	private void processIncrement(Instruction instruction) {
-		checkStackOverflow(instruction.getOperand());
+		if(checkStackOverflow(instruction.getOperand()) == false) {
+			return;
+		} 
 		
 		stackPointer = stackPointer + instruction.getOperand();
 		programCounter++;
@@ -311,7 +328,9 @@ public class Interpreter {
 	 * Reads integer given by user
 	 */
 	private void processReadInteger() {
-		checkStackOverflow(1);
+		if(checkStackOverflow(1) == false) {
+			return;
+		} 
 		
 		Scanner sc = new Scanner(System.in);
 		stackPointer++;
@@ -334,7 +353,9 @@ public class Interpreter {
 	 * writes integer to the CLI
 	 */
 	private void processWriteInteger() {
-		checkStackUnderflow(1);
+		if(checkStackUnderflow(1) == false) {
+			return;
+		}
 		
 		System.out.println(stack[stackPointer]);
 		stackPointer--;
@@ -345,7 +366,9 @@ public class Interpreter {
 	 * Reads real number given by user
 	 */
 	private void processReadReal() {
-		checkStackOverflow(2);
+		if(checkStackOverflow(2) == false) {
+			return;
+		} 
 		
 		Scanner sc = new Scanner(System.in);
 		stackPointer = stackPointer + 2;
@@ -372,7 +395,9 @@ public class Interpreter {
 	 * writes real number to the output
 	 */
 	private void processWriteReal() {
-		checkStackUnderflow(2);
+		if(checkStackUnderflow(2) == false) {
+			return;
+		}
 		
 		System.out.println(stack[stackPointer - 1] + DECIMAL_MARK + stack[stackPointer]);
 		stackPointer = stackPointer - 2;
@@ -396,7 +421,9 @@ public class Interpreter {
 			stack[stackPointer - 1] = -stack[stackPointer - 1];
 			
 		}else{
-			checkStackUnderflow(3);
+			if(checkStackUnderflow(3) == false) {
+				return;
+			}
 			double[] values = getTwoRealNumbers();
 			stackPointer = stackPointer - 2;
 			
@@ -439,7 +466,7 @@ public class Interpreter {
 					
 				}else {
 					System.err.println("INTERPRETER: Unknown operation code");
-					System.exit(1);
+					programCounter = 0;
 				}
 			}
 		}
@@ -450,6 +477,10 @@ public class Interpreter {
 	 * @param instruction instruction to be executed
 	 */
 	private void processLogicOperation(Instruction instruction) {
+		if(checkStackUnderflow(1) == false) {
+			return;
+		}
+		
 		int code = instruction.getOperand();
 		programCounter++;
 		
@@ -459,22 +490,19 @@ public class Interpreter {
 		boolean value2 = stack[stackPointer - 1] != 0;
 		
 		if(code == LogicCode.AND.getCode()) {
-			checkStackUnderflow(1);
 			stackPointer--;
 			stack[stackPointer] = value1 && value2 ? 1 : 0;
 			
 		}else if(code == LogicCode.OR.getCode()) {
-			checkStackUnderflow(1);
 			stackPointer--;
 			stack[stackPointer] = value1 || value2 ? 1 : 0;
 			
 		}else if(code == LogicCode.NEGATION.getCode()) {
-			checkStackUnderflow(1);
 			stack[stackPointer] = stack[stackPointer] == 0 ? 1 : 0;
 			
 		}else {
 			System.err.println("INTERPRETER: Unknown operation code");
-			System.exit(1);
+			programCounter = 0;
 		}
 	}
 	
@@ -482,7 +510,9 @@ public class Interpreter {
 	 * transforms real number to integer
 	 */
 	private void processRealToInteger() {
-		checkStackUnderflow(1);
+		if(checkStackUnderflow(1) == false) {
+			return;
+		}
 		
 		// just remove real part of the number (e.g. number 3.99 will be converted to 3)
 		stackPointer--;
@@ -493,7 +523,9 @@ public class Interpreter {
 	 * transforms integer to real number
 	 */
 	private void processIntegerToReal() {
-		checkStackOverflow(1);
+		if(checkStackOverflow(1) == false) {
+			return;
+		} 
 		
 		// just add real part (= .0) to the number 
 		stackPointer++;
@@ -505,41 +537,47 @@ public class Interpreter {
 	 * Loads data from the the stack from the stack location given by absolute address onto the stack
 	 */
 	private void processLoadFromAddress() {
-		checkStackOverflow(1);
+		if(checkStackOverflow(1) == false) {
+			return;
+		} 
+		
+		programCounter++;
 		
 		if(stack[stackPointer] < 0) {
 			System.err.println("INTERPRETER: Stack underflow");
-			System.exit(1);
+			programCounter = 0;
 		}
 		
 		if(stack[stackPointer] > InterpreterConstants.STACK_SIZE - 1) {
 			System.err.println("INTERPRETER: Stack overflow");
-			System.exit(1);
+			programCounter = 0;
 		}
 		
 		stack[stackPointer] = stack[stack[stackPointer]];
-		programCounter++;
 	}
 	
 	/**
 	 * Stores data at top of the stack to the stack location given by absolute address
 	 */
 	private void processStoreAtAddress() {
-		checkStackUnderflow(2);
+		if(checkStackUnderflow(2) == false) {
+			return;
+		}
+		
+		programCounter++;
 		
 		if(stack[stackPointer] < 0) {
 			System.err.println("INTERPRETER: Stack underflow");
-			System.exit(1);
+			programCounter = 0;
 		}
 		
 		if(stack[stackPointer] > InterpreterConstants.STACK_SIZE - 1) {
 			System.err.println("INTERPRETER: Stack overflow");
-			System.exit(1);
+			programCounter = 0;
 		}
 		
 		stackPointer = stackPointer - 2;
 		stack[stack[stackPointer + 2]] = stack[stackPointer + 1];
-		programCounter++;
 	}
 	
 	/**
@@ -563,7 +601,9 @@ public class Interpreter {
 	 * Reads fraction from the user input
 	 */
 	private void processReadFrac() {
-		checkStackOverflow(2);
+		if(checkStackOverflow(2) == false) {
+			return;
+		} 
 		
 		Scanner sc = new Scanner(System.in);
 		stackPointer = stackPointer + 2;
@@ -601,7 +641,9 @@ public class Interpreter {
 	 * processes fraction output
 	 */
 	private void processWriteFrac() {
-		checkStackUnderflow(2);
+		if(checkStackUnderflow(2) == false) {
+			return;
+		}
 		
 		System.out.println(stack[stackPointer - 1] + FRACTION_BAR + stack[stackPointer]);
 		stackPointer = stackPointer - 2;
@@ -636,22 +678,28 @@ public class Interpreter {
 	 * checks whether popping given number of values from the stack causes stack underflow
 	 * @param items number of values to be popped
 	 */
-	private void checkStackUnderflow(int items) {
-		if(stackPointer - items < 0) { //check for stack boundaries
+	private boolean checkStackUnderflow(int items) {
+		if(stackPointer - items < -1) { //check for stack boundaries (stack has no empty space on the beginning, therefore -1)
 			System.err.println("INTERPRETER: Stack underflow");
-			System.exit(1);
+			programCounter = 0;
+			return false;
 		}
+		
+		return true;
 	}
 	
 	/**
 	 * check whether pushing given number of values onto the stack causes stack underflow
 	 * @param items number of values to be pushed
 	 */
-	private void checkStackOverflow(int items) {
+	private boolean checkStackOverflow(int items) {
 		if(stackPointer - items > InterpreterConstants.STACK_SIZE - 1) { //check for stack boundaries
 			System.err.println("INTERPRETER: Stack overflow");
-			System.exit(1);
+			programCounter = 0;
+			return false;
 		}
+		
+		return true;
 	}
 	
 	/**
@@ -673,21 +721,23 @@ public class Interpreter {
 		try(Stream<String> stream = Files.lines(Paths.get(filePath))){
 			
 			stream.forEach(e -> {
-				Scanner sc = new Scanner(e);
+				Scanner scanner = new Scanner(e);
 				
-				int address = sc.nextInt();
+				int address = scanner.nextInt();
 				
 				if(address != stackPointer) {
 					System.err.println("INTERPRETER: Input file is corrupted");
-					System.exit(1);
+					instructions.clear();
+					scanner.close();
+					return;
 				}
 				
 				stackPointer++;
 				
-				String instruction = sc.next();
-				int nestingLevel = sc.nextInt();
-				int operand = sc.nextInt();
-				sc.close();
+				String instruction = scanner.next();
+				int nestingLevel = scanner.nextInt();
+				int operand = scanner.nextInt();
+				scanner.close();
 				
 				Optional<InstructionCodes> code = Arrays.stream(InstructionCodes.values())
 											.filter(x -> instruction.equals(x.getOperation()))
@@ -695,7 +745,8 @@ public class Interpreter {
 				
 				if(!code.isPresent()) {
 					System.err.println("INTERPRETER: Input file is corrupted");
-					System.exit(1);
+					instructions.clear();
+					return;
 				}
 				
 				this.instructions.add(new Instruction(code.get(), nestingLevel, operand));
@@ -704,11 +755,15 @@ public class Interpreter {
 			
 		} catch (IOException e) {
 			System.err.println("INTERPRETER: Cannot read input file");
-			System.exit(1);
+			instructions.clear();
+			return;
 			
 		} catch (NumberFormatException | ArrayIndexOutOfBoundsException e1) {
 			System.err.println("INTERPRETER: Input file is corrupted");
-			System.exit(1);
+			instructions.clear();
+			return;
+		} finally {
+			
 		}
 		
 		stackPointer = 0;
