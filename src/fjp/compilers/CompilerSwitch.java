@@ -150,7 +150,7 @@ public class CompilerSwitch extends CBaseListener {
         Instruction jump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, -1);
         data.addInstruction(jump);
         switches.peek().insQueue.offer(jump);
-        data.incStackPointer();
+        data.decStackPointer();
 
         if(lastJump != null){
             lastJump.setOperand(data.getCurrentInstructionAddress() + 1);
