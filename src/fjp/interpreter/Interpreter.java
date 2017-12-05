@@ -13,36 +13,35 @@ import java.util.stream.Stream;
  */
 public class Interpreter {
 	
-	/**
-	 * number of current instruction
-	 */
-	private int programCounter = 0;
+	/** symbol of fraction bar */
+	private final String FRACTION_BAR = "|"; 
 	
-	/**
-	 * current stack pointer
-	 */
-	private int stackPointer = 0;
+	/** symbol of decimal mark (separator) */
+	private final String DECIMAL_MARK = ".";
 	
-	/**
-	 * current base address
-	 */
-	private int base = 0;
+	/** indicates maximum length of fractional part of real number (used for avoiding integer overflow)*/
+	private final int FRACTIONAL_PART_CROP = 9;
 	
-	/**
-	 * stack of the interpreter
-	 */
+	/** number of current instruction */
+	private int programCounter;
+	
+	/** current stack pointer */
+	private int stackPointer;
+	
+	/** current base address */
+	private int base;
+	
+	/** stack of the interpreter */
 	private int[] stack;
 	
-	/**
-	 * List of instructions to be executed
-	 */
+	/** List of instructions to be executed */
 	private List<Instruction> instructions = null;
 
 	/**
 	 * Constructor
 	 */
 	public Interpreter() {
-		stack = new int[InterpreterConstants.STACK_SIZE + 1];
+		stack = new int[InterpreterConstants.getStackSize()];
 	}
 
 	/**
@@ -56,6 +55,7 @@ public class Interpreter {
 		
 		programCounter = 0;
 		base = 0;
+		
 		stackPointer = -1;
 		
 		System.out.println("START PL/0");
@@ -374,7 +374,7 @@ public class Interpreter {
 	private void processWriteReal() {
 		checkStackUnderflow(2);
 		
-		System.out.println(stack[stackPointer - 1] + "." + stack[stackPointer]);
+		System.out.println(stack[stackPointer - 1] + DECIMAL_MARK + stack[stackPointer]);
 		stackPointer = stackPointer - 2;
 		programCounter++;
 	}
@@ -455,27 +455,21 @@ public class Interpreter {
 		
 		//Booleans are stored in stack as numeric values, 0 = false, non-zero = true 
 		
+		boolean value1 = stack[stackPointer] != 0;
+		boolean value2 = stack[stackPointer - 1] != 0;
+		
 		if(code == LogicCode.AND.getCode()) {
 			checkStackUnderflow(1);
-			
-			boolean value1 = stack[stackPointer] != 0;
-			boolean value2 = stack[stackPointer - 1] != 0;
-			
 			stackPointer--;
 			stack[stackPointer] = value1 && value2 ? 1 : 0;
 			
 		}else if(code == LogicCode.OR.getCode()) {
 			checkStackUnderflow(1);
-			
-			boolean value1 = stack[stackPointer] != 0;
-			boolean value2 = stack[stackPointer - 1] != 0;
-			
 			stackPointer--;
 			stack[stackPointer] = value1 || value2 ? 1 : 0;
 			
 		}else if(code == LogicCode.NEGATION.getCode()) {
 			checkStackUnderflow(1);
-			
 			stack[stackPointer] = stack[stackPointer] == 0 ? 1 : 0;
 			
 		}else {
@@ -580,18 +574,18 @@ public class Interpreter {
 		
 		while(sc.hasNext()) {
 			try {
-				value = sc.next().split("\\|");
+				value = sc.next().split("\\" + FRACTION_BAR); //must escape fraction bar symbol
 				numerator = Integer.parseInt(value[0]);
 				denominator = Integer.parseInt(value[1]);
 				
 				if(denominator == 0) {
-					System.err.println("Invalid input - division by zero");
+					System.err.println("Invalid input - denominator of fraction must be non-zero value");
 					continue;
 				}
 				
 				break;
 			} catch (InputMismatchException e) {
-				System.err.println("Invalid input - enter fraction (example: 1|2)");
+				System.err.println("Invalid input - enter fraction (use pipe as fraction bar, e.g. 1|2)");
 				sc.next();
 			}
 		}
@@ -609,7 +603,7 @@ public class Interpreter {
 	private void processWriteFrac() {
 		checkStackUnderflow(2);
 		
-		System.out.println(stack[stackPointer - 1] + "|" + stack[stackPointer]);
+		System.out.println(stack[stackPointer - 1] + FRACTION_BAR + stack[stackPointer]);
 		stackPointer = stackPointer - 2;
 		programCounter++;
 	}
@@ -617,7 +611,7 @@ public class Interpreter {
 	/**
 	 * finds base of given number lexicographical levels down
 	 * @param currentBase current base address
-	 * @param levels defines which lexicographical level base address user need
+	 * @param levels defines which lexicographical level down base address is user looking for
 	 * @return base address of given number lexicographical levels down
 	 */
 	private int findLowerBase(int currentBase, int levels) {
@@ -721,19 +715,6 @@ public class Interpreter {
 	}
 	
 	/**
-	 * gets real part of the real number as integer
-	 * @param number number which real part will be determined
-	 * @return real part of the number as integer
-	 */
-	private int getRealPartOfNumber(double number) {
-		String data = String.valueOf(number);
-		int realPartIndex = data.lastIndexOf(".") + 1;
-		String real = data.substring(realPartIndex, 
-				data.length() - realPartIndex > 9 ? realPartIndex + 9 : data.length()); //avoiding integer overflow
-		return Integer.parseInt(real);
-	}
-	
-	/**
 	 * shows debug informations after instruction execution
 	 */
 	private void showPostInstructionDebug() {
@@ -745,6 +726,7 @@ public class Interpreter {
 			}
 			
 			System.out.println();
+			
 		}else if(InterpreterConstants.isShowStack() && stackPointer >= 0) {
 			System.out.println(Arrays.toString(Arrays.copyOfRange(stack, 0, stackPointer + 1)));
 			System.out.println();
@@ -759,6 +741,22 @@ public class Interpreter {
 		if(InterpreterConstants.isShowDebug()) {
 			System.out.println(programCounter + " " + current.toString());
 		}
+	}
+	
+	/**
+	 * gets fractional part of the real number as integer
+	 * @param number number which fractional part will be determined
+	 * @return fractional part of the number as integer
+	 */
+	private int getFractionalPartOfNumber(double number) {
+		String data = String.valueOf(number);
+		
+		int fractionalPartIndex = data.lastIndexOf(DECIMAL_MARK) + 1;
+		String fractional = data.substring(fractionalPartIndex, 
+				data.length() - fractionalPartIndex > FRACTIONAL_PART_CROP ? 
+						fractionalPartIndex + FRACTIONAL_PART_CROP : data.length()); //avoiding integer overflow
+		
+		return Integer.parseInt(fractional);
 	}
 	
 	/**
@@ -784,7 +782,7 @@ public class Interpreter {
 	 * @param number number to be popped
 	 */
 	private void pushRealNumber(double number) {
-		stack[stackPointer] = getRealPartOfNumber(number);
+		stack[stackPointer] = getFractionalPartOfNumber(number);
 		stack[stackPointer - 1] = (int) number;
 	}
 }

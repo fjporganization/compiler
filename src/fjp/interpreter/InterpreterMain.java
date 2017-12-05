@@ -1,7 +1,15 @@
 package fjp.interpreter;
 
+/**
+ * Main class of interpreter
+ *
+ */
 public class InterpreterMain {
-
+	
+	/**
+	 * executes the interpreter
+	 * @param args file name of file containing instructions to be executed
+	 */
 	public static void main(String[] args) {
 		
 		if(args.length >= 1) {
