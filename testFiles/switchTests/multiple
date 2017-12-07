@@ -1,0 +1,50 @@
+
+int a = 1;
+int c = 10;
+
+void method(){
+
+    switch(a){
+            case 1:
+                a = 11;
+                c = 1;
+                break;
+            case 2:
+                a = 22;
+                c = 2;
+                break;
+    }
+
+    switch(a){
+            case 1:
+                switch(c){
+                        case 1:
+                            c = 1;
+                            break;
+                        default:
+                            c = 22;
+                }
+                c = 3;
+                break;
+            case 11:
+                switch(c){
+                        case 5434:
+                            c = 1;
+                            break;
+                        case 56:
+                            c = 2;
+                            break;
+                        case 654:
+                            c = 3;
+                            break;
+                        default:
+                            c = 6789;
+                    }
+                break;
+            case 3:
+                c = 3;
+                break;
+            default:
+                c = 22;
+    }
+}
