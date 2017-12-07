@@ -1,0 +1,27 @@
+
+int a = 0;
+int c = 10;
+
+void method(){
+    a = 3;
+    switchMethod();
+    a = 8;
+    switchMethod();
+}
+
+void switchMethod(){
+
+    switch(a){
+        case 1:
+            c = 1;
+            break;
+        case 2:
+            c = 2;
+            break;
+        case 3:
+            c = 3;
+            break;
+        default:
+            c = 22;
+    }
+}

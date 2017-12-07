@@ -1,0 +1,17 @@
+
+int c = 10;
+
+void switchMethod(){
+
+    switch(10 + 3 + 1 - 11){
+        case 1:
+          c = 1;
+          break;
+        case 2:
+            c = 2;
+            break;
+        case 3:
+            c = 3;
+            break;
+    }
+}
