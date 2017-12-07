@@ -23,7 +23,11 @@ public class Main {
 			System.exit(1);
 		}
 
-		new Main().compile(args);
+		try{
+			new Main().compile(args);
+		} catch (ParseCancellationException e){
+			System.err.println(e.getMessage());
+		}
 	}
 
 	public void compile(String [] args){
@@ -33,12 +37,9 @@ public class Main {
 
 		CompilerData data = new CompilerData();
 		registerCompilers(parser, data);
-		try {
-			parser.start();
-		} catch (ParseCancellationException e){
-			System.err.println(e.getMessage());
-			return;
-		}
+
+		parser.start();
+
 
 		// TODO delete only for testing ==================================
 		try {

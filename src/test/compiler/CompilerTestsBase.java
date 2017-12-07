@@ -1,6 +1,7 @@
 package test.compiler;
 
 import fjp.Main;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 
@@ -63,8 +64,22 @@ class CompilerTestsBase {
     }
 
     void testFiles(String input, String expectedResult){
-
         main.compile(new String[]{testPath + input, outFileName});
         assertFiles(testPath + expectedResult, outFileName);
+    }
+
+    void testCompilerError(String input, String expectedError){
+
+        boolean exception = false;
+
+        try {
+            main.compile(new String[]{testPath + input, outFileName});
+
+        }catch (ParseCancellationException ex){
+            assertEquals(expectedError, ex.getMessage());
+            exception = true;
+        }
+
+        assertTrue(exception);
     }
 }
