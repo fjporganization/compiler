@@ -67,9 +67,6 @@ public class CompilerData {
             case OPERATION_REAL:
                 stackPointer += OperationCode.getOpCodeByCode(instruction.getOperand()).getRealStackChange();
                 break;
-            case OPERATION_LOGIC:
-                stackPointer += LogicCode.getOpCodeByCode(instruction.getOperand()).getStackChange();
-                break;
             case INCREMENT:
                 stackPointer += instruction.getOperand();
                 break;

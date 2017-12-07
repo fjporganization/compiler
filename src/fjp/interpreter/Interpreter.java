@@ -123,10 +123,6 @@ public class Interpreter {
 					processFloatOperation(instruction);
 					break;
 					
-				case OPERATION_LOGIC:
-					processLogicOperation(instruction);
-					break;
-					
 				case REAL_TO_INTEGER:
 					processRealToInteger();
 					break;
@@ -469,40 +465,6 @@ public class Interpreter {
 					programCounter = 0;
 				}
 			}
-		}
-	}
-	
-	/**
-	 * Provides logic operation to be performed on boolean data at the top of the stack
-	 * @param instruction instruction to be executed
-	 */
-	private void processLogicOperation(Instruction instruction) {
-		if(checkStackUnderflow(1) == false) {
-			return;
-		}
-		
-		int code = instruction.getOperand();
-		programCounter++;
-		
-		//Booleans are stored in stack as numeric values, 0 = false, non-zero = true 
-		
-		boolean value1 = stack[stackPointer] != 0;
-		boolean value2 = stack[stackPointer - 1] != 0;
-		
-		if(code == LogicCode.AND.getCode()) {
-			stackPointer--;
-			stack[stackPointer] = value1 && value2 ? 1 : 0;
-			
-		}else if(code == LogicCode.OR.getCode()) {
-			stackPointer--;
-			stack[stackPointer] = value1 || value2 ? 1 : 0;
-			
-		}else if(code == LogicCode.NEGATION.getCode()) {
-			stack[stackPointer] = stack[stackPointer] == 0 ? 1 : 0;
-			
-		}else {
-			System.err.println("INTERPRETER: Unknown operation code");
-			programCounter = 0;
 		}
 	}
 	

@@ -15,7 +15,6 @@ public enum InstructionCodes {
 	READ_REAL("RER", +2),
 	WRITE_REAL("WRR", -2),
 	OPERATION_REAL("OPF", 0),
-	OPERATION_LOGIC("OPL", 0),
 	REAL_TO_INTEGER("RTI", -1),
 	INTEGER_TO_REAL("ITR", +1),
 	LOAD_FROM_ADDRESS("LDA", 0),
