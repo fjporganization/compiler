@@ -5,9 +5,8 @@ import java.util.EmptyStackException;
 import java.util.List;
 
 import fjp.compilers.*;
-import fjp.compilers.Compiler;
+import fjp.compilers.CompilerFunctions;
 import fjp.generated.*;
-import fjp.interpreter.Interpreter;
 import fjp.structures.Instruction;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
@@ -97,7 +96,7 @@ public class Main {
 	 * @param data shared object between compilers contains all data
 	 */
 	private void registerCompilers(CParser parser, CompilerData data) {
-		parser.addParseListener(new Compiler(data));
+		parser.addParseListener(new CompilerFunctions(data));
 		parser.addParseListener(new CompilerSwitch(data));
 		parser.addParseListener(new CompilerLogic(data));
 		parser.addParseListener(new CompilerVariables(data));

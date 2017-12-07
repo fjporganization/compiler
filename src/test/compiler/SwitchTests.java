@@ -25,4 +25,16 @@ class SwitchTests extends CompilerTestsBase {
         testFiles(path + "fracInput", path + "fracInput.pl0");
     }
 
+    @Test
+    @DisplayName("Multiple switches")
+    void testSwitch4() {
+        testFiles(path + "multiple", path + "multiple.pl0");
+    }
+
+    @Test
+    @DisplayName("Switch with default and no break")
+    void testSwitch5() {
+        testFiles(path + "wthBreak", path + "wthBreak.pl0");
+    }
+
 }

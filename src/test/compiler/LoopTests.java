@@ -19,6 +19,11 @@ class LoopTests extends CompilerTestsBase {
         testFiles(path + "while2", path + "while2.pl0");
     }
 
+    @Test
+    @DisplayName("While - not known variable in expression")
+    void testWhile3() {
+        testCompilerError(path + "while3", "Error(2, 10): Unknown identifier: a");
+    }
 
     @Test
     @DisplayName("While - three while loops")

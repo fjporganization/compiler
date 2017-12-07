@@ -1,0 +1,21 @@
+
+int a = 0;
+int b = 0;
+int c = 0;
+int d = 0;
+
+void method(){
+
+    int x = 2;
+
+    switch(x){
+        case 1:
+            a = 1;
+        case 2:
+            b = 1;
+        case 3:
+            c = 1;
+        default:
+            d = 1;
+    }
+}

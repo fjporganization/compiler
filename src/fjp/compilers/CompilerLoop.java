@@ -33,6 +33,9 @@ public class CompilerLoop extends CBaseListener {
     @Override
     public void enterWhilestatement(CParser.WhilestatementContext ctx) {
         //method is called AFTER parser processed block 'if(condition)' so condition is already processed
+        if(data.popDataType() != DataType.BOOLEAN){
+            Error.throwError(ctx, "Unexpected data type in 'while' expression.");
+        }
         Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, -1);
         data.decStackPointer();
         data.addInstruction(conditionalJump);
@@ -59,6 +62,9 @@ public class CompilerLoop extends CBaseListener {
     @Override
     public void exitDowhileloop(CParser.DowhileloopContext ctx) {
         // JMC - jump on zero -> need to neg. resutl
+        if(data.popDataType() != DataType.BOOLEAN){
+            Error.throwError(ctx, "Unexpected data type in 'while' expression.");
+        }
         data.addInstruction(new Instruction(InstructionCodes.PUSH, 0, 0));
         data.addInstruction(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.EQUALITY));
         Instruction jump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, addressStack.pop());
@@ -74,6 +80,9 @@ public class CompilerLoop extends CBaseListener {
 
     @Override
     public void enterForafterthought(CParser.ForafterthoughtContext ctx) {
+        if(data.popDataType() != DataType.BOOLEAN){
+            Error.throwError(ctx, "Unexpected data type in 'for' expression.");
+        }
         Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0, -1);
         data.decStackPointer();
         data.addInstruction(conditionalJump);
