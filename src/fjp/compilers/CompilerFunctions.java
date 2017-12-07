@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Class providing compiler functionality
  */
-public class Compiler extends CBaseListener {
+public class CompilerFunctions extends CBaseListener {
 
 	/**
 	 * Instruction Increment(INT) which is at beginning of function.
@@ -27,10 +27,10 @@ public class Compiler extends CBaseListener {
 
 	
 	/**
-	 * Constructor of Compiler
+	 * Constructor of CompilerFunctions
 	 * @param data contains data which are shared with all compiler classes
 	 */
-	public Compiler(CompilerData data) {
+	public CompilerFunctions(CompilerData data) {
 		this.data = data;
 
 		funcCalls = new ArrayList<>();
