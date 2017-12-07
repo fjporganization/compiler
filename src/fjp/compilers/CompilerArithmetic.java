@@ -151,23 +151,27 @@ public class CompilerArithmetic extends CBaseListener {
         //load given literal onto the stack
         String literal = ctx.getText();
         
-        if(literal.contains(FRACTION_BAR)) { //fraction
-        	
-        	String[] inputData = literal.split("\\" + FRACTION_BAR); //must escape |
-        	String numerator = inputData[0];
-        	int denominator = Integer.parseInt(inputData[1]);
-        	if(denominator == 0) {
-        		Error.throwError(ctx, "Denominator of ratio data type cannot be zero");
-        	}
-        	
-        	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, numerator));
-        	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, denominator));
-        	data.pushDataType(DataType.FRACTION);
-    		        	
-        }else { //integer
-        	Instruction instruction = new Instruction(InstructionCodes.PUSH, 0, literal);
-            data.addInstructionChangeStackPointer(instruction);
-            data.pushDataType(DataType.INT);
+        try {
+        	if(literal.contains(FRACTION_BAR)) { //fraction
+            	
+            	String[] inputData = literal.split("\\" + FRACTION_BAR); //must escape |
+            	String numerator = inputData[0];
+            	int denominator = Integer.parseInt(inputData[1]);
+            	if(denominator == 0) {
+            		Error.throwError(ctx, "Denominator of ratio data type cannot be zero");
+            	}
+            	
+            	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, numerator));
+            	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, denominator));
+            	data.pushDataType(DataType.FRACTION);
+        		        	
+            }else { //integer
+            	Instruction instruction = new Instruction(InstructionCodes.PUSH, 0, literal);
+                data.addInstructionChangeStackPointer(instruction);
+                data.pushDataType(DataType.INT);
+            }
+        }catch (NumberFormatException e) {
+        	Error.throwError(ctx, "Too large number");
         }
     }
     
