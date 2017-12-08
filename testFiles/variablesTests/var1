@@ -1,0 +1,25 @@
+int counter = 0;
+const int konstanta = 10;
+
+void a(){
+    counter = counter + 1;
+    if (konstanta == 10){
+        counter = counter + 1;
+    }
+    b();
+}
+
+void b(){
+    counter = counter + 1;
+    boolean bool = true;
+    bool = false;
+
+    ratio frac = 2|7;
+
+    if (konstanta == 11){
+        counter = counter + 1;
+    }
+
+    int numb = 10;
+    counter = counter + numb;
+}

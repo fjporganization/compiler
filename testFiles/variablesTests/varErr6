@@ -1,0 +1,4 @@
+
+void a(){
+    boolean bool = 45|6;
+}

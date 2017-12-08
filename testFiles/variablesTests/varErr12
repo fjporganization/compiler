@@ -1,0 +1,6 @@
+
+void a(){
+    boolean bool = false;
+
+    bool = 9;
+}

@@ -1,0 +1,6 @@
+
+void a(){
+    int numb = 10;
+
+    numb = 8|2;
+}

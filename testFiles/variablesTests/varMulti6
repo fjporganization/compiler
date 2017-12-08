@@ -1,0 +1,8 @@
+boolean a = false;
+boolean b = true;
+
+void main(){
+    int c = 10;
+
+    a = b = c;
+}

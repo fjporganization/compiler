@@ -1,0 +1,6 @@
+ratio a = 7|8;
+ratio b = 9|2;
+
+void main(){
+    a = b = false;
+}

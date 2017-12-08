@@ -1,0 +1,6 @@
+
+void a(){
+    boolean bool = true;
+
+    bool = 8|2;
+}

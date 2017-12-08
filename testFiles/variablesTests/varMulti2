@@ -1,0 +1,11 @@
+
+boolean a = false;
+boolean b = true;
+boolean c = true;
+
+void main(){
+
+    boolean d = true;
+
+    a = b = c = d = false;
+}

@@ -1,0 +1,6 @@
+
+void a(){
+    const int number = 10;
+
+    number = 8;
+}

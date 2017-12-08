@@ -1,0 +1,8 @@
+ratio a = 2|9;
+ratio b = 8|9;
+
+void main(){
+    ratio c = 3|2;
+
+    a = b = c;
+}

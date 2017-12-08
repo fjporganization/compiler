@@ -1,0 +1,12 @@
+int a = 0;
+int b = 20;
+ratio c = 38|12;
+
+void main(){
+    boolean d = true;
+    boolean e = false;
+
+    ratio f = 1|2;
+
+    {a, b, c, d, e, f} = {99, 0, false, true, true, 892|323};
+}

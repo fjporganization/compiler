@@ -1,0 +1,6 @@
+
+void a(){
+    ratio frac = 8|3;
+
+    frac = 567;
+}

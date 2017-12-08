@@ -1,0 +1,11 @@
+
+int a = 0;
+int b = 20;
+int c = 38;
+
+void main(){
+    const int number = 678;
+    int d = 0;
+
+    a = b = c = d = number;
+}
