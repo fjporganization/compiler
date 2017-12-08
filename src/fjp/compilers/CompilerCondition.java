@@ -37,6 +37,10 @@ public class CompilerCondition extends CBaseListener {
      */
     @Override
     public void enterSimplecondition(CParser.SimpleconditionContext ctx) {
+    	if(Error.inError()) { //skip method when previous parse error occurred
+    		return;
+    	}
+    	
         //method is called AFTER parser processed block 'if(condition)', so condition is already processed and evaluated
     	if(data.popDataType() != DataType.BOOLEAN) {
     		Error.throwError(ctx, "In if condition must be boolean data type");
@@ -56,6 +60,10 @@ public class CompilerCondition extends CBaseListener {
      */
     @Override
     public void exitSimplecondition(CParser.SimpleconditionContext ctx) {
+    	if(Error.inError()) { //skip method when previous parse error occurred
+    		return;
+    	}
+    	
         Instruction conditionalJump = instructionStack.pop();
         conditionalJump.setOperand(data.getCurrentInstructionAddress() + 1);
     }
@@ -69,6 +77,10 @@ public class CompilerCondition extends CBaseListener {
      */
     @Override
     public void enterIfelsecondition(CParser.IfelseconditionContext ctx) {
+    	if(Error.inError()) { //skip method when previous parse error occurred
+    		return;
+    	}
+    	
         //method is called AFTER parser processed block 'if(condition)' so condition is already processed
     	if(data.popDataType() != DataType.BOOLEAN) {
     		Error.throwError(ctx, "In if condition must be boolean data type");
@@ -88,6 +100,10 @@ public class CompilerCondition extends CBaseListener {
      */
     @Override
     public void exitAssertivebranch(CParser.AssertivebranchContext ctx) {
+    	if(Error.inError()) { //skip method when previous parse error occurred
+    		return;
+    	}
+    	
         Instruction conditionalJump = instructionStack.pop();
         // must jump to instruction beyond instruction for unconditional jump beyond negative branch, therefore +2
         conditionalJump.setOperand(data.getCurrentInstructionAddress() + 2);
@@ -106,6 +122,10 @@ public class CompilerCondition extends CBaseListener {
      */
     @Override
     public void exitNegativebranch(CParser.NegativebranchContext ctx) {
+    	if(Error.inError()) { //skip method when previous parse error occurred
+    		return;
+    	}
+    	
         Instruction jump = instructionStack.pop();
         jump.setOperand(data.getCurrentInstructionAddress() + 1);
     }
@@ -118,6 +138,10 @@ public class CompilerCondition extends CBaseListener {
      */
     @Override
     public void enterTernaryoperator(CParser.TernaryoperatorContext ctx) {
+    	if(Error.inError()) { //skip method when previous parse error occurred
+    		return;
+    	}
+    	
         // condition has been processed yet
     	if(data.popDataType() != DataType.BOOLEAN) {
     		Error.throwError(ctx, "In ternary operator condition must be boolean data type");
@@ -136,6 +160,10 @@ public class CompilerCondition extends CBaseListener {
      */
     @Override
     public void exitTernaryassertive(CParser.TernaryassertiveContext ctx) {
+    	if(Error.inError()) { //skip method when previous parse error occurred
+    		return;
+    	}
+    	
         Instruction conditionalJump = instructionStack.pop();
         // must jump to instruction beyond instruction for unconditional jump beyond negative branch, therefore +2
         conditionalJump.setOperand(data.getCurrentInstructionAddress() + 2);
@@ -153,6 +181,10 @@ public class CompilerCondition extends CBaseListener {
      */
     @Override
     public void exitTernarynegative(CParser.TernarynegativeContext ctx) {
+    	if(Error.inError()) { //skip method when previous parse error occurred
+    		return;
+    	}
+    	
         Instruction jump = instructionStack.pop();
         jump.setOperand(data.getCurrentInstructionAddress() + 1);
         
