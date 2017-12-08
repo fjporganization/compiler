@@ -14,26 +14,34 @@ public class CompilerLoop extends CBaseListener {
      */
     private final Stack<Instruction> instructionStack;
 
-    /** Data which are shared across all compilers classes */
+    /**
+     * Storing addresses for later use (e.g. in instructionStack)
+     */
     private final Stack<Integer> addressStack;
 
-    /** Data which are shared across all compilers classes */
+    /**
+     * Data which are shared across all compilers classes
+     */
     private final CompilerData data;
 
     /**
      * Constructor of CompilerLoop
+     *
      * @param data contains data which are shared with all compiler classes
      */
-    public CompilerLoop(CompilerData data){
+    public CompilerLoop(CompilerData data) {
         this.data = data;
         this.instructionStack = new Stack<>();
         this.addressStack = new Stack<>();
     }
 
+    /**
+     * Check DataType of value on stack and add conditional jump to end of file(condition is not fulfilled)
+     */
     @Override
     public void enterWhilestatement(CParser.WhilestatementContext ctx) {
         //method is called AFTER parser processed block 'if(condition)' so condition is already processed
-        if(data.popDataType() != DataType.BOOLEAN){
+        if (data.popDataType() != DataType.BOOLEAN) {
             Error.throwError(ctx, "Unexpected data type in 'while' expression.");
             return;
         }
@@ -43,6 +51,10 @@ public class CompilerLoop extends CBaseListener {
         instructionStack.push(conditionalJump);
     }
 
+    /**
+     * Method is called at the end of while body.
+     * Add jump instruction to the beginning of while. And set address to first instruction on instructionStack
+     */
     @Override
     public void exitWhilestatement(CParser.WhilestatementContext ctx) {
 
@@ -50,20 +62,29 @@ public class CompilerLoop extends CBaseListener {
         data.addInstruction(new Instruction(InstructionCodes.JUMP, 0, addressStack.pop()));
     }
 
+    /**
+     * Add address of while begging to addressStack.
+     */
     @Override
     public void enterWhileloop(CParser.WhileloopContext ctx) {
         addressStack.push(data.getCurrentInstructionAddress() + 1);
     }
 
+    /**
+     * Add address of do while beginning to addressStack.
+     */
     @Override
     public void enterDowhileloop(CParser.DowhileloopContext ctx) {
         addressStack.push(data.getCurrentInstructionAddress() + 1);
     }
 
+    /**
+     * Check dataType of value on top of stack and instructions to evaluate condition.
+     */
     @Override
     public void exitDowhileloop(CParser.DowhileloopContext ctx) {
         // JMC - jump on zero -> need to neg. resutl
-        if(data.popDataType() != DataType.BOOLEAN){
+        if (data.popDataType() != DataType.BOOLEAN) {
             Error.throwError(ctx, "Unexpected data type in 'while' expression.");
             return;
         }
@@ -74,15 +95,21 @@ public class CompilerLoop extends CBaseListener {
         data.decStackPointer();
     }
 
+    /**
+     * Add address of next instruction after for initialization to addressStack.
+     */
     @Override
     public void exitForinitialization(CParser.ForinitializationContext ctx) {
 
         addressStack.push(data.getCurrentInstructionAddress() + 1);
     }
 
+    /**
+     * Check dataType of value on top of stack and evaluate for condition.
+     */
     @Override
     public void enterForafterthought(CParser.ForafterthoughtContext ctx) {
-        if(data.popDataType() != DataType.BOOLEAN){
+        if (data.popDataType() != DataType.BOOLEAN) {
             Error.throwError(ctx, "Unexpected data type in 'for' expression.");
             return;
         }
@@ -98,6 +125,9 @@ public class CompilerLoop extends CBaseListener {
         addressStack.push(data.getCurrentInstructionAddress() + 1);
     }
 
+    /**
+     * Method set addresses of jumps which jumps to this position. Add new jump. Push current address to addressStack.
+     */
     @Override
     public void exitForafterthought(CParser.ForafterthoughtContext ctx) {
 
@@ -111,6 +141,10 @@ public class CompilerLoop extends CBaseListener {
         instructionStack.pop().setOperand(data.getCurrentInstructionAddress() + 1);
     }
 
+    /**
+     * At the end of for loop only add instruction to jump on beginning of forAfterThought and set address of
+     * jump in condition to end of for loop.
+     */
     @Override
     public void exitForloop(CParser.ForloopContext ctx) {
 
