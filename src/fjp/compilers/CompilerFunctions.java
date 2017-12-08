@@ -106,8 +106,6 @@ public class CompilerFunctions extends CBaseListener {
 		shiftInstructions();
 
 		data.addInstruction(new Instruction(InstructionCodes.RETURN, 0 ,0));
-
-		// TODO should be removed symbolTable.removeAll(is in data.getNestingLevel()); (ONLY FOR MEMORY OPTIMALIZATION)
 	}
 
 	@Override

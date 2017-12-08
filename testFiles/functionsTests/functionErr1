@@ -1,0 +1,9 @@
+void a(){
+    int promenna = 0;
+
+    b();
+}
+
+void b(){
+    promenna = 10;
+}

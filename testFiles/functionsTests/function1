@@ -1,0 +1,79 @@
+int counter = 0;
+int aa = 0;
+int bb = 0;
+int cc = 0;
+int dd = 0;
+int ee = 0;
+int ff = 0;
+int gg = 0;
+int hh = 0;
+int ii = 0;
+int jj = 0;
+int kk = 0;
+
+void a(){
+    aa = aa + 1;
+
+    while(counter < 100){
+        b();
+    }
+    d();
+    g();
+}
+
+void b(){
+    bb = bb + 1;
+    counter = counter + 1;
+    c();
+}
+
+void c(){
+    cc = cc + 1;
+    counter = counter + 1;
+}
+
+void d(){
+    dd = dd + 1;
+    c();
+    e();
+    f();
+}
+
+void e(){
+    ee = ee + 1;
+    counter = counter - 1;
+}
+
+void f(){
+    ff = ff + 1;
+    counter = counter + 200;
+}
+
+void g(){
+   gg = gg + 1;
+   e();
+   h();
+}
+
+void h(){
+    hh = hh + 1;
+    e();
+    i();
+}
+
+void i(){
+    ii = ii + 1;
+    e();
+    j();
+}
+
+void j(){
+    jj = jj + 1;
+    e();
+    k();
+}
+
+void k(){
+    kk = kk + 1;
+    e();
+}
