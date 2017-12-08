@@ -1,0 +1,6 @@
+void main(){
+  ratio a = 3|1;
+  if(a){
+    a = 5|2;
+  }
+}
