@@ -27,7 +27,11 @@ public class CompilerIO extends CBaseListener{
 	 * Processes integer input (adds instructions for input)
 	 */
 	@Override
-	public void exitInputinteger(CParser.InputintegerContext ctx) { 
+	public void exitInputinteger(CParser.InputintegerContext ctx) {
+		if(Error.inError()) { //skip method if previous parsing error occurred
+			return;
+		}
+		
 		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.READ_INTEGER, 0, 0));
 		data.pushDataType(DataType.INT);
 	}
@@ -37,6 +41,10 @@ public class CompilerIO extends CBaseListener{
 	 */
 	@Override
 	public void exitOutputinteger(CParser.OutputintegerContext ctx) { 
+		if(Error.inError()) { //skip method if previous parsing error occurred
+			return;
+		}
+		
 		if(data.popDataType() != DataType.INT) {
 			Error.throwError(ctx, "Incompatible data type for integer output");
 			return;
@@ -50,6 +58,10 @@ public class CompilerIO extends CBaseListener{
 	 */
 	@Override 
 	public void exitInputfrac(CParser.InputfracContext ctx) { 
+		if(Error.inError()) { //skip method if previous parsing error occurred
+			return;
+		}
+		
 		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.READ_FRAC, 0, 0));
 		data.pushDataType(DataType.FRACTION);
 	}
@@ -59,6 +71,10 @@ public class CompilerIO extends CBaseListener{
 	 */
 	@Override 
 	public void exitOutputfrac(CParser.OutputfracContext ctx) {
+		if(Error.inError()) { //skip method if previous parsing error occurred
+			return;
+		}
+		
 		DataType exp = data.popDataType();
 		
 		if(exp == DataType.INT) {
