@@ -40,6 +40,7 @@ public class CompilerCondition extends CBaseListener {
         //method is called AFTER parser processed block 'if(condition)', so condition is already processed and evaluated
     	if(data.popDataType() != DataType.BOOLEAN) {
     		Error.throwError(ctx, "In if condition must be boolean data type");
+    		return;
     	}
     	
         Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0);
@@ -71,6 +72,7 @@ public class CompilerCondition extends CBaseListener {
         //method is called AFTER parser processed block 'if(condition)' so condition is already processed
     	if(data.popDataType() != DataType.BOOLEAN) {
     		Error.throwError(ctx, "In if condition must be boolean data type");
+    		return;
     	}
     	
         Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0);
@@ -119,6 +121,7 @@ public class CompilerCondition extends CBaseListener {
         // condition has been processed yet
     	if(data.popDataType() != DataType.BOOLEAN) {
     		Error.throwError(ctx, "In if condition must be boolean data type");
+    		return;
     	}
     	
         Instruction conditionalJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0);
@@ -158,6 +161,7 @@ public class CompilerCondition extends CBaseListener {
     	
     	if(assertiveExpression != negativeExpression) {
     		Error.throwError(ctx, "Incompatible data types in ternary operators - data types in both expressions of ternary operator may not differs");
+    		return;
     	}
     	
     	data.pushDataType(assertiveExpression);

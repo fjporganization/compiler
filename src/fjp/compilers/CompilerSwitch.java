@@ -123,6 +123,7 @@ public class CompilerSwitch extends CBaseListener {
         if(type != switches.peek().valueType){
             String msg = "Incompatible data type. Expected: " + switches.peek().valueType + " but is: " + type;
             Error.throwError(ctx, msg);
+            return;
         }
 
         // Comparison

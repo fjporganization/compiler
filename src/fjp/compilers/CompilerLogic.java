@@ -83,7 +83,7 @@ public class CompilerLogic extends CBaseListener {
         
         case BOOLEAN:
         	Error.throwError(ctx, "Booleans cannot be compared with operator " + operator);
-        	break;
+        	return;
         }
         
         data.pushDataType(DataType.BOOLEAN);
@@ -169,6 +169,7 @@ public class CompilerLogic extends CBaseListener {
     public void exitLogicNegation(CParser.LogicNegationContext ctx) {
     	if(data.popDataType() != DataType.BOOLEAN) { //check data types on the stack
     		Error.throwError(ctx, "Only boolean data type is allowed in logical negation expression");
+    		return;
     	}
     	
     	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 0));
@@ -183,6 +184,7 @@ public class CompilerLogic extends CBaseListener {
     public void exitLogicalAndExp(CParser.LogicalAndExpContext ctx) {
     	if(data.popDataType() != DataType.BOOLEAN || data.popDataType() != DataType.BOOLEAN) { //check data types on the stack
     		Error.throwError(ctx, "Only boolean data type is allowed in logical AND expression");
+    		return;
     	}
     	
         data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.ADDITION));
@@ -200,6 +202,7 @@ public class CompilerLogic extends CBaseListener {
     public void exitLogicalOrExp(CParser.LogicalOrExpContext ctx) {
     	if(data.popDataType() != DataType.BOOLEAN || data.popDataType() != DataType.BOOLEAN) { //check data types on the stack
     		Error.throwError(ctx, "Only boolean data type is allowed in logical OR expression");
+    		return;
     	}
     	
         data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.ADDITION));

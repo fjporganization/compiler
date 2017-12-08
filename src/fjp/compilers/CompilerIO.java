@@ -39,6 +39,7 @@ public class CompilerIO extends CBaseListener{
 	public void exitOutputinteger(CParser.OutputintegerContext ctx) { 
 		if(data.popDataType() != DataType.INT) {
 			Error.throwError(ctx, "Incompatible data type for integer output");
+			return;
 		}
 		
 		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.WRITE_INTEGER, 0, 0));
@@ -64,6 +65,7 @@ public class CompilerIO extends CBaseListener{
 			data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 1));
 		}else if(exp != DataType.FRACTION) {
 			Error.throwError(ctx, "Incompatible data type for ratio output");
+			return;
 		}
 		
 		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.WRITE_FRAC, 0, 0));

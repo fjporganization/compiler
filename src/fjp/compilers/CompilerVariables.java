@@ -29,6 +29,7 @@ public class CompilerVariables extends CBaseListener {
 
         if (addressable == null){
             Error.throwError(ctx, "Identifier " + ctx.IDENTIFIER().getText() + " is already declared");
+            return;
         }
     }
 
@@ -37,6 +38,8 @@ public class CompilerVariables extends CBaseListener {
      */
     @Override
     public void exitDeclarationAndInitialization(CParser.DeclarationAndInitializationContext ctx) {
+        if(Error.inError())return;
+
         Addressable addressable = declaration(ctx.IDENTIFIER().getText(), ctx.TYPESPECIFIER().getText(), false);
 
         if (addressable == null){
@@ -60,6 +63,8 @@ public class CompilerVariables extends CBaseListener {
      */
     @Override
     public void exitConstantdeclaration(CParser.ConstantdeclarationContext ctx) {
+
+        if(Error.inError())return;
 
         Addressable addressable = declaration(ctx.IDENTIFIER().getText(), ctx.TYPESPECIFIER().getText(), true);
 

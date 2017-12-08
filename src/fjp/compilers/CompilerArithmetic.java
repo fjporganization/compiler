@@ -84,7 +84,7 @@ public class CompilerArithmetic extends CBaseListener {
     		
     	case BOOLEAN:
     		Error.throwError(ctx, "Incompatible data types - trying to multiply / divide boolean");
-    		break;
+    		return;
     	}
     }
 
@@ -139,7 +139,7 @@ public class CompilerArithmetic extends CBaseListener {
     		
     	case BOOLEAN:
     		Error.throwError(ctx, "Incompatible data types - trying to add / subtract boolean");
-    		break;
+    		return;
     	}
     }  	
 
@@ -159,6 +159,7 @@ public class CompilerArithmetic extends CBaseListener {
             	int denominator = Integer.parseInt(inputData[1]);
             	if(denominator == 0) {
             		Error.throwError(ctx, "Denominator of ratio data type cannot be zero");
+            		return;
             	}
             	
             	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, numerator));
@@ -172,6 +173,7 @@ public class CompilerArithmetic extends CBaseListener {
             }
         }catch (NumberFormatException e) {
         	Error.throwError(ctx, "Too large number");
+        	return;
         }
     }
     
@@ -206,7 +208,7 @@ public class CompilerArithmetic extends CBaseListener {
     			
     		case BOOLEAN:
     			Error.throwError(ctx, "Cannot convert integer to boolean");
-    			break;
+    			return;
     		}
     		
     		data.pushDataType(DataType.INT);
@@ -223,7 +225,7 @@ public class CompilerArithmetic extends CBaseListener {
     			
     		case BOOLEAN:
     			Error.throwError(ctx, "Cannot convert ratio to boolean");
-    			break;
+    			return;
     		}
     		
     		data.pushDataType(DataType.FRACTION);
@@ -233,11 +235,11 @@ public class CompilerArithmetic extends CBaseListener {
     		switch(currentType) {
     		case INT:
     			Error.throwError(ctx, "Cannot convert boolean to integer");
-    			break;
+    			return;
     			
     		case FRACTION: 
     			Error.throwError(ctx, "Cannot convert boolean to ratio");
-    			break;
+    			return;
     			
     		case BOOLEAN: //everything is OK
     			break;
@@ -272,7 +274,7 @@ public class CompilerArithmetic extends CBaseListener {
 			
 		case BOOLEAN:
 			Error.throwError(ctx, "Unary operators are not applicable to boolean data type");
-			break;
+			return;
 		}
     }
     

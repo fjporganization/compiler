@@ -58,6 +58,7 @@ public class CompilerFunctions extends CBaseListener {
 
 			if(func == null) {
 				Error.throwError(ctx, "Unknown function identifier: " + pair.getKey());
+				return;
 			}
 
 			if(!(func instanceof Function)) {
@@ -98,6 +99,7 @@ public class CompilerFunctions extends CBaseListener {
 
 		if(data.symbolTableGet(identifier) != null) {
 			Error.throwError(ctx,"Identifier " + identifier + " is already declared");
+			return;
 		}
 
 		Function func = new Function(intInstructionAdr, identifier);

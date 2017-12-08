@@ -1,9 +1,11 @@
 package test.compiler;
 
 import fjp.Main;
+import fjp.compilers.Error;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +25,11 @@ class CompilerTestsBase {
     @BeforeAll
     static void setUp() {
         main = new Main();
+    }
+
+    @BeforeEach
+    void clear(){
+        Error.resetError();
     }
 
     @AfterEach
