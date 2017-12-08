@@ -183,4 +183,10 @@ class ArithmeticTests extends CompilerTestsBase{
 		testCompilerError(path + "unaryMinusBoolean", "Error(2, 14): Unary operators are not applicable to boolean data type");
 	}
 	
+	@Test
+	@DisplayName("Negative - implicit conversion boolean -> int")
+	void testImplicitBoolean() {
+		testCompilerError(path + "errImplicit", "Error(2, 14): Cannot implicitly convert BOOLEAN and INT to the same data type");
+	}
+	
 }
