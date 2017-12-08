@@ -1,0 +1,4 @@
+void main(){
+  ratio a = 3|2;
+  writeint(a);
+}

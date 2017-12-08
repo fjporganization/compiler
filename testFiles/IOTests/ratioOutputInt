@@ -1,4 +1,4 @@
 void main(){
-  boolean a = true;
+  int a = 1;
   writefrac(a);
 }
