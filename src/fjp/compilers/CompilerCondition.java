@@ -120,7 +120,7 @@ public class CompilerCondition extends CBaseListener {
     public void enterTernaryoperator(CParser.TernaryoperatorContext ctx) {
         // condition has been processed yet
     	if(data.popDataType() != DataType.BOOLEAN) {
-    		Error.throwError(ctx, "In if condition must be boolean data type");
+    		Error.throwError(ctx, "In ternary operator condition must be boolean data type");
     		return;
     	}
     	
