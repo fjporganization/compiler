@@ -108,79 +108,79 @@ class ArithmeticTests extends CompilerTestsBase{
 	@Test
 	@DisplayName("Negative - addition of booleans")
 	void testBooleanAdd() {
-		testCompilerError(path + "booleanAddition", "Error(2, 14): Incompatible data types - trying to add / subtract boolean");
+		testCompilerError(path + "errBooleanAddition", "Error(2, 14): Incompatible data types - trying to add / subtract boolean");
 	}
 	
 	@Test
 	@DisplayName("Negative - subtraction of booleans")
 	void testBooleanSub() {
-		testCompilerError(path + "booleanSubtraction", "Error(2, 14): Incompatible data types - trying to add / subtract boolean");
+		testCompilerError(path + "errBooleanSubtraction", "Error(2, 14): Incompatible data types - trying to add / subtract boolean");
 	}
 	
 	@Test
 	@DisplayName("Negative - multiplication of booleans")
 	void testBooleanMul() {
-		testCompilerError(path + "booleanMultiplication", "Error(2, 14): Incompatible data types - trying to multiply / divide boolean");
+		testCompilerError(path + "errBooleanMultiplication", "Error(2, 14): Incompatible data types - trying to multiply / divide boolean");
 	}
 	
 	@Test
 	@DisplayName("Negative - division of booleans")
 	void testBooleanDiv() {
-		testCompilerError(path + "booleanDivision", "Error(2, 14): Incompatible data types - trying to multiply / divide boolean");
+		testCompilerError(path + "errBooleanDivision", "Error(2, 14): Incompatible data types - trying to multiply / divide boolean");
 	}
 	
 	@Test
 	@DisplayName("Negative - zero denominator of fraction")
 	void testZeroDenominator() {
-		testCompilerError(path + "ratioZeroDenominator", "Error(2, 12): Denominator of ratio data type cannot be zero");
+		testCompilerError(path + "errRatioZeroDenominator", "Error(2, 12): Denominator of ratio data type cannot be zero");
 	}
 	
 	@Test
 	@DisplayName("Negative - too large number in ratio")
 	void testRatioTooLarge() {
-		testCompilerError(path + "ratioTooLarge", "Error(2, 12): Too large number");
+		testCompilerError(path + "errRatioTooLarge", "Error(2, 12): Too large number");
 	}
 	
 	@Test
 	@DisplayName("Negative - too large number in integer")
 	void testIntTooLarge() {
-		testCompilerError(path + "intTooLarge", "Error(2, 10): Too large number");
+		testCompilerError(path + "errIntTooLarge", "Error(2, 10): Too large number");
 	}
 	
 	@Test
 	@DisplayName("Negative - boolean conversion to int")
 	void testBooleanToInt() {
-		testCompilerError(path + "booleanToInt", "Error(3, 10): Cannot convert boolean to integer");
+		testCompilerError(path + "errBooleanToInt", "Error(3, 10): Cannot convert boolean to integer");
 	}
 	
 	@Test
 	@DisplayName("Negative - boolean conversion to ratio")
 	void testBooleanToRatio() {
-		testCompilerError(path + "booleanToRatio", "Error(3, 12): Cannot convert boolean to ratio");
+		testCompilerError(path + "errBooleanToRatio", "Error(3, 12): Cannot convert boolean to ratio");
 	}
 	
 	@Test
 	@DisplayName("Negative - int conversion to boolean")
 	void testIntToBoolean() {
-		testCompilerError(path + "intToBoolean", "Error(3, 14): Cannot convert integer to boolean");
+		testCompilerError(path + "errIntToBoolean", "Error(3, 14): Cannot convert integer to boolean");
 	}
 	
 	@Test
 	@DisplayName("Negative - ratio conversion to boolean")
 	void testRatioToBoolean() {
-		testCompilerError(path + "ratioToBoolean", "Error(3, 14): Cannot convert ratio to boolean");
+		testCompilerError(path + "errRatioToBoolean", "Error(3, 14): Cannot convert ratio to boolean");
 	}
 	
 	@Test
 	@DisplayName("Negative - unary plus boolean")
 	void testUnaryPlusBoolean() {
-		testCompilerError(path + "unaryPlusBoolean", "Error(2, 14): Unary operators are not applicable to boolean data type");
+		testCompilerError(path + "errUnaryPlusBoolean", "Error(2, 14): Unary operators are not applicable to boolean data type");
 	}
 	
 	@Test
 	@DisplayName("Negative - unary minus boolean")
 	void testUnaryMinusBoolean() {
-		testCompilerError(path + "unaryMinusBoolean", "Error(2, 14): Unary operators are not applicable to boolean data type");
+		testCompilerError(path + "errUnaryMinusBoolean", "Error(2, 14): Unary operators are not applicable to boolean data type");
 	}
 	
 	@Test
