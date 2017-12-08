@@ -43,6 +43,10 @@ public class CompilerLogic extends CBaseListener {
      */
     @Override
     public void exitRelationalLogicExp(CParser.RelationalLogicExpContext ctx) {
+    	if(Error.inError()) { //skip the method in case of previous parsing error occurred
+    		return;
+    	}
+    	
         OperationCode operationCode = null;
         Instruction instruction;
         String operator = ctx.RELATIONALOPERATOR().getText();
@@ -94,6 +98,10 @@ public class CompilerLogic extends CBaseListener {
      */
     @Override
     public void exitEqualityLogicExp(CParser.EqualityLogicExpContext ctx) {
+    	if(Error.inError()) { //skip the method in case of previous parsing error occurred
+    		return;
+    	}
+    	
         int operationCode = -1;
         Instruction instruction;
         String operator = ctx.EQUALITYOPERATOR().getText();
@@ -167,6 +175,10 @@ public class CompilerLogic extends CBaseListener {
      */
     @Override
     public void exitLogicNegation(CParser.LogicNegationContext ctx) {
+    	if(Error.inError()) { //skip the method in case of previous parsing error occurred
+    		return;
+    	}
+    	
     	if(data.popDataType() != DataType.BOOLEAN) { //check data types on the stack
     		Error.throwError(ctx, "Only boolean data type is allowed in logical negation expression");
     		return;
@@ -182,6 +194,10 @@ public class CompilerLogic extends CBaseListener {
      */
     @Override
     public void exitLogicalAndExp(CParser.LogicalAndExpContext ctx) {
+    	if(Error.inError()) { //skip the method in case of previous parsing error occurred
+    		return;
+    	}
+    	
     	if(data.popDataType() != DataType.BOOLEAN || data.popDataType() != DataType.BOOLEAN) { //check data types on the stack
     		Error.throwError(ctx, "Only boolean data type is allowed in logical AND expression");
     		return;
@@ -200,6 +216,10 @@ public class CompilerLogic extends CBaseListener {
      */
     @Override
     public void exitLogicalOrExp(CParser.LogicalOrExpContext ctx) {
+    	if(Error.inError()) { //skip the method in case of previous parsing error occurred
+    		return;
+    	}
+    	
     	if(data.popDataType() != DataType.BOOLEAN || data.popDataType() != DataType.BOOLEAN) { //check data types on the stack
     		Error.throwError(ctx, "Only boolean data type is allowed in logical OR expression");
     		return;
@@ -214,7 +234,7 @@ public class CompilerLogic extends CBaseListener {
     }
 
     /**
-     * Processes logic literal atom
+     * Processes logic literal
      */
     @Override
     public void exitLogicAtom(CParser.LogicAtomContext ctx) {
