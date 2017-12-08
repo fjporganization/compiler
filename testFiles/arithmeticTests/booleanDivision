@@ -1,0 +1,3 @@
+void main(){
+  boolean c = true / false;
+}

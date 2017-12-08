@@ -1,0 +1,4 @@
+void main(){
+  boolean a = true;
+  int b = (int)a;
+}

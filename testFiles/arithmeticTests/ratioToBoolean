@@ -1,0 +1,4 @@
+void main(){
+  ratio a = 1|1;
+  boolean b = (boolean)a;
+}
