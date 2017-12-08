@@ -24,6 +24,9 @@ public class CompilerArithmetic extends CBaseListener {
     /** Data which are shared across all compilers classes */
     private final CompilerData data;
     
+    /** indicates whether there was error in previous parsing - antlr tries to recover from errors, this can cause problems with data type control */
+    private boolean error = false;
+    
     /**
      * Constructor of the arithmetic compiler
      * @param data compiler data that are shared across all compiler classes
@@ -37,6 +40,10 @@ public class CompilerArithmetic extends CBaseListener {
      */
     @Override
     public void exitMulDivExp(CParser.MulDivExpContext ctx) {
+    	if(error) { //check for error in previous parsing that antlr tries to recover from
+    		return;
+    	}
+    	
     	DataType result = DataConversions.checkDataTypes(data, ctx);
     	Instruction instruction;
     	
@@ -83,6 +90,7 @@ public class CompilerArithmetic extends CBaseListener {
     		break;
     		
     	case BOOLEAN:
+    		error = true;
     		Error.throwError(ctx, "Incompatible data types - trying to multiply / divide boolean");
     		return;
     	}
@@ -94,6 +102,10 @@ public class CompilerArithmetic extends CBaseListener {
      */
     @Override
     public void exitAddSubExp(CParser.AddSubExpContext ctx) {
+    	if(error) { //check for error in previous parsing that antlr tries to recover from
+    		return;
+    	}
+    	
     	OperationCode operationCode;
     	DataType result = DataConversions.checkDataTypes(data, ctx);
     	
@@ -138,6 +150,7 @@ public class CompilerArithmetic extends CBaseListener {
     		break;
     		
     	case BOOLEAN:
+    		error = true;
     		Error.throwError(ctx, "Incompatible data types - trying to add / subtract boolean");
     		return;
     	}
@@ -158,6 +171,7 @@ public class CompilerArithmetic extends CBaseListener {
             	String numerator = inputData[0];
             	int denominator = Integer.parseInt(inputData[1]);
             	if(denominator == 0) {
+            		error = true;
             		Error.throwError(ctx, "Denominator of ratio data type cannot be zero");
             		return;
             	}
@@ -172,6 +186,7 @@ public class CompilerArithmetic extends CBaseListener {
                 data.pushDataType(DataType.INT);
             }
         }catch (NumberFormatException e) {
+        	error = true;
         	Error.throwError(ctx, "Too large number");
         	return;
         }
@@ -182,7 +197,11 @@ public class CompilerArithmetic extends CBaseListener {
      * eventually converts fraction into fraction with numerator and denominator as low as possible
      */
     @Override 
-    public void exitExpression(CParser.ExpressionContext ctx) { 
+    public void exitExpression(CParser.ExpressionContext ctx) {
+    	if(error) { //check for error in previous parsing that antlr tries to recover from
+    		return;
+    	}
+    	
     	if(data.peekDataType() == DataType.FRACTION) {
     		shortenFraction();
     	}
@@ -193,6 +212,10 @@ public class CompilerArithmetic extends CBaseListener {
      */
     @Override 
     public void exitDataTypeConversion(CParser.DataTypeConversionContext ctx) { 
+    	if(error) { //check for error in previous parsing that antlr tries to recover from
+    		return;
+    	}
+    	
     	DataType currentType = data.popDataType();
     	String newType = ctx.TYPESPECIFIER().getText();
     	
@@ -207,6 +230,7 @@ public class CompilerArithmetic extends CBaseListener {
     			break;
     			
     		case BOOLEAN:
+    			error = true;
     			Error.throwError(ctx, "Cannot convert integer to boolean");
     			return;
     		}
@@ -224,6 +248,7 @@ public class CompilerArithmetic extends CBaseListener {
     			break;
     			
     		case BOOLEAN:
+    			error = true;
     			Error.throwError(ctx, "Cannot convert ratio to boolean");
     			return;
     		}
@@ -234,10 +259,12 @@ public class CompilerArithmetic extends CBaseListener {
     	case "boolean":
     		switch(currentType) {
     		case INT:
+    			error = true;
     			Error.throwError(ctx, "Cannot convert boolean to integer");
     			return;
     			
     		case FRACTION: 
+    			error = true;
     			Error.throwError(ctx, "Cannot convert boolean to ratio");
     			return;
     			
@@ -255,6 +282,10 @@ public class CompilerArithmetic extends CBaseListener {
      */
     @Override 
     public void exitUnaryOperator(CParser.UnaryOperatorContext ctx) { 
+    	if(error) { //check for error in previous parsing that antlr tries to recover from
+    		return;
+    	}
+    	
     	DataType current = data.peekDataType();
 		
 		switch(current) {
@@ -273,6 +304,7 @@ public class CompilerArithmetic extends CBaseListener {
 			break;
 			
 		case BOOLEAN:
+			error = true;
 			Error.throwError(ctx, "Unary operators are not applicable to boolean data type");
 			return;
 		}
