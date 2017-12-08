@@ -5,42 +5,44 @@ import org.junit.jupiter.api.Test;
 
 class ArithmeticTests extends CompilerTestsBase{
 	
+	private static final String path = "arithmeticTests/";
+	
 	// integers tests =====================
 	
 	@Test
 	@DisplayName("Addition of two integers")
 	void testIntAdd() {
-		testFiles("arithmeticTests/intAddition", "arithmeticTests/intAddition.pl0");
+		testFiles(path + "intAddition", path + "intAddition.pl0");
 	}
 	
 	@Test
 	@DisplayName("Subtraction of two integers")
 	void testIntSub() {
-		testFiles("arithmeticTests/intSubtraction", "arithmeticTests/intSubtraction.pl0");
+		testFiles(path + "intSubtraction", path + "intSubtraction.pl0");
 	}
 	
 	@Test
 	@DisplayName("Multiplication of two integers")
 	void testIntMul() {
-		testFiles("arithmeticTests/intMultiplication", "arithmeticTests/intMultiplication.pl0");
+		testFiles(path + "intMultiplication", path + "intMultiplication.pl0");
 	}
 	
 	@Test
 	@DisplayName("Division of two integers")
 	void testIntDiv() {
-		testFiles("arithmeticTests/intDivision", "arithmeticTests/intDivision.pl0");
+		testFiles(path + "intDivision", path + "intDivision.pl0");
 	}
 	
 	@Test
 	@DisplayName("Integer operators precedence")
 	void testIntPrecedence() {
-		testFiles("arithmeticTests/intPrecedence", "arithmeticTests/intPrecedence.pl0");
+		testFiles(path + "intPrecedence", path + "intPrecedence.pl0");
 	}
 	
 	@Test
 	@DisplayName("Integer unary operators")
 	void testIntUnary() {
-		testFiles("arithmeticTests/intUnaryOperator", "arithmeticTests/intUnaryOperator.pl0");
+		testFiles(path + "intUnaryOperator", path + "intUnaryOperator.pl0");
 	}
 	
 	// fractions tests =====================
@@ -48,31 +50,31 @@ class ArithmeticTests extends CompilerTestsBase{
 	@Test
 	@DisplayName("Addition of two fractions")
 	void testRatioAdd() {
-		testFiles("arithmeticTests/ratioAddition", "arithmeticTests/ratioAddition.pl0");
+		testFiles(path + "ratioAddition", path + "ratioAddition.pl0");
 	}
 	
 	@Test
 	@DisplayName("Subtraction of two fractions")
 	void testRatioSub() {
-		testFiles("arithmeticTests/ratioSubtraction", "arithmeticTests/ratioSubtraction.pl0");
+		testFiles(path + "ratioSubtraction", path + "ratioSubtraction.pl0");
 	}
 	
 	@Test
 	@DisplayName("Multiplication of two fractions")
 	void testRatioMul() {
-		testFiles("arithmeticTests/ratioMultiplication", "arithmeticTests/ratioMultiplication.pl0");
+		testFiles(path + "ratioMultiplication", path + "ratioMultiplication.pl0");
 	}
 	
 	@Test
 	@DisplayName("Division of two fractions")
 	void testRatioDiv() {
-		testFiles("arithmeticTests/ratioDivision", "arithmeticTests/ratioDivision.pl0");
+		testFiles(path + "ratioDivision", path + "ratioDivision.pl0");
 	}
 	
 	@Test
 	@DisplayName("Fraction operators precedence and unary operators")
 	void testRatioPrecedence() {
-		testFiles("arithmeticTests/ratioPrecedenceUnary", "arithmeticTests/ratioPrecedenceUnary.pl0");
+		testFiles(path + "ratioPrecedenceUnary", path + "ratioPrecedenceUnary.pl0");
 	}
 	
 	// type conversion tests =========================
@@ -80,24 +82,105 @@ class ArithmeticTests extends CompilerTestsBase{
 	@Test
 	@DisplayName("Explicit conversion ratio -> int")
 	void testRatioToInt() {
-		testFiles("arithmeticTests/ratioToInt", "arithmeticTests/ratioToInt.pl0");
+		testFiles(path + "ratioToInt", path + "ratioToInt.pl0");
 	}
 	
 	@Test
 	@DisplayName("Explicit conversion int -> ratio")
 	void testIntToRatio() {
-		testFiles("arithmeticTests/intToRatio", "arithmeticTests/intToRatio.pl0");
+		testFiles(path + "intToRatio", path + "intToRatio.pl0");
 	}
 	
 	@Test
 	@DisplayName("Implicit conversion int -> ratio")
 	void testImplicitIntToRatio() {
-		testFiles("arithmeticTests/implicitConversion", "arithmeticTests/implicitConversion.pl0");
+		testFiles(path + "implicitConversion", path + "implicitConversion.pl0");
 	}
 	
 	@Test
 	@DisplayName("Ratio saving")
 	void testRatioStack() {
-		testFiles("arithmeticTests/ratioVariable", "arithmeticTests/ratioVariable.pl0");
+		testFiles(path + "ratioVariable", path + "ratioVariable.pl0");
 	}
+	
+	// negative tests - arithmetic operations on boolean ===============
+	
+	@Test
+	@DisplayName("Negative - addition of booleans")
+	void testBooleanAdd() {
+		testCompilerError(path + "booleanAddition", "Error(2, 14): Incompatible data types - trying to add / subtract boolean");
+	}
+	
+	@Test
+	@DisplayName("Negative - subtraction of booleans")
+	void testBooleanSub() {
+		testCompilerError(path + "booleanSubtraction", "Error(2, 14): Incompatible data types - trying to add / subtract boolean");
+	}
+	
+	@Test
+	@DisplayName("Negative - multiplication of booleans")
+	void testBooleanMul() {
+		testCompilerError(path + "booleanMultiplication", "Error(2, 14): Incompatible data types - trying to multiply / divide boolean");
+	}
+	
+	@Test
+	@DisplayName("Negative - division of booleans")
+	void testBooleanDiv() {
+		testCompilerError(path + "booleanDivision", "Error(2, 14): Incompatible data types - trying to multiply / divide boolean");
+	}
+	
+	@Test
+	@DisplayName("Negative - zero denominator of fraction")
+	void testZeroDenominator() {
+		testCompilerError(path + "ratioZeroDenominator", "Error(2, 12): Denominator of ratio data type cannot be zero");
+	}
+	
+	@Test
+	@DisplayName("Negative - too large number in ratio")
+	void testRatioTooLarge() {
+		testCompilerError(path + "ratioTooLarge", "Error(2, 12): Too large number");
+	}
+	
+	@Test
+	@DisplayName("Negative - too large number in integer")
+	void testIntTooLarge() {
+		testCompilerError(path + "intTooLarge", "Error(2, 10): Too large number");
+	}
+	
+	@Test
+	@DisplayName("Negative - boolean conversion to int")
+	void testBooleanToInt() {
+		testCompilerError(path + "booleanToInt", "Error(3, 10): Cannot convert boolean to integer");
+	}
+	
+	@Test
+	@DisplayName("Negative - boolean conversion to ratio")
+	void testBooleanToRatio() {
+		testCompilerError(path + "booleanToRatio", "Error(3, 12): Cannot convert boolean to ratio");
+	}
+	
+	@Test
+	@DisplayName("Negative - int conversion to boolean")
+	void testIntToBoolean() {
+		testCompilerError(path + "intToBoolean", "Error(3, 14): Cannot convert integer to boolean");
+	}
+	
+	@Test
+	@DisplayName("Negative - ratio conversion to boolean")
+	void testRatioToBoolean() {
+		testCompilerError(path + "ratioToBoolean", "Error(3, 14): Cannot convert ratio to boolean");
+	}
+	
+	@Test
+	@DisplayName("Negative - unary plus boolean")
+	void testUnaryPlusBoolean() {
+		testCompilerError(path + "unaryPlusBoolean", "Error(2, 14): Unary operators are not applicable to boolean data type");
+	}
+	
+	@Test
+	@DisplayName("Negative - unary minus boolean")
+	void testUnaryMinusBoolean() {
+		testCompilerError(path + "unaryMinusBoolean", "Error(2, 14): Unary operators are not applicable to boolean data type");
+	}
+	
 }
