@@ -1,5 +1,9 @@
 package fjp.structures;
 
+/**
+ * Represents codes for arithmetic operations
+ *
+ */
 public enum InstructionCodes {
 	PUSH("LIT", +1), 
 	OPERATION("OPR", 0),
@@ -22,21 +26,35 @@ public enum InstructionCodes {
 	READ_FRAC("REF", +2),
 	WRITE_FRAC("WRF", -2);
 	;
-		
-	private String operation;
 	
+	/** operation mnemonic code */
+	private final String operation;
+	
+	/** change of the stack pointer after instruction execution */
 	private final int stackChange;
 		
+	/**
+	 * Constructor
+	 * @param operation operation mnemonic code
+	 * @param stackChange change of the stack pointer after instruction execution
+	 */
 	private InstructionCodes(String operation, int stackChange) {
 		this.operation = operation;
 		this.stackChange = stackChange;
 	}
-	
+
+	/**
+	* getter for operation
+	* @return the operation
+	*/
 	public String getOperation() {
-		return this.operation;
+		return operation;
 	}
 
-	
+	/**
+	* getter for stackChange
+	* @return the stackChange
+	*/
 	public int getStackChange() {
 		return stackChange;
 	}
