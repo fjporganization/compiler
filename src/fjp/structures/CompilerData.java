@@ -17,8 +17,8 @@ public class CompilerData {
     /** address of actual position of the stack (in the assembler) */
     private int stackPointer;
 
-    /** current lexicographical level */
-    private int nestingLevel;
+    /** Current scope ID. scopeID 0 is reserved for global variables. */
+    private int scopeId;
 
     /** output instructions */
     private final List<Instruction> output;
@@ -40,7 +40,7 @@ public class CompilerData {
      */
     public CompilerData(){
         resetStackPointer();
-        this.nestingLevel = 0;
+        this.scopeId = 0;
 
         this.output = new ArrayList<>();
         this.toShift = new ArrayList<>();
@@ -152,19 +152,19 @@ public class CompilerData {
     // SCOPE NUMBER ========================
 
     /**
-     * Return nestingLevel.
+     * Return scope id.
      *
-     * @return nestingLevel
+     * @return scopeId
      */
-    public int getNestingLevel() {
-        return nestingLevel;
+    public int getScopeId() {
+        return scopeId;
     }
 
-	/**
-     * Method increment nestingLevel.
+    /**
+     * Method increment scopeId.
      */
-    public void incNestingLevel() {
-        nestingLevel++;
+    public void incScopeId() {
+        scopeId++;
     }
 
     // VARIABLE COUNTER ====================
@@ -208,8 +208,8 @@ public class CompilerData {
      * @param identifier of searching object
      * @return found object or null
      */
-    public Addressable symbolTableGet(String identifier){
-        Addressable res = symbolTable.get(hashIdentifier(identifier, getNestingLevel()));
+    public Addressable symbolTableGet(String identifier) {
+        Addressable res = symbolTable.get(hashIdentifier(identifier, getScopeId()));
 
         if (res == null){
             res = symbolTable.get(hashIdentifier(identifier, 0));
@@ -224,30 +224,30 @@ public class CompilerData {
      * @param identifier of saving object
      * @param addressable object which will be saved
      */
-    public void symbolTablePut(String identifier, Addressable addressable){
-        symbolTable.put(hashIdentifier(identifier, getNestingLevel()), addressable);
+    public void symbolTablePut(String identifier, Addressable addressable) {
+        symbolTable.put(hashIdentifier(identifier, getScopeId()), addressable);
     }
 
     /**
      * Put input addressable to map with hashed key by function hashIdentifier
      *
-     * @param identifier of saving object
-     * @param addressable object which will be saved
-     * @param nestingLevel level of scope
+     * @param identifier   of saving object
+     * @param addressable  object which will be saved
+     * @param scopeId level of scope
      */
-    public void symbolTablePut(String identifier, Addressable addressable, int nestingLevel){
-        symbolTable.put(hashIdentifier(identifier, nestingLevel), addressable);
+    public void symbolTablePut(String identifier, Addressable addressable, int scopeId) {
+        symbolTable.put(hashIdentifier(identifier, scopeId), addressable);
     }
 
     /**
-     * Add before identifier nestingLevel. New identifier is unique for scope.
+     * Add before identifier scope id. New identifier is unique for scope.
      *
-     * @param identifier which will be hashed
-     * @param nestingLevel number of scope
+     * @param identifier   which will be hashed
+     * @param scopeId number of scope
      * @return coded identifier
      */
-    private String hashIdentifier(String identifier, int nestingLevel){
-        return nestingLevel + identifier;
+    private String hashIdentifier(String identifier, int scopeId) {
+        return scopeId + identifier;
     }
     
     // EXPRESSION DATA TYPE ================

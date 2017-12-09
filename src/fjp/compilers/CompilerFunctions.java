@@ -102,7 +102,7 @@ public class CompilerFunctions extends CBaseListener {
             data.addInstruction(new Instruction(InstructionCodes.CALL, 0, data.getCurrentInstructionAddress() + 3));
             data.addInstruction(new Instruction(InstructionCodes.RETURN, 0, 0));
         }
-        data.incNestingLevel();
+        data.incScopeId();
         data.resetStackPointer();
 
         // add increment instruction

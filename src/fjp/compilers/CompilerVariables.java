@@ -132,9 +132,9 @@ public class CompilerVariables extends CBaseListener {
         // Create Variable or Constant
         Addressable addressable;
         if (constant) {
-            addressable = new Constant(varAddress, data.getNestingLevel(), identifier, length, type);
+            addressable = new Constant(varAddress, data.getScopeId(), identifier, length, type);
         } else {
-            addressable = new Variable(varAddress, data.getNestingLevel(), identifier, length, type);
+            addressable = new Variable(varAddress, data.getScopeId(), identifier, length, type);
         }
         data.symbolTablePut(identifier, addressable);
 
@@ -157,7 +157,7 @@ public class CompilerVariables extends CBaseListener {
 
         data.pushDataType(variable.getDataType());
 
-        if (variable.getNestingLevel() == 0) {
+        if (variable.getScopeId() == 0) {
             // global variable
             globalVariablesLoad(variable.getAddress(), variable.getLength());
         } else {
@@ -187,7 +187,7 @@ public class CompilerVariables extends CBaseListener {
             return;
         }
 
-        if (variable.getNestingLevel() == 0) {
+        if (variable.getScopeId() == 0) {
             globalVariablesStore(variable.getAddress(), variable.getLength());
         } else {
             localVariablesStore(variable.getAddress(), variable.getLength());
@@ -229,7 +229,7 @@ public class CompilerVariables extends CBaseListener {
                 data.toShift.add(load);
             }
 
-            if (variable.getNestingLevel() == 0) {
+            if (variable.getScopeId() == 0) {
                 globalVariablesStore(variable.getAddress(), variable.getLength());
             } else {
                 localVariablesStore(variable.getAddress(), variable.getLength());
@@ -277,7 +277,7 @@ public class CompilerVariables extends CBaseListener {
                 return;
             }
 
-            if (variable.getNestingLevel() == 0) {
+            if (variable.getScopeId() == 0) {
                 globalVariablesStore(variable.getAddress(), variable.getLength());
             } else {
                 localVariablesStore(variable.getAddress(), variable.getLength());

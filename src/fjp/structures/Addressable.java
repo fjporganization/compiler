@@ -8,23 +8,23 @@ public abstract class Addressable extends Identifier{
 
 	private int address;
 	
-	private int nestingLevel;
+	private int scopeId;
 	
 	private int length;
 
 	private DataType dataType;
 	
-	public Addressable(int address, int nestingLevel, String name, int length, DataType dataType) {
+	public Addressable(int address, int scopeId, String name, int length, DataType dataType) {
 		super(name);
 		this.address = address;
-		this.nestingLevel = nestingLevel;
+		this.scopeId = scopeId;
 		this.length = length;
 		this.dataType = dataType;
 	}
 	
-	public Addressable(int nestingLevel, String name, int length, DataType dataType) {
+	public Addressable(int scopeId, String name, int length, DataType dataType) {
 		super(name);
-		this.nestingLevel = nestingLevel;
+		this.scopeId = scopeId;
 		this.length = length;
 		this.dataType = dataType;
 	}
@@ -37,12 +37,12 @@ public abstract class Addressable extends Identifier{
 		this.address = address;
 	}
 
-	public int getNestingLevel() {
-		return nestingLevel;
+	public int getScopeId() {
+		return scopeId;
 	}
 
-	public void setNestingLevel(int nestingLevel) {
-		this.nestingLevel = nestingLevel;
+	public void setScopeId(int scopeId) {
+		this.scopeId = scopeId;
 	}
 
 	public int getLength() {
