@@ -11,34 +11,34 @@ import java.util.Stack;
  */
 public class CompilerData {
 
-    /** Number of function declaration instructions */
+    /** Size of space on stack on beginning of every function.*/
     public static final short BASE_FUNC_STACK_SIZE = 3;
 
-    /** address of actual position of the stack (in the assembler) */
+    /** Address of actual position of the stack(in the assembler). */
     private int stackPointer;
 
     /** Current scope ID. scopeID 0 is reserved for global variables. */
     private int scopeId;
 
-    /** output instructions */
+    /** Output instructions. */
     private final List<Instruction> output;
 
-    /** table of symbol */
+    /** Table of symbols(identifiers). */
     private final Map<String, Addressable> symbolTable;
 
-    /** instruction whose operand need to be add about number of variables */
+    /** List of instructions whose operand need to be add about number of variables. */
     public final List<Instruction> toShift;
 
-    /** Number of variables which will be defined at the beginning of function/program */
+    /** Number of variables which will be defined at the beginning of function/program. */
     private int varCounter = 0;
-    
-    /** data types of the expression which is currently evaluated */
+
+    /** Data types of the expression which is currently evaluated(DataType of values on stack). */
     private final Stack<DataType> expDataTypeStack;
 
     /**
      * Initialize data in class
      */
-    public CompilerData(){
+    public CompilerData() {
         resetStackPointer();
         this.scopeId = 0;
 
@@ -49,16 +49,16 @@ public class CompilerData {
     }
 
     // OUTPUT INSTRUCTIONS =================
-    
+
     /**
      * Add input instruction to end of list of all instructions and change stack pointer
      *
      * @param instruction instruction which will be add to list
      */
     public void addInstructionChangeStackPointer(Instruction instruction) {
-    	addInstruction(instruction);
+        addInstruction(instruction);
 
-    	switch (instruction.getCode()){
+        switch (instruction.getCode()) {
             case OPERATION:
                 stackPointer += OperationCode.getOpCodeByCode(instruction.getOperand()).getIntegerStackChange();
                 break;
@@ -73,13 +73,13 @@ public class CompilerData {
                 break;
         }
     }
-    
+
     /**
      * Add input instruction to end of list of all instructions.
      *
      * @param instruction instruction which will be add to list
      */
-    public void addInstruction(Instruction instruction){
+    public void addInstruction(Instruction instruction) {
         output.add(instruction);
     }
 
@@ -88,7 +88,7 @@ public class CompilerData {
      *
      * @return list of instructions
      */
-    public List<Instruction> getOutput(){
+    public List<Instruction> getOutput() {
         return output;
     }
 
@@ -104,39 +104,39 @@ public class CompilerData {
     // STACK POINTER =======================
 
     /**
-     * Set stackpointer to default value -1.
+     * Set stackPointer to default value -1.
      */
-    public void resetStackPointer(){
+    public void resetStackPointer() {
         stackPointer = -1;
     }
 
     /**
-     * Method increment stackPointer
+     * Method increment stackPointer.
      */
-    public void incStackPointer(){
-        stackPointer ++;
+    public void incStackPointer() {
+        stackPointer++;
     }
 
     /**
-     * Method add value to stackPointer
+     * Method add value to stackPointer.
      *
      * @param value which is add to stackPointer
      */
-    public void incStackPointer(int value){
+    public void incStackPointer(int value) {
         stackPointer += value;
     }
 
     /**
      * Method decrement stackPointer.
      */
-    public void decStackPointer(){
-        stackPointer --;
+    public void decStackPointer() {
+        stackPointer--;
     }
 
     /**
      * Method decrement value of stackPointer.
      */
-    public void decStackPointer(int value){
+    public void decStackPointer(int value) {
         stackPointer -= value;
     }
 
@@ -172,22 +172,23 @@ public class CompilerData {
     /**
      * Set varCounter to default value 0.
      */
-    public void resetVarCounter(){
+    public void resetVarCounter() {
         varCounter = 0;
     }
 
     /**
      * Return varCounter.
+     *
      * @return varCounter
      */
-    public int getVarCounter(){
+    public int getVarCounter() {
         return varCounter;
     }
 
     /**
      * Method increment varCounter.
      */
-    public void incVarCounter(){
+    public void incVarCounter() {
         varCounter++;
     }
 
@@ -196,14 +197,14 @@ public class CompilerData {
      *
      * @param count size of increment
      */
-    public void incVarCounter(int count){
+    public void incVarCounter(int count) {
         varCounter += count;
     }
 
     // SYMBOL TABLE OPERATIONS =============
 
     /**
-     * Return object of Addressable which have input identifier and is in same scope or is defined globally
+     * Return object of Addressable which have input identifier and is in same scope or is defined globally.
      *
      * @param identifier of searching object
      * @return found object or null
@@ -211,7 +212,7 @@ public class CompilerData {
     public Addressable symbolTableGet(String identifier) {
         Addressable res = symbolTable.get(hashIdentifier(identifier, getScopeId()));
 
-        if (res == null){
+        if (res == null) {
             res = symbolTable.get(hashIdentifier(identifier, 0));
         }
 
@@ -221,7 +222,7 @@ public class CompilerData {
     /**
      * Put input addressable to map with hashed key by function hashIdentifier
      *
-     * @param identifier of saving object
+     * @param identifier  of saving object
      * @param addressable object which will be saved
      */
     public void symbolTablePut(String identifier, Addressable addressable) {
@@ -249,33 +250,33 @@ public class CompilerData {
     private String hashIdentifier(String identifier, int scopeId) {
         return scopeId + identifier;
     }
-    
+
     // EXPRESSION DATA TYPE ================
-    
+
     /**
-     * push data type of atom or interim result onto the expression data type stack
-     * 
+     * Push data type of atom or interim result onto the expression data type stack.
+     *
      * @param type data type to be pushed onto the stack
      */
     public void pushDataType(DataType type) {
-    	expDataTypeStack.push(type);
+        expDataTypeStack.push(type);
     }
-    
+
     /**
-     * pops data type of last item on the stack from the expression data type stack
-     * 
+     * Pops data type of last item on the stack from the expression data type stack.
+     *
      * @return popped data type of last item on the stack from the expression data type stack
      */
     public DataType popDataType() {
-    	return expDataTypeStack.pop();
+        return expDataTypeStack.pop();
     }
-    
+
     /**
-     * peeks data type of last item on the stack from the expression data type stack
-     * 
+     * Peeks data type of last item on the stack from the expression data type stack.
+     *
      * @return peeked data type of last item on the stack from the expression data type stack
      */
     public DataType peekDataType() {
-    	return expDataTypeStack.peek();
+        return expDataTypeStack.peek();
     }
 }
