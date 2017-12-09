@@ -562,7 +562,7 @@ public class Interpreter {
 		}
 		
 		if(InterpreterConstants.isShowStore()) {
-			System.out.println(stack[stackPointer]);
+			System.out.println(stack[stackPointer - 1]);
 		}
 		
 		stackPointer = stackPointer - 2;
@@ -726,7 +726,7 @@ public class Interpreter {
 		stack[address] = stack[stackPointer + 1];
 		
 		if(InterpreterConstants.isShowStore()) {
-			System.out.println(stack[stackPointer]);
+			System.out.println(stack[stackPointer + 1]);
 		}
 		
 	}
