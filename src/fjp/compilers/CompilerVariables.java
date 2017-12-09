@@ -7,42 +7,48 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.List;
 
+/**
+ * Class providing compiler functionality for parsing variables.
+ */
 public class CompilerVariables extends CBaseListener {
 
-    /** Data which are shared across all compilers classes */
+    /**
+     * Data which are shared across all compilers classes.
+     */
     private final CompilerData data;
 
     /**
-     * Constructor of CompilerVariables
+     * Constructor of CompilerVariables.
+     *
      * @param data contains data which are shared with all compiler classes
      */
-    public CompilerVariables(CompilerData data){
+    public CompilerVariables(CompilerData data) {
         this.data = data;
     }
 
     /**
-     * Processes variable declaration without initialization
+     * Processes variable declaration without initialization.
      */
     @Override
     public void exitDeclarationOnly(CParser.DeclarationOnlyContext ctx) {
         Addressable addressable = declaration(ctx.IDENTIFIER().getText(), ctx.TYPESPECIFIER().getText(), false);
 
-        if (addressable == null){
+        if (addressable == null) {
             Error.throwError(ctx, "Identifier " + ctx.IDENTIFIER().getText() + " is already declared");
             return;
         }
     }
 
     /**
-     * Processes variable declaration with initialization
+     * Processes variable declaration with initialization.
      */
     @Override
     public void exitDeclarationAndInitialization(CParser.DeclarationAndInitializationContext ctx) {
-        if(Error.inError())return;
+        if (Error.inError()) return;
 
         Addressable addressable = declaration(ctx.IDENTIFIER().getText(), ctx.TYPESPECIFIER().getText(), false);
 
-        if (addressable == null){
+        if (addressable == null) {
             Error.throwError(ctx, "Identifier " + ctx.IDENTIFIER().getText() + " is already declared");
             return;
         }
@@ -54,23 +60,23 @@ public class CompilerVariables extends CBaseListener {
             return;
         }
 
-        for (int i = addressable.getLength() - 1; i >= 0; i--){
+        for (int i = addressable.getLength() - 1; i >= 0; i--) {
             data.addInstruction(new Instruction(InstructionCodes.STORE, 0, addressable.getAddress() + i));
             data.decStackPointer();
         }
     }
 
     /**
-     * Processes constant declaration with initialization
+     * Processes constant declaration with initialization.
      */
     @Override
     public void exitConstantdeclaration(CParser.ConstantdeclarationContext ctx) {
 
-        if(Error.inError())return;
+        if (Error.inError()) return;
 
         Addressable addressable = declaration(ctx.IDENTIFIER().getText(), ctx.TYPESPECIFIER().getText(), true);
 
-        if (addressable == null){
+        if (addressable == null) {
             Error.throwError(ctx, "Identifier " + ctx.IDENTIFIER().getText() + " is already declared");
             return;
         }
@@ -82,21 +88,29 @@ public class CompilerVariables extends CBaseListener {
             return;
         }
 
-        for (int i = addressable.getLength() - 1; i >= 0; i--){
+        for (int i = addressable.getLength() - 1; i >= 0; i--) {
             data.addInstruction(new Instruction(InstructionCodes.STORE, 0, addressable.getAddress() + i));
             data.decStackPointer();
         }
     }
 
-    private Addressable declaration (String identifier, String dataType, boolean constant){
+    /**
+     * Create new variable or constant. Check data type, add it to identifiers list and book space in stack.
+     *
+     * @param identifier which is specified for scope
+     * @param dataType string of used data type
+     * @param constant true if created variable is constant
+     * @return created variable or constant
+     */
+    private Addressable declaration(String identifier, String dataType, boolean constant) {
         int length = 0;
         DataType type = null;
 
-        if(data.symbolTableGet(identifier) != null) {
+        if (data.symbolTableGet(identifier) != null) {
             return null;
         }
 
-        switch(dataType) {
+        switch (dataType) {
             case "int":
                 type = DataType.INT;
                 length = 1;
@@ -133,11 +147,11 @@ public class CompilerVariables extends CBaseListener {
     @Override
     public void exitIdentifierAtom(CParser.IdentifierAtomContext ctx) {
 
-        if(Error.inError())return;
+        if (Error.inError()) return;
 
         //load variable or constant identified by identifier onto the stack
         Addressable variable = getAddressable(ctx.IDENTIFIER().getText(), ctx, true);
-        if(variable == null){
+        if (variable == null) {
             return;
         }
 
@@ -145,24 +159,24 @@ public class CompilerVariables extends CBaseListener {
 
         if (variable.getNestingLevel() == 0) {
             // global variable
-            globalVariablesLoad(InstructionCodes.LOAD_FROM_ADDRESS, variable.getAddress(), variable.getLength());
+            globalVariablesLoad(variable.getAddress(), variable.getLength());
         } else {
             // local variable
-            int nestingLevel = data.getNestingLevel() - variable.getNestingLevel();
-            localVariablesLoad(InstructionCodes.LOAD, variable.getAddress(), variable.getLength(), nestingLevel);
+            localVariablesLoad(variable.getAddress(), variable.getLength());
         }
     }
 
     /**
-     * Processes variable assignment
+     * Processes standard variable assignment.
+     * Find variable by identifier, check data types and add instructions to store data.
      */
     @Override
     public void exitStandardAssignment(CParser.StandardAssignmentContext ctx) {
 
-        if(Error.inError())return;
+        if (Error.inError()) return;
 
         Addressable variable = getAddressable(ctx.IDENTIFIER().getText(), ctx, false);
-        if(variable == null){
+        if (variable == null) {
             return;
         }
 
@@ -173,27 +187,30 @@ public class CompilerVariables extends CBaseListener {
             return;
         }
 
-        if(variable.getNestingLevel() == 0){
-            globalVariablesStore(InstructionCodes.STORE_AT_ADDRESS, variable.getAddress(), variable.getLength());
+        if (variable.getNestingLevel() == 0) {
+            globalVariablesStore(variable.getAddress(), variable.getLength());
         } else {
-            int nestingLevel = data.getNestingLevel() - variable.getNestingLevel();
-            localVariablesStore(InstructionCodes.STORE, variable.getAddress(), variable.getLength(), nestingLevel);
+            localVariablesStore(variable.getAddress(), variable.getLength());
         }
     }
 
+    /**
+     * Process multiple assignment.
+     * Check all data types and add instructions to store last value to all variables.
+     */
     @Override
     public void exitMultipleAssignment(CParser.MultipleAssignmentContext ctx) {
 
-        if(Error.inError()) return;
+        if (Error.inError()) return;
 
         List<TerminalNode> identifiers = ctx.IDENTIFIER();
         DataType valueType = data.popDataType();
         int length = valueType == DataType.FRACTION ? 2 : 1; // size of values on stack
 
-        for(TerminalNode node : identifiers){
+        for (TerminalNode node : identifiers) {
             Addressable variable = getAddressable(node.getText(), ctx, false);
 
-            if(variable == null){
+            if (variable == null) {
                 return;
             }
 
@@ -212,11 +229,10 @@ public class CompilerVariables extends CBaseListener {
                 data.toShift.add(load);
             }
 
-            if(variable.getNestingLevel() == 0){
-                globalVariablesStore(InstructionCodes.STORE_AT_ADDRESS, variable.getAddress(), variable.getLength());
+            if (variable.getNestingLevel() == 0) {
+                globalVariablesStore(variable.getAddress(), variable.getLength());
             } else {
-                int nestingLevel = data.getNestingLevel() - variable.getNestingLevel();
-                localVariablesStore(InstructionCodes.STORE, variable.getAddress(), variable.getLength(), nestingLevel);
+                localVariablesStore(variable.getAddress(), variable.getLength());
             }
         }
 
@@ -227,12 +243,16 @@ public class CompilerVariables extends CBaseListener {
         data.decStackPointer(length);
     }
 
+    /**
+     * Process parallel assignment.
+     * Check number of identifiers and number of values, check data types and add instructions to store data.
+     */
     @Override
     public void exitParallelassignment(CParser.ParallelassignmentContext ctx) {
 
-        if(Error.inError()) return;
+        if (Error.inError()) return;
 
-        if(ctx.identifierlist().IDENTIFIER().size() != ctx.valuelist().expression().size()){
+        if (ctx.identifierlist().IDENTIFIER().size() != ctx.valuelist().expression().size()) {
             String message = "Parallel assignment: Number of identifiers is not equal to number of values.\n";
             message += ctx.getText();
             Error.throwError(ctx, message);
@@ -241,11 +261,11 @@ public class CompilerVariables extends CBaseListener {
 
         List<TerminalNode> identifiers = ctx.identifierlist().IDENTIFIER();
 
-        for(int i = identifiers.size() - 1; i >= 0; i--){
+        for (int i = identifiers.size() - 1; i >= 0; i--) {
 
             Addressable variable = getAddressable(identifiers.get(i).getText(), ctx, false);
 
-            if(variable == null){
+            if (variable == null) {
                 return;
             }
 
@@ -257,30 +277,36 @@ public class CompilerVariables extends CBaseListener {
                 return;
             }
 
-            if(variable.getNestingLevel() == 0){
-                globalVariablesStore(InstructionCodes.STORE_AT_ADDRESS, variable.getAddress(), variable.getLength());
+            if (variable.getNestingLevel() == 0) {
+                globalVariablesStore(variable.getAddress(), variable.getLength());
             } else {
-                int nestingLevel = data.getNestingLevel() - variable.getNestingLevel();
-                localVariablesStore(InstructionCodes.STORE, variable.getAddress(), variable.getLength(), nestingLevel);
+                localVariablesStore(variable.getAddress(), variable.getLength());
             }
         }
     }
 
-
-    private Addressable getAddressable(String identifier, ParserRuleContext ctx, boolean includeConstant){
+    /**
+     * Found identifier in list of identifiers. Return only global variables or variables in scope(in function).
+     *
+     * @param identifier specific identifier of variable or constant
+     * @param ctx Parser rule context
+     * @param includeConstant true if found variable can be constant.
+     * @return found variable or constant.
+     */
+    private Addressable getAddressable(String identifier, ParserRuleContext ctx, boolean includeConstant) {
         Addressable variable = data.symbolTableGet(identifier);
 
-        if(variable == null) {
+        if (variable == null) {
             Error.throwError(ctx, "Unknown identifier: " + identifier);
             return null;
         }
 
-        if(!includeConstant && variable instanceof Constant){
+        if (!includeConstant && variable instanceof Constant) {
             Error.throwError(ctx, "Variable " + identifier + " is constant.");
             return null;
         }
 
-        if(!(variable instanceof Variable || (includeConstant && variable instanceof Constant))) {
+        if (!(variable instanceof Variable || (includeConstant && variable instanceof Constant))) {
             String msg = identifier + "is not a variable";
             msg += includeConstant ? "or constant." : ".";
             Error.throwError(ctx, msg);
@@ -290,36 +316,62 @@ public class CompilerVariables extends CBaseListener {
         return variable;
     }
 
-    private void localVariablesStore(InstructionCodes code, int address, int length, int nestingLevel){
+    /**
+     * Add instructions to store number of values(length) on top of stack to specific address in stack but only in
+     * actual function.
+     *
+     * @param address in stack where value should be stored
+     * @param length number of values which will be stored
+     */
+    private void localVariablesStore(int address, int length) {
 
-        for (int i = length - 1; i >= 0; i--){
-            data.addInstruction(new Instruction(code, nestingLevel, address + i));
+        for (int i = length - 1; i >= 0; i--) {
+            data.addInstruction(new Instruction(InstructionCodes.STORE, 0, address + i));
             data.decStackPointer();
         }
     }
 
-    private void globalVariablesStore(InstructionCodes code, int address, int length){
+    /**
+     * Add instructions to store number of values(length) on top of stack to specific address in whole stack.
+     *
+     * @param address address in stack
+     * @param length number of values which will be stored
+     */
+    private void globalVariablesStore(int address, int length) {
 
-        for (int i = length - 1; i >= 0; i--){
+        for (int i = length - 1; i >= 0; i--) {
             data.addInstruction(new Instruction(InstructionCodes.PUSH, 0, address + i));
-            data.addInstruction(new Instruction(code, 0, 0));
+            data.addInstruction(new Instruction(InstructionCodes.STORE_AT_ADDRESS, 0, 0));
             data.decStackPointer();
         }
     }
 
-    private void localVariablesLoad(InstructionCodes code, int address, int length, int nestingLevel){
+    /**
+     * Add instructions to load number of values(length) from specific address in stack (only in
+     * actual function) to top of stack.
+     *
+     * @param address in stack from value will be loaded
+     * @param length number of values which will be load
+     */
+    private void localVariablesLoad(int address, int length) {
 
-        for (int i = 0; i < length; i++){
-            data.addInstruction(new Instruction(code, nestingLevel, address + i));
+        for (int i = 0; i < length; i++) {
+            data.addInstruction(new Instruction(InstructionCodes.LOAD, 0, address + i));
             data.incStackPointer();
         }
     }
 
-    private void globalVariablesLoad(InstructionCodes code, int address, int length){
+    /**
+     * Add instructions to load number of values(length) from specific address in stack to top of stack.
+     *
+     * @param address in stack from value will be loaded
+     * @param length number of values which will be load
+     */
+    private void globalVariablesLoad(int address, int length) {
 
-        for (int i = 0; i < length; i++){
+        for (int i = 0; i < length; i++) {
             data.addInstruction(new Instruction(InstructionCodes.PUSH, 0, address + i));
-            data.addInstruction(new Instruction(code, 0, 0));
+            data.addInstruction(new Instruction(InstructionCodes.LOAD_FROM_ADDRESS, 0, 0));
             data.incStackPointer();
         }
     }
