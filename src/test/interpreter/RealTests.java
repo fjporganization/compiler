@@ -5,69 +5,71 @@ import org.junit.jupiter.api.Test;
 
 class RealTests extends InterpreterTestsBase{
 	
+	private static final String path = "/realArithmetic/";
+	
 	@Test
 	@DisplayName("Real unary minus")
 	void testIntMinus(){
-		testOutput("/realArithmetic/realUnaryMinus.pl0", "/realArithmetic/realUnaryMinus.txt");
+		testOutput(path + "realUnaryMinus.pl0", path + "realUnaryMinus.txt");
 	}
 	
 	@Test
 	@DisplayName("Real addition")
 	void testIntAddition(){
-		testOutput("/realArithmetic/realAddition.pl0", "/realArithmetic/realAddition.txt");
+		testOutput(path + "realAddition.pl0", path + "realAddition.txt");
 	}
 	
 	@Test
 	@DisplayName("Real subtraction")
 	void testIntSubtraction(){
-		testOutput("/realArithmetic/realSubtraction.pl0", "/realArithmetic/realSubtraction.txt");
+		testOutput(path + "realSubtraction.pl0", path + "realSubtraction.txt");
 	}
 	
 	@Test
 	@DisplayName("Real multiplication")
 	void testIntMultiplication(){
-		testOutput("/realArithmetic/realMultiplication.pl0", "/realArithmetic/realMultiplication.txt");
+		testOutput(path + "realMultiplication.pl0", path + "realMultiplication.txt");
 	}
 	
 	@Test
 	@DisplayName("Real division")
 	void testIntDivision(){
-		testOutput("/realArithmetic/realDivision.pl0", "/realArithmetic/realDivision.txt");
+		testOutput(path + "realDivision.pl0", path + "realDivision.txt");
 	}
 	
 	@Test
 	@DisplayName("Real equality")
 	void testIntEquality(){
-		testOutput("/realArithmetic/realEquality.pl0", "/realArithmetic/realEquality.txt");
+		testOutput(path + "realEquality.pl0", path + "realEquality.txt");
 	}
 	
 	@Test
 	@DisplayName("Real inequality")
 	void testIntInequality(){
-		testOutput("/realArithmetic/realInequality.pl0", "/realArithmetic/realInequality.txt");
+		testOutput(path + "realInequality.pl0", path + "realInequality.txt");
 	}
 	
 	@Test
 	@DisplayName("Real less")
 	void testIntLess(){
-		testOutput("/realArithmetic/realLess.pl0", "/realArithmetic/realLess.txt");
+		testOutput(path + "realLess.pl0", path + "realLess.txt");
 	}
 	
 	@Test
 	@DisplayName("Real less or equal")
 	void testIntLessEqual(){
-		testOutput("/realArithmetic/realLessEqual.pl0", "/realArithmetic/realLessEqual.txt");
+		testOutput(path + "realLessEqual.pl0", path + "realLessEqual.txt");
 	}
 	
 	@Test
 	@DisplayName("Real greater")
 	void testIntGreater(){
-		testOutput("/realArithmetic/realGreater.pl0", "/realArithmetic/realGreater.txt");
+		testOutput(path + "realGreater.pl0", path + "realGreater.txt");
 	}
 	
 	@Test
 	@DisplayName("Real greater or equal")
 	void testIntGreaterEqual(){
-		testOutput("/realArithmetic/realGreaterEqual.pl0", "/realArithmetic/realGreaterEqual.txt");
+		testOutput(path + "realGreaterEqual.pl0", path + "realGreaterEqual.txt");
 	}
 }
