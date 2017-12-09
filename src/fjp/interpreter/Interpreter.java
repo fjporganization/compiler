@@ -34,6 +34,9 @@ public class Interpreter {
 	/** stack of the interpreter */
 	private int[] stack;
 	
+	/** used indexes in stack for heap data storage */
+	private boolean[] heap;
+	
 	/** List of instructions to be executed */
 	private List<Instruction> instructions = null;
 
@@ -42,6 +45,7 @@ public class Interpreter {
 	 */
 	public Interpreter() {
 		stack = new int[InterpreterConstants.getStackSize()];
+		heap = new boolean[InterpreterConstants.getStackSize()];
 	}
 
 	/**
@@ -52,6 +56,9 @@ public class Interpreter {
 			System.err.println("INTERPRETER: nothing to interpret");
 			return;
 		}
+		
+		Arrays.fill(stack, 0); //reset interpreter stack and heap
+		Arrays.fill(heap, false);
 		
 		programCounter = 0;
 		base = 0;
@@ -145,6 +152,22 @@ public class Interpreter {
 					
 				case WRITE_FRAC:
 					processWriteFrac();
+					break;
+					
+				case ALLOCATE_HEAP:
+					processHeapAllocation();
+					break;
+					
+				case RELEASE_HEAP:
+					processHeapRelease();
+					break;
+					
+				case LOAD_FROM_GIVEN_ADDRESS:
+					processLoadinGivenAddress();
+					break;
+					
+				case STORE_AT_GIVEN_ADDRESS:
+					processStoringGivenAddress();
 					break;
 					
 				default: 
@@ -538,6 +561,10 @@ public class Interpreter {
 			programCounter = 0;
 		}
 		
+		if(InterpreterConstants.isShowStore()) {
+			System.out.println(stack[stackPointer]);
+		}
+		
 		stackPointer = stackPointer - 2;
 		stack[stack[stackPointer + 2]] = stack[stackPointer + 1];
 	}
@@ -610,6 +637,98 @@ public class Interpreter {
 		System.out.println(stack[stackPointer - 1] + FRACTION_BAR + stack[stackPointer]);
 		stackPointer = stackPointer - 2;
 		programCounter++;
+	}
+	
+	/**
+	 * processes allocation position on the heap
+	 */
+	private void processHeapAllocation() {
+		if(checkStackOverflow(1) == false) {
+			return;
+		}
+		
+		int i;
+		
+		for(i = InterpreterConstants.getStackSize(); i > 0; i--) {
+			if(heap[i] == false) {
+				break;
+			}
+		}
+		
+		if(i == 0) {
+			System.err.println("Cannot allocate position on the heap");
+			programCounter = 0;
+			return;
+		}
+		
+		stackPointer++;
+		stack[stackPointer] = i;
+		heap[i] = true;
+		
+		programCounter++;
+	}
+	
+	/**
+	 * processes release of the position in the heap given in the top of the stack
+	 */
+	private void processHeapRelease() {
+		if(checkStackUnderflow(1) == false) {
+			return;
+		}
+		
+		if(heap[stack[stackPointer]] == false) {
+			System.err.println("Cannot deallocate given position");
+			programCounter = 0;
+			return;
+		}
+		
+		heap[stack[stackPointer]] = false;
+		stackPointer--;
+		
+		programCounter++;
+	}
+	
+	/**
+	 * loads data from the position and nesting level obtained from the stack
+	 */
+	private void processLoadinGivenAddress() {
+		if(checkStackUnderflow(1) == false) {
+			return;
+		}
+		
+		int address = findLowerBase(base, stack[stackPointer - 1]) + stack[stackPointer];
+		if(address < 0 || address > InterpreterConstants.getStackSize() - 1) {
+			System.err.println("Stack addressation error");
+		}
+		
+		stack[stackPointer - 1] = stack[address];
+		stackPointer--;
+		
+		programCounter++;
+	}
+	
+	/**
+	 * stores data to the position and nesting level obtained from the stack
+	 */
+	private void processStoringGivenAddress() {
+		if(checkStackUnderflow(3) == false) {
+			return;
+		}
+		
+		programCounter++;
+		
+		int address = findLowerBase(base, stack[stackPointer - 1]) + stack[stackPointer];
+		if(address < 0 || address > InterpreterConstants.getStackSize() - 1) {
+			System.err.println("Stack addressation error");
+		}
+		
+		stackPointer = stackPointer - 3;
+		stack[address] = stack[stackPointer + 1];
+		
+		if(InterpreterConstants.isShowStore()) {
+			System.out.println(stack[stackPointer]);
+		}
+		
 	}
 	
 	/**

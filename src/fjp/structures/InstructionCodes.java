@@ -24,8 +24,11 @@ public enum InstructionCodes {
 	LOAD_FROM_ADDRESS("LDA", 0),
 	STORE_AT_ADDRESS("STA", -2),
 	READ_FRAC("REF", +2),
-	WRITE_FRAC("WRF", -2);
-	;
+	WRITE_FRAC("WRF", -2),
+	ALLOCATE_HEAP("NEW", +1),
+	RELEASE_HEAP("DEL", -1),
+	LOAD_FROM_GIVEN_ADDRESS("PLD", -1), //address and nesting level popped from the stack
+	STORE_AT_GIVEN_ADDRESS("PST", -3); //address and nesting level popped from the stack
 	
 	/** operation mnemonic code */
 	private final String operation;
