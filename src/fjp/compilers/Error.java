@@ -3,13 +3,26 @@ package fjp.compilers;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
+/**
+ * Class is for throwing ParseCancellationException to stop parsing.
+ */
 public class Error {
 
+    /**
+     * Indicates that exception was throw.
+     */
     private static boolean inError = false;
 
-    public static void throwError(ParserRuleContext ctx, String message){
+    /**
+     * If variable inError is set to false throw ParseCancellationException and set inError to true.
+     * Into message is added Line and column number: "Error(LN, CN): message"
+     *
+     * @param ctx     Parse rule context
+     * @param message which is added to exception
+     */
+    public static void throwError(ParserRuleContext ctx, String message) {
 
-        if(inError){
+        if (inError) {
             return;
         }
 
@@ -18,11 +31,19 @@ public class Error {
         throw new ParseCancellationException(msg + message);
     }
 
-    public static void resetError(){
+    /**
+     * Set variable inError to false. New exception can be throw.
+     */
+    public static void resetError() {
         inError = false;
     }
 
-    public static boolean inError(){
+    /**
+     * Return true if exception was thrown.
+     *
+     * @return true if exception was thrown, false otherwise
+     */
+    public static boolean inError() {
         return inError;
     }
 }
