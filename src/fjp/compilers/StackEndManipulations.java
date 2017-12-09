@@ -1,5 +1,6 @@
 package fjp.compilers;
 
+import fjp.structures.CompilerData;
 import fjp.structures.Instruction;
 import fjp.structures.InstructionCodes;
 

@@ -2,6 +2,7 @@ package fjp.compilers;
 
 import fjp.generated.CBaseListener;
 import fjp.generated.CParser;
+import fjp.structures.CompilerData;
 import fjp.structures.DataType;
 import fjp.structures.Instruction;
 import fjp.structures.InstructionCodes;

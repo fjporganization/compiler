@@ -7,6 +7,7 @@ import java.util.List;
 import fjp.compilers.*;
 import fjp.compilers.CompilerFunctions;
 import fjp.generated.*;
+import fjp.structures.CompilerData;
 import fjp.structures.Instruction;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
