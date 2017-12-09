@@ -649,7 +649,7 @@ public class Interpreter {
 		
 		int i;
 		
-		for(i = InterpreterConstants.getStackSize(); i > 0; i--) {
+		for(i = InterpreterConstants.getStackSize() - 1; i > 0; i--) {
 			if(heap[i] == false) {
 				break;
 			}
