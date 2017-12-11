@@ -226,6 +226,10 @@ outputfrac
  * Lexer rules
  */
  
+COMMENT
+  : '#' ~( '\r' | '\n' )* -> skip
+  ;
+ 
 WHITESPACE 
   : [ \r\t\f\n]+ -> skip
   ;
