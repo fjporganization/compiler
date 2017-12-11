@@ -88,6 +88,18 @@ public class CBaseListener implements CListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterVariableinitializationvalue(CParser.VariableinitializationvalueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitVariableinitializationvalue(CParser.VariableinitializationvalueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterConstantdeclaration(CParser.ConstantdeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}

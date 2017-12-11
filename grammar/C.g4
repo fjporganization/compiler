@@ -50,8 +50,13 @@ statement
   ;
   
 variabledeclaration
-  : TYPESPECIFIER IDENTIFIER ASSIGNMENTOPERATOR expression SEMICOLON   #declarationAndInitialization
-  | TYPESPECIFIER IDENTIFIER SEMICOLON                                 #declarationOnly                                               
+  : TYPESPECIFIER IDENTIFIER ASSIGNMENTOPERATOR variableinitializationvalue SEMICOLON  	#declarationAndInitialization
+  | TYPESPECIFIER IDENTIFIER SEMICOLON                                 					#declarationOnly                                               
+  ;
+  
+variableinitializationvalue
+  : expression
+  | logicalexpression ternaryoperator
   ;
   
 constantdeclaration

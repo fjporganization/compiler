@@ -72,6 +72,16 @@ public interface CListener extends ParseTreeListener {
 	 */
 	void exitDeclarationOnly(CParser.DeclarationOnlyContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link CParser#variableinitializationvalue}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariableinitializationvalue(CParser.VariableinitializationvalueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#variableinitializationvalue}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariableinitializationvalue(CParser.VariableinitializationvalueContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link CParser#constantdeclaration}.
 	 * @param ctx the parse tree
 	 */
