@@ -13,7 +13,7 @@ public class Instruction {
 	private final int nestingLevel;
 	
 	/** second parameter of the instruction - operand */
-	private int operand;
+	private double operand;
 	
 	/**
 	 * Constructor of the instruction
@@ -31,7 +31,7 @@ public class Instruction {
 	 * @param nestingLevel first parameter of the instruction - nesting level
 	 * @param operand second parameter of the instruction - operand
 	 */
-	public Instruction(InstructionCodes code, int nestingLevel, int operand) {
+	public Instruction(InstructionCodes code, int nestingLevel, double operand) {
 		this.code = code;
 		this.nestingLevel = nestingLevel;
 		this.operand = operand;
@@ -65,7 +65,7 @@ public class Instruction {
 	* getter for operand
 	* @return the operand
 	*/
-	public int getOperand() {
+	public double getOperand() {
 		return operand;
 	}
 
@@ -73,7 +73,7 @@ public class Instruction {
 	 * setter for the operand
 	 * @param operand the operand to set
 	 */
-	public void setOperand(int operand) {
+	public void setOperand(double operand) {
 		this.operand = operand;
 	}
 
@@ -98,6 +98,10 @@ public class Instruction {
 	 * except address of the instruction, address is added when output file generating
 	 */
 	public String toString() {
-		return code.getOperation() + " " + nestingLevel + " " + operand;
+		if(code == InstructionCodes.PUSH_REAL) {
+			return code.getOperation() + " " + nestingLevel + " " + operand;
+		}else {
+			return code.getOperation() + " " + nestingLevel + " " + (int)operand;
+		}
 	}
 }

@@ -69,11 +69,11 @@ public enum OperationCode {
 	 * @param code operand of the concrete arithmetic operation on integer or real number
 	 * @return instance determined by operand of the concrete arithmetic operation on integer or real number
 	 */
-	public static OperationCode getOpCodeByCode(int code) {
+	public static OperationCode getOpCodeByCode(double code) {
 		OperationCode[] opCodes = OperationCode.values();
 		
 		for(OperationCode op : opCodes) {
-			if(op.getCode() == code) {
+			if(op.getCode() == (int)code) {
 				return op;
 			}
 		}

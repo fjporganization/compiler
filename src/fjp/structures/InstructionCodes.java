@@ -28,7 +28,8 @@ public enum InstructionCodes {
 	ALLOCATE_HEAP("NEW", +1),
 	RELEASE_HEAP("DEL", -1),
 	LOAD_FROM_GIVEN_ADDRESS("PLD", -1), //address and nesting level popped from the stack
-	STORE_AT_GIVEN_ADDRESS("PST", -3); //address and nesting level popped from the stack
+	STORE_AT_GIVEN_ADDRESS("PST", -3), //address and nesting level popped from the stack
+	PUSH_REAL("LIR", +2); 
 	
 	/** operation mnemonic code */
 	private final String operation;
