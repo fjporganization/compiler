@@ -14,13 +14,10 @@ import java.util.stream.Stream;
 public class Interpreter {
 	
 	/** symbol of fraction bar */
-	private final String FRACTION_BAR = "|"; 
+	private final static String FRACTION_BAR = "|"; 
 	
-	/** symbol of decimal mark (separator) */
-	private final String DECIMAL_MARK = ".";
-	
-	/** indicates maximum length of fractional part of real number (used for avoiding integer overflow)*/
-	private final int FRACTIONAL_PART_CROP = 9;
+	/** used for output of real number */
+	private final static int REAL_CROP = 9;
 	
 	/** number of current instruction */
 	private int programCounter;
@@ -170,6 +167,10 @@ public class Interpreter {
 					processStoringGivenAddress();
 					break;
 					
+				case PUSH_REAL:
+					processPushReal(instruction);
+					break;
+					
 				default: 
 					System.err.println("INTERPRETER: Unknown instruction");
 					programCounter = 0;
@@ -185,6 +186,20 @@ public class Interpreter {
 		
 		System.out.println("END PL/0");
 	}
+	
+	/**
+	 * Pushes one real number onto the stack
+	 * @param instruction instruction to be executed
+	 */
+	private void processPushReal(Instruction instruction) {
+		if(checkStackOverflow(2) == false) {
+			return;
+		}
+		
+		stackPointer = stackPointer + 2;
+		pushRealNumber(instruction.getOperand());
+		programCounter++;
+	}
 
 	/**
 	 * Pushes literal M onto the stack
@@ -196,7 +211,7 @@ public class Interpreter {
 		}  //we will push 1 item onto the stack
 		
 		stackPointer++;
-		stack[stackPointer] = instruction.getOperand();
+		stack[stackPointer] = (int)instruction.getOperand();
 		programCounter++;
 	}
 
@@ -205,7 +220,7 @@ public class Interpreter {
 	 * @param instruction instruction to be executed
 	 */
 	private void processOperation(Instruction instruction) {
-		int code = instruction.getOperand();
+		int code = (int)instruction.getOperand();
 		programCounter++; 
 		
 		if(code == OperationCode.NEGATION.getCode()) {
@@ -273,7 +288,7 @@ public class Interpreter {
 			return;
 		}
 		
-		int address = findLowerBase(base, instruction.getNestingLevel()) + instruction.getOperand();
+		int address = findLowerBase(base, instruction.getNestingLevel()) + (int)instruction.getOperand();
 		stackPointer++;
 		stack[stackPointer] = stack[address];
 		programCounter++;
@@ -289,7 +304,7 @@ public class Interpreter {
 			return;
 		}
 		
-		int address = findLowerBase(base, instruction.getNestingLevel()) + instruction.getOperand();
+		int address = findLowerBase(base, instruction.getNestingLevel()) + (int)instruction.getOperand();
 		stack[address] = stack[stackPointer];
 		
 		if(InterpreterConstants.isShowStore()) {
@@ -313,7 +328,7 @@ public class Interpreter {
 		stack[stackPointer + 1] = lowerBase;
 		stack[stackPointer + 2] = base;
 		stack[stackPointer + 3] = programCounter + 1;
-		programCounter = instruction.getOperand();
+		programCounter = (int)instruction.getOperand();
 		base = stackPointer + 1;
 	}
 	
@@ -335,11 +350,11 @@ public class Interpreter {
 	 * @param instruction instruction to be executed
 	 */
 	private void processIncrement(Instruction instruction) {
-		if(checkStackOverflow(instruction.getOperand()) == false) {
+		if(checkStackOverflow((int)instruction.getOperand()) == false) {
 			return;
 		} 
 		
-		stackPointer = stackPointer + instruction.getOperand();
+		stackPointer = stackPointer + (int)instruction.getOperand();
 		programCounter++;
 	}
 	
@@ -418,7 +433,7 @@ public class Interpreter {
 			return;
 		}
 		
-		System.out.println(stack[stackPointer - 1] + DECIMAL_MARK + stack[stackPointer]);
+		System.out.println(Double.longBitsToDouble(((long)stack[stackPointer - 1] << 32) | (long)(stack[stackPointer] & 0xFFFFFFFFL)));
 		stackPointer = stackPointer - 2;
 		programCounter++;
 	}
@@ -428,7 +443,7 @@ public class Interpreter {
 	 * @param instruction instruction to be executed
 	 */
 	private void processFloatOperation(Instruction instruction) {
-		int code = instruction.getOperand();
+		int code = (int)instruction.getOperand();
 		programCounter++;
 		
 		/*
@@ -437,12 +452,17 @@ public class Interpreter {
 		 */
 		
 		if(code == OperationCode.NEGATION.getCode()) {
-			stack[stackPointer - 1] = -stack[stackPointer - 1];
+			if(checkStackUnderflow(1) == false) {
+				return;
+			}
+			
+			pushRealNumber(-Double.longBitsToDouble(((long)stack[stackPointer - 1] << 32) | (long)(stack[stackPointer] & 0xFFFFFFFFL)));
 			
 		}else{
 			if(checkStackUnderflow(3) == false) {
 				return;
 			}
+			
 			double[] values = getTwoRealNumbers();
 			stackPointer = stackPointer - 2;
 			
@@ -499,7 +519,7 @@ public class Interpreter {
 			return;
 		}
 		
-		// just remove real part of the number (e.g. number 3.99 will be converted to 3)
+		stack[stackPointer - 1] = (int)Double.longBitsToDouble(((long)stack[stackPointer - 1] << 32) | (stack[stackPointer] & 0xFFFFFFFFL));
 		stackPointer--;
 		programCounter++;
 	}
@@ -511,10 +531,9 @@ public class Interpreter {
 		if(checkStackOverflow(1) == false) {
 			return;
 		} 
-		
-		// just add real part (= .0) to the number 
+		 
 		stackPointer++;
-		stack[stackPointer] = 0;
+		pushRealNumber(stack[stackPointer - 1]);
 		programCounter++;
 	}
 	
@@ -574,7 +593,7 @@ public class Interpreter {
 	 * @param instruction instruction to be executed
 	 */
 	private void processConditionalJump(Instruction instruction) {
-		programCounter = stack[stackPointer] == 0 ? instruction.getOperand() : programCounter + 1;
+		programCounter = stack[stackPointer] == 0 ? (int)instruction.getOperand() : programCounter + 1;
 		stackPointer--;
 	}
 	
@@ -583,7 +602,7 @@ public class Interpreter {
 	 * @param instruction instruction to be executed
 	 */
 	private void processJump(Instruction instruction) {
-		programCounter = instruction.getOperand();
+		programCounter = (int)instruction.getOperand();
 	}
 	
 	/**
@@ -797,6 +816,9 @@ public class Interpreter {
 	 * @param filePath file with instructions to be load 
 	 */
 	public void loadInstructionsFromFile(String filePath) {
+		// use decimal dot as decimal separator
+		Locale.setDefault(Locale.US);
+				
 		instructions = new ArrayList<Instruction>();
 		stackPointer = 0;
 		try(Stream<String> stream = Files.lines(Paths.get(filePath))){
@@ -817,7 +839,7 @@ public class Interpreter {
 				
 				String instruction = scanner.next();
 				int nestingLevel = scanner.nextInt();
-				int operand = scanner.nextInt();
+				double operand = scanner.nextDouble();
 				scanner.close();
 				
 				Optional<InstructionCodes> code = Arrays.stream(InstructionCodes.values())
@@ -880,35 +902,13 @@ public class Interpreter {
 	}
 	
 	/**
-	 * gets fractional part of the real number as integer
-	 * @param number number which fractional part will be determined
-	 * @return fractional part of the number as integer
-	 */
-	private int getFractionalPartOfNumber(double number) {
-		String data = String.valueOf(number);
-		
-		int fractionalPartIndex = data.lastIndexOf(DECIMAL_MARK) + 1;
-		String fractional = data.substring(fractionalPartIndex, 
-				data.length() - fractionalPartIndex > FRACTIONAL_PART_CROP ? 
-						fractionalPartIndex + FRACTIONAL_PART_CROP : data.length()); //avoiding integer overflow
-		
-		return Integer.parseInt(fractional);
-	}
-	
-	/**
 	 * peeks two real numbers from the stack
 	 * @return two real numbers peeked from the stack
 	 */
 	private double[] getTwoRealNumbers() {
 		double[] values = new double[2];
-		
-		values[0] = stack[stackPointer - 3] + 
-				(stack[stackPointer - 3] < 0 ? -stack[stackPointer - 2] : stack[stackPointer - 2])/
-				(Math.pow(10, (int)Math.log10(stack[stackPointer - 2]) + 1));
-		
-		values[1] = stack[stackPointer - 1] + 
-				(stack[stackPointer - 1] < 0 ? -stack[stackPointer] : stack[stackPointer])/
-				(Math.pow(10, (int)Math.log10(stack[stackPointer]) + 1));
+		values[0] = Double.longBitsToDouble(((long)stack[stackPointer - 3] << 32) | (stack[stackPointer - 2] & 0xFFFFFFFFL));
+		values[1] = Double.longBitsToDouble(((long)stack[stackPointer - 1] << 32) | (stack[stackPointer] & 0xFFFFFFFFL));
 		
 		return values;
 	}
@@ -918,7 +918,8 @@ public class Interpreter {
 	 * @param number number to be popped
 	 */
 	private void pushRealNumber(double number) {
-		stack[stackPointer] = getFractionalPartOfNumber(number);
-		stack[stackPointer - 1] = (int) number;
+		long bits = Double.doubleToLongBits(number); //gets bits of real number stored as IEEE 754
+		stack[stackPointer - 1] = (int)(bits >> 32);
+		stack[stackPointer] = (int)bits;
 	}
 }
