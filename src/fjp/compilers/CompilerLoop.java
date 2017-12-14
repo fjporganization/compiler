@@ -40,6 +40,10 @@ public class CompilerLoop extends CBaseListener {
      */
     @Override
     public void enterWhilestatement(CParser.WhilestatementContext ctx) {
+    	if(Error.inError() == true) { // when error in previous parsing occurred, popping data type will cause EmptyStackException
+    		return;
+    	}
+    	
         //method is called AFTER parser processed block 'if(condition)' so condition is already processed
         if (data.popDataType() != DataType.BOOLEAN) {
             Error.throwError(ctx, "Unexpected data type in 'while' expression.");
@@ -83,7 +87,9 @@ public class CompilerLoop extends CBaseListener {
      */
     @Override
     public void exitDowhileloop(CParser.DowhileloopContext ctx) {
-    	
+    	if(Error.inError() == true) { // when error in previous parsing occurred, popping data type will cause EmptyStackException
+    		return;
+    	}
     	
         // JMC - jump on zero -> need to neg. result
         if (data.popDataType() != DataType.BOOLEAN) {
