@@ -138,12 +138,14 @@ public class CompilerCondition extends CBaseListener {
      */
     @Override
     public void enterTernaryoperator(CParser.TernaryoperatorContext ctx) {
-    	if(Error.inError()) { //skip method when previous parse error occurred
+       	if(Error.inError()) { //skip method when previous parse error occurred
     		return;
     	}
+       	
+    	DataType type = data.popDataType();
     	
         // condition has been processed yet
-    	if(data.popDataType() != DataType.BOOLEAN) {
+    	if(type != DataType.BOOLEAN) {
     		Error.throwError(ctx, "In ternary operator condition must be boolean data type");
     		return;
     	}
@@ -172,6 +174,24 @@ public class CompilerCondition extends CBaseListener {
         Instruction jump = new Instruction(InstructionCodes.JUMP, 0);
         data.addInstructionChangeStackPointer(jump);
         instructionStack.add(jump);
+    }
+    
+    /**
+     * Processes enter of negative branch of ternary operator
+     * After processing ternary assertive branch is stack pointer wrong as the compiler will enter only one branch
+     * Method makes current stack pointer correct
+     */
+    @Override
+    public void enterTernarynegative(CParser.TernarynegativeContext ctx) {
+    	switch(data.peekDataType()) {
+    	case INT:
+    	case BOOLEAN:
+    		data.decStackPointer();
+    		break;
+    	case FRACTION:
+    		data.decStackPointer(2);
+    		break;
+    	}
     }
     
     /**
