@@ -1,0 +1,25 @@
+# program that solves linear equations
+# coefficients of linear equation ax = b are obtained from the IO
+int a;
+int b;
+int result;
+
+void main(){ 
+	const int numberOfRuns = 5;
+	int i;
+
+	for(i = 0; i < numberOfRuns; i = i + 1){
+		a = readint();
+		b = readint();
+		
+		# continue loop if a is zero value
+		if(a != 0){ 
+			solve();
+			writeint(result);
+		}
+	}
+}
+
+void solve(){
+	result = b/a;
+}
