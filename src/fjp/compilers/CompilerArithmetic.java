@@ -1,5 +1,7 @@
 package fjp.compilers;
 
+import java.util.Stack;
+
 import fjp.generated.*;
 import fjp.structures.*;
 
@@ -25,11 +27,19 @@ public class CompilerArithmetic extends CBaseListener {
     private final CompilerData data;
     
     /**
+     * used for storing instructions, in which will be changed operands
+     * (e.g. changing address of conditional jump instruction created on
+     * entering if statement at the time of exiting if statement)
+     */
+    private final Stack<Instruction> instructionStack;
+    
+    /**
      * Constructor of the arithmetic compiler
      * @param data compiler data that are shared across all compiler classes
      */
     public CompilerArithmetic(CompilerData data){
         this.data = data;
+        instructionStack = new Stack<>();
     }
 
     /**
@@ -325,6 +335,16 @@ public class CompilerArithmetic extends CBaseListener {
      * sorts numerator and denominator of fraction, greater first
      */
     private void sortPartsFraction() {
+    	
+    	//if numerator is zero, jump to the end of the fraction shortening
+    	StackEndManipulations.loadFromStackEnd(1, data);
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.PUSH, 0, 0));
+    	data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.INEQUALITY));
+    	
+    	Instruction condJump = new Instruction(InstructionCodes.CONDITIONAL_JUMP, 0);
+    	data.addInstructionChangeStackPointer(condJump);
+    	instructionStack.add(condJump);
+    	
     	// determine which part of fraction is greater
     	StackEndManipulations.loadFromStackEnd(1, data);
     	StackEndManipulations.loadFromStackEnd(1, data);
@@ -395,5 +415,8 @@ public class CompilerArithmetic extends CBaseListener {
 		StackEndManipulations.storeAtStackEnd(3, data);
 		
 		data.addInstructionChangeStackPointer(new Instruction(InstructionCodes.OPERATION, 0, OperationCode.DIVISION));
+		
+		Instruction condJump = instructionStack.pop();
+		condJump.setOperand(data.getCurrentInstructionAddress() + 1);
     }
 }
