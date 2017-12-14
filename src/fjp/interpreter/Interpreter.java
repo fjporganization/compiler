@@ -16,9 +16,6 @@ public class Interpreter {
 	/** symbol of fraction bar */
 	private final static String FRACTION_BAR = "|"; 
 	
-	/** used for output of real number */
-	private final static int REAL_CROP = 9;
-	
 	/** number of current instruction */
 	private int programCounter;
 	
@@ -36,6 +33,9 @@ public class Interpreter {
 	
 	/** List of instructions to be executed */
 	private List<Instruction> instructions = null;
+	
+	/** scanner used for IO operations */
+	private final Scanner sc;
 
 	/**
 	 * Constructor
@@ -43,6 +43,7 @@ public class Interpreter {
 	public Interpreter() {
 		stack = new int[InterpreterConstants.getStackSize()];
 		heap = new boolean[InterpreterConstants.getStackSize()];
+		sc = new Scanner(System.in);
 	}
 
 	/**
@@ -366,12 +367,12 @@ public class Interpreter {
 			return;
 		} 
 		
-		Scanner sc = new Scanner(System.in);
 		stackPointer++;
 		
-		while(sc.hasNext()) {
+		while(true) {
 			try {
 				stack[stackPointer] = sc.nextInt();
+				sc.nextLine();
 				break;
 			} catch (InputMismatchException e) {
 				System.err.println("Invalid input - enter integer number");
@@ -379,7 +380,6 @@ public class Interpreter {
 			}
 		}
 		
-		sc.close();	
 		programCounter++;
 	}
 	
@@ -404,7 +404,6 @@ public class Interpreter {
 			return;
 		} 
 		
-		Scanner sc = new Scanner(System.in);
 		stackPointer = stackPointer + 2;
 		
 		double value = 0; 
@@ -421,7 +420,6 @@ public class Interpreter {
 		
 		pushRealNumber(value);
 		
-		sc.close();	
 		programCounter++;
 	}
 	
@@ -613,7 +611,6 @@ public class Interpreter {
 			return;
 		} 
 		
-		Scanner sc = new Scanner(System.in);
 		stackPointer = stackPointer + 2;
 		
 		String value[] = null; 
@@ -641,7 +638,6 @@ public class Interpreter {
 		stack[stackPointer - 1] = numerator;
 		stack[stackPointer] = denominator;
 		
-		sc.close();	
 		programCounter++;
 	}
 	
