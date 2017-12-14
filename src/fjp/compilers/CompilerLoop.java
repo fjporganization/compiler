@@ -83,7 +83,9 @@ public class CompilerLoop extends CBaseListener {
      */
     @Override
     public void exitDowhileloop(CParser.DowhileloopContext ctx) {
-        // JMC - jump on zero -> need to neg. resutl
+    	
+    	
+        // JMC - jump on zero -> need to neg. result
         if (data.popDataType() != DataType.BOOLEAN) {
             Error.throwError(ctx, "Unexpected data type in 'while' expression.");
             return;
@@ -109,6 +111,10 @@ public class CompilerLoop extends CBaseListener {
      */
     @Override
     public void enterForafterthought(CParser.ForafterthoughtContext ctx) {
+    	if(Error.inError() == true) { // when error in previous parsing occurred, popping data type will cause EmptyStackException
+    		return;
+    	}
+    	
         if (data.popDataType() != DataType.BOOLEAN) {
             Error.throwError(ctx, "Unexpected data type in 'for' expression.");
             return;
