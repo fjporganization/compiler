@@ -1,7 +1,7 @@
 # program reads 2 fraction in loop and writes bigger of them
 # ends when both of the read fractions is zero
 
- void main(){
+void main(){
   ratio a;
   ratio b;
   ratio bigger;
@@ -15,6 +15,6 @@
     aIsBigger = a > b;
     bigger = aIsBigger ? a : b;
     writefrac(bigger);
-    aIsBigger = true;
+    
   }while(a != 0 || b != 0);
  }
