@@ -137,9 +137,7 @@ functiondeclaration
   ;
   
 functionargumentlist
-  : TYPESPECIFIER IDENTIFIER
-  | TYPESPECIFIER IDENTIFIER COMMA functionargumentlist
-  | //empty
+  : //empty
   ;
   
 functioncall
@@ -216,7 +214,7 @@ inputinteger
   ;
 
 outputinteger
-  : WRITEINT LEFTPARENTHESE arithmeticexpression RIGHTPARENTHESE SEMICOLON
+  : WRITEINT LEFTPARENTHESE expression RIGHTPARENTHESE SEMICOLON
   ;
   
 inputfrac
@@ -224,7 +222,7 @@ inputfrac
   ;
 
 outputfrac
-  : WRITEFRAC LEFTPARENTHESE arithmeticexpression RIGHTPARENTHESE SEMICOLON
+  : WRITEFRAC LEFTPARENTHESE expression RIGHTPARENTHESE SEMICOLON
   ;
   
 /*
