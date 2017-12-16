@@ -52,7 +52,7 @@ public class Interpreter {
 	public void interpret() {
 		if(instructions == null || instructions.isEmpty()) {
 			System.err.println("INTERPRETER: nothing to interpret");
-			return;
+			return; 
 		}
 		
 		Arrays.fill(stack, 0); //reset interpreter stack and heap
@@ -619,7 +619,14 @@ public class Interpreter {
 		
 		while(sc.hasNext()) {
 			try {
-				value = sc.next().split("\\" + FRACTION_BAR); //must escape fraction bar symbol
+				String input = sc.next();
+				
+				if(!input.contains(FRACTION_BAR)) {
+					System.err.println("Invalid input - enter fraction (use pipe as fraction bar, e.g. 1|2)");
+					continue;
+				}
+				
+				value = input.split("\\" + FRACTION_BAR); //must escape fraction bar symbol
 				numerator = Integer.parseInt(value[0]);
 				denominator = Integer.parseInt(value[1]);
 				
