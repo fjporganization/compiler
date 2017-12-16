@@ -49,6 +49,10 @@ statement
   | //empty
   ;
   
+functionstatement
+  : (declarations)* statement
+  ;
+  
 variabledeclaration
   : TYPESPECIFIER IDENTIFIER ASSIGNMENTOPERATOR variableinitializationvalue SEMICOLON  	#declarationAndInitialization
   | TYPESPECIFIER IDENTIFIER SEMICOLON                                 					#declarationOnly                                               
@@ -133,7 +137,7 @@ atom
   ;
   
 functiondeclaration
-  : FUNCTIONRETURNTYPESPECIFIER IDENTIFIER LEFTPARENTHESE functionargumentlist RIGHTPARENTHESE LEFTBRACE statement RIGHTBRACE 
+  : FUNCTIONRETURNTYPESPECIFIER IDENTIFIER LEFTPARENTHESE functionargumentlist RIGHTPARENTHESE LEFTBRACE functionstatement RIGHTBRACE 
   ;
   
 functionargumentlist
