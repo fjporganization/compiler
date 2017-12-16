@@ -1,5 +1,0 @@
-0 JMP 0 1
-1 INT 0 3
-2 RER 0 0
-3 WRR 0 0
-4 RET 0 0

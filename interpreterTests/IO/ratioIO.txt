@@ -1,3 +1,0 @@
-START PL/0
-1|2
-END PL/0
