@@ -60,12 +60,12 @@ variableinitializationvalue
   ;
   
 constantdeclaration
-  : TYPEQUALIFIER TYPESPECIFIER IDENTIFIER ASSIGNMENTOPERATOR expression SEMICOLON
+  : TYPEQUALIFIER TYPESPECIFIER IDENTIFIER ASSIGNMENTOPERATOR variableinitializationvalue SEMICOLON
   ;
   
 assignment
   : standardAssignment SEMICOLON                                      #standAssignment
-  | (IDENTIFIER ASSIGNMENTOPERATOR)+ expression SEMICOLON             #multipleAssignment 
+  | (IDENTIFIER ASSIGNMENTOPERATOR)+ variableinitializationvalue SEMICOLON   #multipleAssignment 
   ;
   
 
@@ -83,13 +83,12 @@ identifierlist
   ;
   
 valuelist
-  : expression (COMMA expression)*
+  : variableinitializationvalue (COMMA variableinitializationvalue)*
   ;  
   
 expression
   : arithmeticexpression
   | logicalexpression
-  | ternaryoperator
   ;
   
 ternaryoperator

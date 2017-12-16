@@ -252,7 +252,7 @@ public class CompilerVariables extends CBaseListener {
 
         if (Error.inError()) return;
 
-        if (ctx.identifierlist().IDENTIFIER().size() != ctx.valuelist().expression().size()) {
+        if (ctx.identifierlist().IDENTIFIER().size() != ctx.valuelist().variableinitializationvalue().size()) {
             String message = "Parallel assignment: Number of identifiers is not equal to number of values.\n";
             message += ctx.getText();
             Error.throwError(ctx, message);
