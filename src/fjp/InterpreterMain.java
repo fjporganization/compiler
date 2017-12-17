@@ -1,4 +1,6 @@
-package fjp.interpreter;
+package fjp;
+
+import fjp.interpreter.*;
 
 /**
  * Main class of interpreter

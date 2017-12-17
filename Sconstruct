@@ -1,0 +1,9 @@
+env = Environment() 
+env.Append(JAVACFLAGS = ["-cp", './lib/antlr-4.7-complete.jar'])
+classes = env.Java(target='bin', source='./src/fjp/')
+
+env.Jar(target = 'compiler.jar', source = [classes, 'src/compiler_man.txt', './lib/antlr-4.7-complete.jar'])
+env.Jar(target = 'interpreter.jar', source = [classes, 'src/interpret_man.txt'])
+
+
+
