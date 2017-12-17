@@ -1,9 +1,6 @@
 env = Environment() 
 env.Append(JAVACFLAGS = ["-cp", './lib/antlr-4.7-complete.jar'])
-classes = env.Java(target='bin', source='./src/fjp/')
+env.Java(target='bin', source='./src/fjp/')
 
-env.Jar(target = 'compiler.jar', source = [classes, 'src/compiler_man.txt', './lib/antlr-4.7-complete.jar'])
-env.Jar(target = 'interpreter.jar', source = [classes, 'src/interpret_man.txt'])
-
-
-
+env.Jar(target = 'compiler.jar', source = [Glob('bin/fjp/compilers/*.class'), Glob('bin/fjp/structures/*.class'), Glob('bin/fjp/generated/*.class'), Glob('bin/fjp/generated/*.tokens'), 'bin/fjp/Main.class', 'src/compiler_man.txt', './lib/antlr-4.7-complete.jar'])
+env.Jar(target = 'interpreter.jar', source = [Glob('bin/fjp/structures/*.class'), Glob('bin/fjp/interpreter/*.class'), 'bin/fjp/InterpreterMain.class', 'src/interpret_man.txt'])
