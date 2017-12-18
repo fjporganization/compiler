@@ -183,8 +183,10 @@ public class Interpreter {
 			
 		}catch(IndexOutOfBoundsException e) {
 			System.err.println("INTERPRETER: Instruction addressation error");
+			return;
 		}catch(ArithmeticException e) {
-			System.err.println("INTERPRETER: Arithmetic operation error");
+			System.err.println("INTERPRETER: Arithmetic operation error: " + e.getMessage());
+			return;
 		}
 		
 		System.out.println("END PL/0");
