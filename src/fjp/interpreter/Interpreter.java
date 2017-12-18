@@ -183,6 +183,8 @@ public class Interpreter {
 			
 		}catch(IndexOutOfBoundsException e) {
 			System.err.println("INTERPRETER: Instruction addressation error");
+		}catch(ArithmeticException e) {
+			System.err.println("INTERPRETER: Arithmetic operation error");
 		}
 		
 		System.out.println("END PL/0");
@@ -220,7 +222,7 @@ public class Interpreter {
 	 * Provides numeric and comparison operation to be performed on integer data at the top of the stack
 	 * @param instruction instruction to be executed
 	 */
-	private void processOperation(Instruction instruction) {
+	private void processOperation(Instruction instruction) throws ArithmeticException{
 		int code = (int)instruction.getOperand();
 		programCounter++; 
 		
@@ -440,7 +442,7 @@ public class Interpreter {
 	 * Provides numeric and comparison operation to be performed on real numbers at the top of the stack
 	 * @param instruction instruction to be executed
 	 */
-	private void processFloatOperation(Instruction instruction) {
+	private void processFloatOperation(Instruction instruction) throws ArithmeticException {
 		int code = (int)instruction.getOperand();
 		programCounter++;
 		
