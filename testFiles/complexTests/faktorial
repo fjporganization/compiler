@@ -1,0 +1,16 @@
+int result = 1;
+int faktorial = 6;
+
+void main(){
+	a();
+	writeint(result);
+}
+
+void a(){
+
+    if(faktorial != 0){
+        result = result * faktorial;
+        faktorial = faktorial - 1;
+        a();
+    }
+}

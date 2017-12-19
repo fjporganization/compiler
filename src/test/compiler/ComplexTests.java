@@ -24,4 +24,10 @@ class ComplexTests extends CompilerTestsBase{
 	void testRatioOutput() {
 		testFiles(path + "ratioBigger", path + "ratioBigger.pl0");
 	}
+	
+	@Test
+	@DisplayName("Faktorial - recursion")
+	void testFaktorial() {
+		testFiles(path + "faktorial", path + "faktorial.pl0");
+	}
 }
