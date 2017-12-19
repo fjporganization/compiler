@@ -51,7 +51,7 @@ public class Interpreter {
 	 */
 	public void interpret() {
 		if(instructions == null || instructions.isEmpty()) {
-			System.err.println("INTERPRETER: nothing to interpret");
+			System.err.println("nothing to interpret");
 			return; 
 		}
 		
@@ -173,8 +173,8 @@ public class Interpreter {
 					break;
 					
 				default: 
-					System.err.println("INTERPRETER: Unknown instruction");
-					programCounter = 0;
+					System.err.println("Unknown instruction");
+					return;
 				}
 				
 				showPostInstructionDebug();
@@ -182,10 +182,10 @@ public class Interpreter {
 			}while(programCounter > 0);
 			
 		}catch(IndexOutOfBoundsException e) {
-			System.err.println("INTERPRETER: Instruction addressation error");
+			System.err.println("Instruction addressation error");
 			return;
 		}catch(ArithmeticException e) {
-			System.err.println("INTERPRETER: Arithmetic operation error: " + e.getMessage());
+			System.err.println("Arithmetic operation error: " + e.getMessage());
 			return;
 		}
 		
@@ -276,10 +276,10 @@ public class Interpreter {
 				stack[stackPointer] = stack[stackPointer] <= stack[stackPointer + 1] ? 1 : 0;
 				
 			}else {
-				System.err.println("INTERPRETER: Unknown operation code");
+				System.err.println("Unknown operation code");
 				programCounter = 0;
+				return;
 			}
-			
 		}
 	}
 	
@@ -506,8 +506,9 @@ public class Interpreter {
 					stack[stackPointer] = values[0] <= values[1] ? 1 : 0; 
 					
 				}else {
-					System.err.println("INTERPRETER: Unknown operation code");
+					System.err.println("Unknown operation code");
 					programCounter = 0;
+					return;
 				}
 			}
 		}
@@ -550,13 +551,15 @@ public class Interpreter {
 		programCounter++;
 		
 		if(stack[stackPointer] < 0) {
-			System.err.println("INTERPRETER: Stack underflow");
+			System.err.println("Stack underflow");
 			programCounter = 0;
+			return;
 		}
 		
 		if(stack[stackPointer] > InterpreterConstants.STACK_SIZE - 1) {
-			System.err.println("INTERPRETER: Stack overflow");
+			System.err.println("Stack overflow");
 			programCounter = 0;
+			return;
 		}
 		
 		stack[stackPointer] = stack[stack[stackPointer]];
@@ -573,13 +576,15 @@ public class Interpreter {
 		programCounter++;
 		
 		if(stack[stackPointer] < 0) {
-			System.err.println("INTERPRETER: Stack underflow");
+			System.err.println("Stack underflow");
 			programCounter = 0;
+			return;
 		}
 		
 		if(stack[stackPointer] > InterpreterConstants.STACK_SIZE - 1) {
-			System.err.println("INTERPRETER: Stack overflow");
+			System.err.println("Stack overflow");
 			programCounter = 0;
+			return;
 		}
 		
 		if(InterpreterConstants.isShowStore()) {
@@ -725,6 +730,8 @@ public class Interpreter {
 		int address = findLowerBase(base, stack[stackPointer - 1]) + stack[stackPointer];
 		if(address < 0 || address > InterpreterConstants.getStackSize() - 1) {
 			System.err.println("Stack addressation error");
+			programCounter = 0;
+			return;
 		}
 		
 		stack[stackPointer - 1] = stack[address];
@@ -746,6 +753,8 @@ public class Interpreter {
 		int address = findLowerBase(base, stack[stackPointer - 1]) + stack[stackPointer];
 		if(address < 0 || address > InterpreterConstants.getStackSize() - 1) {
 			System.err.println("Stack addressation error");
+			programCounter = 0;
+			return;
 		}
 		
 		stackPointer = stackPointer - 3;
@@ -787,7 +796,7 @@ public class Interpreter {
 	 */
 	private boolean checkStackUnderflow(int items) {
 		if(stackPointer - items < -1) { //check for stack boundaries (stack has no empty space on the beginning, therefore -1)
-			System.err.println("INTERPRETER: Stack underflow");
+			System.err.println("Stack underflow");
 			programCounter = 0;
 			return false;
 		}
@@ -801,7 +810,7 @@ public class Interpreter {
 	 */
 	private boolean checkStackOverflow(int items) {
 		if(stackPointer - items > InterpreterConstants.STACK_SIZE - 1) { //check for stack boundaries
-			System.err.println("INTERPRETER: Stack overflow");
+			System.err.println("Stack overflow");
 			programCounter = 0;
 			return false;
 		}
@@ -836,7 +845,7 @@ public class Interpreter {
 				int address = scanner.nextInt();
 				
 				if(address != stackPointer) {
-					System.err.println("INTERPRETER: Input file is corrupted");
+					System.err.println("Input file is corrupted");
 					instructions.clear();
 					scanner.close();
 					return;
@@ -854,7 +863,7 @@ public class Interpreter {
 											.findFirst();
 				
 				if(!code.isPresent()) {
-					System.err.println("INTERPRETER: Input file is corrupted");
+					System.err.println("Input file is corrupted");
 					instructions.clear();
 					return;
 				}
@@ -864,12 +873,12 @@ public class Interpreter {
 			});
 			
 		} catch (IOException e) {
-			System.err.println("INTERPRETER: Cannot read input file");
+			System.err.println("Cannot read input file");
 			instructions.clear();
 			return;
 			
 		} catch (NumberFormatException | ArrayIndexOutOfBoundsException e1) {
-			System.err.println("INTERPRETER: Input file is corrupted");
+			System.err.println("Input file is corrupted");
 			instructions.clear();
 			return;
 		} finally {
