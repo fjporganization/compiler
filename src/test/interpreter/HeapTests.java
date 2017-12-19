@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 class HeapTests extends InterpreterTestsBase{
 	
-	private static final String path = "/heap/";
+	private static final String path = "heap/";
 	
 	@Test
 	@DisplayName("Allocate on heap")

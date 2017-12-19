@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 class JumpTests extends InterpreterTestsBase{
 	
-	private static final String path = "/jumps/";
+	private static final String path = "jumps/";
 
 	@Test
 	@DisplayName("Conditional jump asserive")

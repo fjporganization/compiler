@@ -18,7 +18,7 @@ class InterpreterTestsBase {
 	
 	Interpreter interpreter;
 	
-	String testPath = "testFiles/interpreterTests";
+	String testPath = "testFiles/interpreterTests/";
 	
 	private static ByteArrayOutputStream out = null;
 	

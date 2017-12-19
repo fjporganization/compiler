@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 class IntegerTests extends InterpreterTestsBase{
 	
-	private static final String path = "/integerArithmetic/";
+	private static final String path = "integerArithmetic/";
 
 	@Test
 	@DisplayName("Integer unary minus")

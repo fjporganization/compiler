@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 class RealTests extends InterpreterTestsBase{
 	
-	private static final String path = "/realArithmetic/";
+	private static final String path = "realArithmetic/";
 	
 	@Test
 	@DisplayName("Real unary minus")

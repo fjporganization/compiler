@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 class LoadStoreTests extends InterpreterTestsBase{
 	
-	private static final String path = "/loadStore/";
+	private static final String path = "loadStore/";
 
 	@Test
 	@DisplayName("LOD instruction - no nesting")

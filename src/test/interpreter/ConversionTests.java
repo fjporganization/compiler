@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 class ConversionTests  extends InterpreterTestsBase{
 	
-	private static final String path = "/conversions/";
+	private static final String path = "conversions/";
 	
 	@Test
 	@DisplayName("RTI - float to integer")
