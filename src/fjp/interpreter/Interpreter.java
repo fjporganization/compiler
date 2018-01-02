@@ -877,13 +877,11 @@ public class Interpreter {
 			instructions.clear();
 			return;
 			
-		} catch (NumberFormatException | ArrayIndexOutOfBoundsException e1) {
+		} catch (Exception e1) {
 			System.err.println("Input file is corrupted");
 			instructions.clear();
 			return;
-		} finally {
-			
-		}
+		} 
 		
 		stackPointer = 0;
 	}
